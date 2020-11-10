@@ -13,7 +13,8 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>onomastico</name>
 	<description>card system</description>
-
+	<packaging>jar</packaging>
+	
 	<properties>
 		<java.version>14</java.version>
 	</properties>
@@ -66,6 +67,7 @@
 	</dependencies>
 
 	<build>
+	<finalName>onomastico</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
