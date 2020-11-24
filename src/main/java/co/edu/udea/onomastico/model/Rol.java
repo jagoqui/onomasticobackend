@@ -1,6 +1,8 @@
 package co.edu.udea.onomastico.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +22,6 @@ public class Rol implements Serializable{
 
 	@Column(name = "nombre", length = 45, nullable = false)
 	private String nombre;
-
 	
 	public Rol() {
 		super();

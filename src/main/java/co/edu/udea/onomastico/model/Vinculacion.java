@@ -14,21 +14,24 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Table(name = "vinculacion")
 public class Vinculacion {
-
+	
+	@JsonView(Views.Public.class)
 	@Id 
 	@Column(name = "idvinculacion", nullable = false)
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "nombre", nullable = false)
 	private String nombre;
 
 	@ManyToMany(mappedBy = "vinculacionPorUsuarioCorreo")
-	@JsonIgnoreProperties("vinculacionPorUsuarioCorreo")
+	@JsonView(Views.Internal.class)
     private Set<UsuarioCorreo> usuariosCorreoVinculacion = new HashSet<>();
 	
 	public Vinculacion() {

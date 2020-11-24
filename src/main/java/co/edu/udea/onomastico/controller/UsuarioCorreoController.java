@@ -27,16 +27,22 @@ public class UsuarioCorreoController {
 
 	@Autowired
 	UsuarioCorreoRepository  usuarioRepository;
-	@GetMapping("/usuariosemail")
 	
+	
+	
+	@GetMapping("/usuariosemail")
 	public List<UsuarioCorreo> getAllUsuarios() {
 	    return usuarioRepository.findAll();
 	}
 	
 	//crear usuario
 	@PostMapping("/usuariosemail")
-	public UsuarioCorreo createUsuario(@RequestBody UsuarioCorreo usuario) {
-	    return usuarioRepository.save(usuario);
+	public String createUsuario(@RequestBody UsuarioCorreo usuario) {
+		if(usuario.getEmail()!=null) {
+			usuarioRepository.save(usuario);
+			return "success";
+		}
+		return "fail";
 	}
 	@GetMapping("/usuariosemail/{tipo}/{numero}")
 	public Optional<UsuarioCorreo> getUsuarioById(@PathVariable(value = "tipo") String tipo, 

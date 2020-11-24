@@ -3,17 +3,15 @@ package co.edu.udea.onomastico.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Table(name = "plataforma")
@@ -22,13 +20,15 @@ public class Plataforma {
 	@Id 
 	@Column(name = "idplataforma", nullable = false)
 	@GeneratedValue(strategy=GenerationType.AUTO)
+	@JsonView(Views.Public.class)	
 	private int id;
 	
 	@Column(name = "nombre", nullable = false, length = 45)
+	@JsonView(Views.Public.class)
 	private String nombre;
 	
 	@ManyToMany(mappedBy = "plataformaPorUsuarioCorreo")
-	@JsonIgnoreProperties("plataformaPorUsuarioCorreo")
+	@JsonView(Views.Internal.class)
     private Set<UsuarioCorreo> usuariosCorreoPlataforma = new HashSet<>();
 
 	public Plataforma() {

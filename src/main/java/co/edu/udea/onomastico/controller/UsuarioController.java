@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,8 +14,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Usuario;
+import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.repository.UsuarioRepository;
 
 @RestController
@@ -21,6 +26,9 @@ public class UsuarioController {
 
 	@Autowired
 	UsuarioRepository  usuarioRepository;
+	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 	
 	//obtener todos los usuarios
 	@GetMapping("/usuarios")
@@ -30,8 +38,12 @@ public class UsuarioController {
 	
 	//crear usuario
 	@PostMapping("/usuarios")
-	public Usuario createUsuario(@RequestBody Usuario usuario) {
-	    return usuarioRepository.save(usuario);
+	public String AddUsuario(@RequestBody Usuario usuario) {
+		String password = usuario.getPassword();
+		String encriptedPassword = passwordEncoder.encode(password);
+		usuario.setPassword(encriptedPassword);
+	    usuarioRepository.save(usuario);
+	    return "succesfull";
 	}
 	@GetMapping("/usuarios/{id}")
 	public Usuario getUsuarioById(@PathVariable(value = "id") Integer usuarioId) {

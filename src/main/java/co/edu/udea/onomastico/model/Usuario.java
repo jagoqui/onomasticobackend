@@ -20,26 +20,31 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name="usuario")
+@Table(name="usuario", uniqueConstraints = {
+		@UniqueConstraint(columnNames = {
+	            "email"
+	        })
+})
 public class Usuario {
-	
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
 	
 	@Column(name = "nombre_usuario", length = 16, nullable = false)
-	private String nombre; 
+	private String username; 
 	
 	@Column(name = "email", length = 255, unique = true, nullable = false)
 	private String email; 
 	
+	@JsonView(Views.Internal.class)
 	@Column(name = "password", length = 32, nullable = false)
 	private String password; 
 	
@@ -51,15 +56,15 @@ public class Usuario {
 	@CreatedDate
 	private java.util.Date createTime;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "rol_id", nullable = false)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "rol_id", nullable = false)
 	private Rol rol;
 	
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "asociacion_por_usuario", 
             joinColumns = { @JoinColumn(name = "usuario_id") }, 
             inverseJoinColumns = { @JoinColumn(name = "asociacion_id") })
-	@JsonIgnoreProperties({"usuariosAsociacion","usuariosCorreoAsociacion"})
+	@JsonView(Views.Internal.class)
     private Set<Asociacion> asociacionPorUsuario = new HashSet<Asociacion>();
 	
 	public Usuario() {
@@ -70,7 +75,7 @@ public class Usuario {
 			Set<Asociacion> asociacionPorUsuario) {
 		super();
 		this.id = id;
-		this.nombre = nombre;
+		this.username = nombre;
 		this.email = email;
 		this.password = password;
 		this.estado = estado;
@@ -88,11 +93,11 @@ public class Usuario {
 	}
 
 	public String getNombre() {
-		return nombre;
+		return username;
 	}
 
 	public void setNombre(String nombre) {
-		this.nombre = nombre;
+		this.username = nombre;
 	}
 
 	public String getEmail() {
@@ -142,5 +147,5 @@ public class Usuario {
 	public void setAsociacionPorUsuario(Set<Asociacion> asociacionPorUsuario) {
 		this.asociacionPorUsuario = asociacionPorUsuario;
 	}
-	
+
 }

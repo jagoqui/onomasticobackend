@@ -9,20 +9,22 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Table(name = "programa_academico")
 public class ProgramaAcademico {
-
+	
+	@JsonView(Views.Public.class)
 	@Id 
 	private int codigo;
 	
 	@Column(name = "nombre", length = 45, nullable = false)
+	@JsonView(Views.Public.class)
 	private String nombre;
 	
 	@ManyToMany(mappedBy = "programaAcademicoPorUsuarioCorreo")
-	@JsonIgnoreProperties("programaAcademicoPorUsuarioCorreo")
+	@JsonView(Views.Internal.class)
     private Set<UsuarioCorreo> usuariosCorreoProgramaAcademico = new HashSet<>();
 
 	public ProgramaAcademico() {
