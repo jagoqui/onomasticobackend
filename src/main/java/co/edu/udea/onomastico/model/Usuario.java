@@ -39,7 +39,7 @@ public class Usuario {
 	private int id;
 	
 	@Column(name = "nombre_usuario", length = 16, nullable = false)
-	private String username; 
+	private String nombre; 
 	
 	@Column(name = "email", length = 255, unique = true, nullable = false)
 	private String email; 
@@ -75,7 +75,7 @@ public class Usuario {
 			Set<Asociacion> asociacionPorUsuario) {
 		super();
 		this.id = id;
-		this.username = nombre;
+		this.nombre = nombre;
 		this.email = email;
 		this.password = password;
 		this.estado = estado;
@@ -93,11 +93,11 @@ public class Usuario {
 	}
 
 	public String getNombre() {
-		return username;
+		return nombre;
 	}
 
 	public void setNombre(String nombre) {
-		this.username = nombre;
+		this.nombre = nombre;
 	}
 
 	public String getEmail() {
@@ -147,5 +147,4 @@ public class Usuario {
 	public void setAsociacionPorUsuario(Set<Asociacion> asociacionPorUsuario) {
 		this.asociacionPorUsuario = asociacionPorUsuario;
 	}
-
 }

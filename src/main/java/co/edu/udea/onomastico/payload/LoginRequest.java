@@ -3,23 +3,23 @@ package co.edu.udea.onomastico.payload;
 
 public class LoginRequest {
 	
-    private String usernameOrEmail;
+    private String userEmail;
     
     private String password;
 
-    public String getUsernameOrEmail() {
-        return usernameOrEmail;
-    }
+	public String getUserEmail() {
+		return userEmail;
+	}
 
-    public void setUsernameOrEmail(String usernameOrEmail) {
-        this.usernameOrEmail = usernameOrEmail;
-    }
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public void setPassword(String password) {
+		this.password = password;
+	}
 }
