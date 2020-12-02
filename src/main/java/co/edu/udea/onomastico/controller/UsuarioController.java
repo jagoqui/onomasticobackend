@@ -1,6 +1,7 @@
 package co.edu.udea.onomastico.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import co.edu.udea.onomastico.exceptions.BadRequestException;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Usuario;
 import co.edu.udea.onomastico.model.Views;
@@ -38,12 +40,13 @@ public class UsuarioController {
 	
 	//crear usuario
 	@PostMapping("/usuarios")
-	public String AddUsuario(@RequestBody Usuario usuario) {
+	public Usuario AddUsuario(@RequestBody Usuario usuario) {
+		if(!usuarioRepository.findByEmail(usuario.getEmail()).isEmpty()) throw new BadRequestException("usuario existente");
 		String password = usuario.getPassword();
 		String encriptedPassword = passwordEncoder.encode(password);
 		usuario.setPassword(encriptedPassword);
-	    usuarioRepository.save(usuario);
-	    return "succesfull";
+	    Usuario newuser = usuarioRepository.save(usuario);
+	    return newuser;
 	}
 	@GetMapping("/usuarios/{id}")
 	public Usuario getUsuarioById(@PathVariable(value = "id") Integer usuarioId) {

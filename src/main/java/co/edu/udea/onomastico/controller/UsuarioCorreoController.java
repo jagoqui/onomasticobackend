@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import co.edu.udea.onomastico.exceptions.BadRequestException;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Usuario;
 import co.edu.udea.onomastico.model.UsuarioCorreo;
@@ -28,8 +29,6 @@ public class UsuarioCorreoController {
 	@Autowired
 	UsuarioCorreoRepository  usuarioRepository;
 	
-	
-	
 	@GetMapping("/usuariosemail")
 	public List<UsuarioCorreo> getAllUsuarios() {
 	    return usuarioRepository.findAll();
@@ -37,13 +36,13 @@ public class UsuarioCorreoController {
 	
 	//crear usuario
 	@PostMapping("/usuariosemail")
-	public String createUsuario(@RequestBody UsuarioCorreo usuario) {
-		if(usuario.getEmail()!=null) {
-			usuarioRepository.save(usuario);
-			return "success";
-		}
-		return "fail";
+	public UsuarioCorreo createUsuario(@RequestBody UsuarioCorreo usuario) {
+		if(usuario.getEmail()!=null && usuarioRepository.findById(usuario.getId()).isEmpty()) {
+			UsuarioCorreo newUser = usuarioRepository.save(usuario);
+			return newUser;
+		}else throw new BadRequestException("usuario de correo existente");
 	}
+	
 	@GetMapping("/usuariosemail/{tipo}/{numero}")
 	public Optional<UsuarioCorreo> getUsuarioById(@PathVariable(value = "tipo") String tipo, 
 			@PathVariable(value = "numero")String numero) {

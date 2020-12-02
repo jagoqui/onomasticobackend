@@ -1,6 +1,7 @@
 package co.edu.udea.onomastico.model;
 
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,6 +26,7 @@ import javax.persistence.UniqueConstraint;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
@@ -34,8 +36,13 @@ import com.fasterxml.jackson.annotation.JsonView;
 	            "email"
 	        })
 })
-public class Usuario {
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
+public class Usuario implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	
 	@Column(name = "nombre_usuario", length = 16, nullable = false)
@@ -56,7 +63,7 @@ public class Usuario {
 	@CreatedDate
 	private java.util.Date createTime;
 	
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "rol_id", nullable = false)
 	private Rol rol;
 	
