@@ -14,16 +14,18 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 
 
 @Entity
 @Table(name = "asociacion")
 public class Asociacion {
 	
+	@JsonView(Views.Public.class)
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
 	
-	
+	@JsonView(Views.Public.class)
 	@Column(name = "nombre", nullable = false, length=45)
 	private String nombre;
 	
