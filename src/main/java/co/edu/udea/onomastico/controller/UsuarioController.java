@@ -63,7 +63,8 @@ public class UsuarioController {
 
 		usuario.setNombre(detallesUsuario.getNombre());;
 		usuario.setEmail(detallesUsuario.getEmail());
-		usuario.setPassword(detallesUsuario.getPassword());
+		String encriptedPassword = passwordEncoder.encode(detallesUsuario.getPassword());
+		usuario.setPassword(encriptedPassword);
 
 		Usuario updatedUsuario = usuarioRepository.save(usuario);
 	    return updatedUsuario;
