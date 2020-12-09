@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Table(name = "rol")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Rol implements Serializable{
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 
 	@Column(name = "nombre", length = 45, nullable = false)

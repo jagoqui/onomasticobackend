@@ -10,23 +10,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 @Entity
 @Table(name = "imagen_archivo")
 public class ImagenArchivo {
 
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	
-	@Column(name = "url_imagen", nullable = false, length = 250)
+	@Column(name = "url_imagen")
 	private String urlImagen;
-	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "asociacion_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-	private Asociacion asociacion;
 
 	public ImagenArchivo() {
 		super();
@@ -36,7 +31,6 @@ public class ImagenArchivo {
 		super();
 		this.id = id;
 		this.urlImagen = urlImagen;
-		this.asociacion = asociacion;
 	}
 
 	public int getId() {
@@ -54,14 +48,4 @@ public class ImagenArchivo {
 	public void setUrlImagen(String urlImagen) {
 		this.urlImagen = urlImagen;
 	}
-
-	public Asociacion getAsociacion() {
-		return asociacion;
-	}
-
-	public void setAsociacion(Asociacion asociacion) {
-		this.asociacion = asociacion;
-	}
-	
-	
 }

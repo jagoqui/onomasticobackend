@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Plantilla;
-import co.edu.udea.onomastico.model.Tipografia;
 import co.edu.udea.onomastico.repository.PlantillaRepository;
-import co.edu.udea.onomastico.repository.TipografiaRepository;
 
 @RestController
 public class PlantillasController {
@@ -24,14 +22,6 @@ public class PlantillasController {
 	@Autowired
 	PlantillaRepository plantillaRepository;
 	
-	@Autowired
-	TipografiaRepository tipografiaRepository;
-	
-	
-	@GetMapping("/tipografias")
-	public List<Tipografia> getAllTipografias(){
-		return tipografiaRepository.findAll();
-	}
 	
 	@GetMapping("/plantillas")
 	public List<Plantilla> getAllPlantillas(){
@@ -55,16 +45,10 @@ public class PlantillasController {
 
 		 Plantilla  plantilla =  plantillaRepository.findById(plantillaId)
 	            .orElseThrow(() -> new ResourceNotFoundException("plantilla" + "id"+plantillaId));
-		plantilla.setAlineacionTexto(detallesPlantilla.getAlineacionTexto());
-		plantilla.setColorTexto(detallesPlantilla.getColorTexto());
+	
 		plantilla.setCuerpoTexto(detallesPlantilla.getCuerpoTexto());
 		plantilla.setImagenArchivo(detallesPlantilla.getImagenArchivo());
-		plantilla.setInterlineado(detallesPlantilla.getInterlineado());
-		plantilla.setMargenHorizontal(detallesPlantilla.getMargenHorizontal());
-		plantilla.setMargenVertical(detallesPlantilla.getMargenVertical());
-		plantilla.setTamañoTexto(detallesPlantilla.getTamañoTexto());
-		plantilla.setTipografia(detallesPlantilla.getTipografia());
-
+	
 		Plantilla updatedPlantilla = plantillaRepository.save(plantilla);
 	    return updatedPlantilla;
 	}

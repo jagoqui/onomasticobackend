@@ -1,5 +1,6 @@
 package co.edu.udea.onomastico.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Table(name = "asociacion")
-public class Asociacion {
+public class Asociacion implements Serializable {
 	
 	@JsonView(Views.Public.class)
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
@@ -29,11 +30,12 @@ public class Asociacion {
 	@Column(name = "nombre", nullable = false, length=45)
 	private String nombre;
 	
-	
+	@JsonView(Views.Internal.class)
 	@ManyToMany(mappedBy = "asociacionPorUsuario")
 	@JsonIgnoreProperties("asociacionPorUsuario")
     private Set<Usuario> usuariosAsociacion = new HashSet<>();
 	
+	@JsonView(Views.Internal.class)
 	@ManyToMany(mappedBy = "asociacionPorUsuarioCorreo")
 	@JsonIgnoreProperties("asociacionPorUsuarioCorreo")
     private Set<UsuarioCorreo> usuariosCorreoAsociacion = new HashSet<>();
