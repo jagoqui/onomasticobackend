@@ -62,6 +62,7 @@ public class UsuarioCorreoController {
 		usuario.setEmail(detallesUsuario.getEmail());
 		usuario.setApellido(detallesUsuario.getApellido());
 		usuario.setGenero(detallesUsuario.getGenero());
+		usuario.setEstado(detallesUsuario.getEstado());
 		usuario.setFechaNacimiento(detallesUsuario.getFechaNacimiento());
 		usuario.setPlataformaPorUsuarioCorreo(detallesUsuario.getPlataformaPorUsuarioCorreo());
 		usuario.setAsociacionPorUsuarioCorreo(detallesUsuario.getAsociacionPorUsuarioCorreo());
