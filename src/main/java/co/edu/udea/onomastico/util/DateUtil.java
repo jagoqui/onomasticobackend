@@ -63,7 +63,7 @@ public class DateUtil {
     
     public static String getCurrentDatetime() {
     	Date date = Calendar. getInstance(). getTime();
-    	DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+    	DateFormat dateFormat = new SimpleDateFormat("MMddhhmmss");
     	return dateFormat.format(date);
     }
 	

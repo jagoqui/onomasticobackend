@@ -23,7 +23,7 @@ public class FileUploadService {
 		String dateTime = DateUtil.getCurrentDatetime();
 
 		Path locationDestiny = Paths
-				.get(uploadDirectory + StringUtils.cleanPath(file.getOriginalFilename()));
+				.get(uploadDirectory + File.separator + StringUtils.cleanPath(dateTime.toString() + file.getOriginalFilename()));
 		Files.copy(file.getInputStream(), locationDestiny, StandardCopyOption.REPLACE_EXISTING);
 
 		return locationDestiny.toString();

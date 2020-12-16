@@ -16,6 +16,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -51,14 +54,16 @@ public class UsuarioCorreo {
 			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"), }, inverseJoinColumns = {
 					@JoinColumn(name = "asociacion_id") })
 	@JsonIgnoreProperties({"usuariosAsociacion","usuariosCorreoAsociacion"})
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<Asociacion> asociacionPorUsuarioCorreo = new HashSet<Asociacion>();
-
+	
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "programa_academico_por_usuario_correo", joinColumns = {
 			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
 			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"), }, inverseJoinColumns = {
 					@JoinColumn(name = "programa_academico_codigo") })
 	@JsonIgnoreProperties("usuariosCorreoProgramaAcademico")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<ProgramaAcademico> programaAcademicoPorUsuarioCorreo = new HashSet<ProgramaAcademico>();
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -67,6 +72,7 @@ public class UsuarioCorreo {
 			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"), }, inverseJoinColumns = {
 					@JoinColumn(name = "plataforma_idplataforma") })
 	@JsonIgnoreProperties("usuariosCorreoPlataforma")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<Plataforma> plataformaPorUsuarioCorreo = new HashSet<Plataforma>();
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -75,6 +81,7 @@ public class UsuarioCorreo {
 			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"), }, inverseJoinColumns = {
 					@JoinColumn(name = "vinculacion_idvinculacion") })
 	@JsonIgnoreProperties("usuariosCorreoVinculacion")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<Vinculacion> vinculacionPorUsuarioCorreo = new HashSet<Vinculacion>();
 
 	public UsuarioCorreo() {

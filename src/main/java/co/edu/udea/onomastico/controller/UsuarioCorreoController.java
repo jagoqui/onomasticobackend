@@ -78,8 +78,8 @@ public class UsuarioCorreoController {
 		UsuarioCorreoId usuarioId = new UsuarioCorreoId(tipo,numero);
 		UsuarioCorreo usuario = usuarioRepository.findById(usuarioId)
 	            .orElseThrow(() -> new ResourceNotFoundException("UsuarioCorreo"+"id"+usuarioId));
-
-	    usuarioRepository.delete(usuario);
+	    
+		usuarioRepository.delete(usuario);
 	    return ResponseEntity.ok().build();
 	}
 }
