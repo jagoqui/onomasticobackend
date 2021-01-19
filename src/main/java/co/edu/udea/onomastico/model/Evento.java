@@ -28,7 +28,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "evento")
 public class Evento {
 
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name ="idevento")
 	private int id;
 	
@@ -58,9 +58,6 @@ public class Evento {
             joinColumns = { @JoinColumn(name = "evento_idevento") }, 
             inverseJoinColumns = { @JoinColumn(name = "condicion_idcondicion") })
     private Set<Condicion> condicionesEvento = new HashSet<Condicion>();
-	
-//	@OneToMany(mappedBy = "usuarioCorreoEnviado")
-//    Set<CorreoEnviado> correoEnviados;
 
 	public Evento() {
 		super();
@@ -142,6 +139,5 @@ public Set<Condicion> getCondicionesEvento() {
 public void setCondicionesEvento(Set<Condicion> condicionesEvento) {
 	this.condicionesEvento = condicionesEvento;
 }
-
 	
 }

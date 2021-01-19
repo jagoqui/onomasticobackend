@@ -12,13 +12,13 @@ public class CorreoEnviadoId implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	@Column(name = "usuario_correo_tipo_identificacion", length = 10)
+	@Column(name = "usuario_correo_tipo_identificacion")
 	private String tipoIdentificacion;
 	 
-	@Column(name = "usuario_correo_numero_identificacion", length = 12)
+	@Column(name = "usuario_correo_numero_identificacion")
 	private String numeroIdentificacion;
 	
-	@Column(name = "evento_idevento", nullable = false)
+	@Column(name = "evento_idevento")
 	private int eventoId ;
 
 	public CorreoEnviadoId() {

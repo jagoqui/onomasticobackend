@@ -26,22 +26,16 @@ public class CorreoEnviado {
 	@EmbeddedId
 	private CorreoEnviadoId id = new CorreoEnviadoId(); 
 
-//	@ManyToOne
-//	@JoinTable(name = "usuario_correo", joinColumns = {
-//			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "usuario_correo_tipo_identificacion"),
-//			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "usuario_correo_numero_identificacion"), }, 
-//	inverseJoinColumns = {
-//			@JoinColumn(name = "tipo_identificacion", referencedColumnName = "tipo_identificacion"),
-//			@JoinColumn(name = "numero_identificacion", referencedColumnName = "numero_identificacion"), })
-//	private UsuarioCorreo usuarioCorreoEnviado;
+	@ManyToOne(optional=false)
+	@JoinColumns({
+			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion",insertable = false, updatable = false),
+			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion",insertable = false, updatable = false), })
+	private UsuarioCorreo usuarioCorreoEnviado;
 	
-//	@ManyToOne
-//	@JoinTable(name = "evento", joinColumns = {
-//			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
-//			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"), }, 
-//	inverseJoinColumns = {
-//			@JoinColumn(name = "evento_idevento", referencedColumnName = "idevento"), })
-//	private Evento eventoEnviado;
+	@ManyToOne(optional=false)
+	@JoinColumns({
+		@JoinColumn(name = "evento_idevento", referencedColumnName = "idevento",insertable = false, updatable = false) })
+	private Evento eventoEnviado;
 	
 	@Column(name = "fecha", nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
