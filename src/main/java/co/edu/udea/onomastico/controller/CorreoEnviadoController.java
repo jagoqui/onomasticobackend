@@ -30,9 +30,9 @@ public class CorreoEnviadoController {
 		return correoEnviadoRepository.save(correoEnviado);
 	}
 	
-	@GetMapping("/emails/{id}")
-	public CorreoEnviado getEventoById(@PathVariable(value = "id") Integer eventoId) {
-	    return correoEnviadoRepository.findById(id)
-	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
-	}
+//	@GetMapping("/emails/{id}")
+//	public CorreoEnviado getEventoById(@PathVariable(value = "id") Integer eventoId) {
+//	    return correoEnviadoRepository.findById(eventoId)
+//	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
+//	}
 }
