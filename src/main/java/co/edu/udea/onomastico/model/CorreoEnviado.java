@@ -18,6 +18,8 @@ import javax.persistence.TemporalType;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "correo_enviado")
@@ -26,34 +28,30 @@ public class CorreoEnviado {
 	@EmbeddedId
 	private CorreoEnviadoId id = new CorreoEnviadoId(); 
 
+	@JsonView(Views.Public.class)
 	@ManyToOne(optional=false)
 	@JoinColumns({
 			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion",insertable = false, updatable = false),
 			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion",insertable = false, updatable = false), })
 	private UsuarioCorreo usuarioCorreoEnviado;
 	
+	@JsonView(Views.Public.class)
 	@ManyToOne(optional=false)
 	@JoinColumns({
 		@JoinColumn(name = "evento_idevento", referencedColumnName = "idevento",insertable = false, updatable = false) })
 	private Evento eventoEnviado;
 	
-	@Column(name = "fecha", nullable = false, updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	@CreatedDate
-	private java.util.Date fecha;
+//	@Column(name = "fecha", nullable = false, updatable = false)
+//	@Temporal(TemporalType.TIMESTAMP)
+//	@CreatedDate
+//	private java.util.Date fecha;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "email",nullable = false, length = 250)
 	private String email;
 
 	public CorreoEnviado() {
 		super();
-	}
-
-	public CorreoEnviado(CorreoEnviadoId id, Date fecha, String email) {
-		super();
-		this.id = id;
-		this.fecha = fecha;
-		this.email = email;
 	}
 
 	public CorreoEnviadoId getId() {
@@ -64,12 +62,20 @@ public class CorreoEnviado {
 		this.id = id;
 	}
 
-	public java.util.Date getFecha() {
-		return fecha;
+	public UsuarioCorreo getUsuarioCorreoEnviado() {
+		return usuarioCorreoEnviado;
 	}
 
-	public void setFecha(java.util.Date fecha) {
-		this.fecha = fecha;
+	public void setUsuarioCorreoEnviado(UsuarioCorreo usuarioCorreoEnviado) {
+		this.usuarioCorreoEnviado = usuarioCorreoEnviado;
+	}
+
+	public Evento getEventoEnviado() {
+		return eventoEnviado;
+	}
+
+	public void setEventoEnviado(Evento eventoEnviado) {
+		this.eventoEnviado = eventoEnviado;
 	}
 
 	public String getEmail() {

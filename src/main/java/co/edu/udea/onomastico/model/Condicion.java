@@ -13,21 +13,27 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 @Entity
 @Table(name = "condicion")
 public class Condicion {
 
+	@JsonView(Views.Public.class)
 	@Id
 	@Column(name ="idcondicion")
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "parametro_a", nullable = false, length = 45)
 	private String parametroA;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "parametro_b", nullable = false, length = 45)
 	private String parametroB;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "coparacion", nullable = false, length = 10)
 	private String comparacion;
 

@@ -10,18 +10,23 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 @Entity
 @Table(name = "plantilla")
 public class Plantilla {
 
+	@JsonView(Views.Public.class)
 	@Id 
 	@Column(name ="idplantilla")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "cuerpo_texto")
 	private String cuerpoTexto;
 	
+	@JsonView(Views.Public.class)
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "imagen_archivo_id")
 	private ImagenArchivo imagenArchivo;

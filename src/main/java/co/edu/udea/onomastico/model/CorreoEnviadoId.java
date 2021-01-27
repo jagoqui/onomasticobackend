@@ -6,6 +6,10 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.springframework.data.annotation.CreatedDate;
 
 @Embeddable
 public class CorreoEnviadoId implements Serializable{
@@ -20,16 +24,14 @@ public class CorreoEnviadoId implements Serializable{
 	
 	@Column(name = "evento_idevento")
 	private int eventoId ;
+	
+	@Column(name = "fecha", nullable = false, updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	@CreatedDate
+	private java.util.Date fecha;
 
 	public CorreoEnviadoId() {
 		super();
-	}
-
-	public CorreoEnviadoId(String tipoIdentificacion, String numeroIdentificacion, int eventoId) {
-		super();
-		this.tipoIdentificacion = tipoIdentificacion;
-		this.numeroIdentificacion = numeroIdentificacion;
-		this.eventoId = eventoId;
 	}
 
 	public String getTipoIdentificacion() {
@@ -56,11 +58,20 @@ public class CorreoEnviadoId implements Serializable{
 		this.eventoId = eventoId;
 	}
 
+	public java.util.Date getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(java.util.Date fecha) {
+		this.fecha = fecha;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + eventoId;
+		result = prime * result + ((fecha == null) ? 0 : fecha.hashCode());
 		result = prime * result + ((numeroIdentificacion == null) ? 0 : numeroIdentificacion.hashCode());
 		result = prime * result + ((tipoIdentificacion == null) ? 0 : tipoIdentificacion.hashCode());
 		return result;
@@ -77,6 +88,11 @@ public class CorreoEnviadoId implements Serializable{
 		CorreoEnviadoId other = (CorreoEnviadoId) obj;
 		if (eventoId != other.eventoId)
 			return false;
+		if (fecha == null) {
+			if (other.fecha != null)
+				return false;
+		} else if (!fecha.equals(other.fecha))
+			return false;
 		if (numeroIdentificacion == null) {
 			if (other.numeroIdentificacion != null)
 				return false;
@@ -89,4 +105,5 @@ public class CorreoEnviadoId implements Serializable{
 			return false;
 		return true;
 	}
+
 }

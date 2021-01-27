@@ -33,6 +33,7 @@ public class UsuarioController {
 	private BCryptPasswordEncoder passwordEncoder;
 	
 	//obtener todos los usuarios
+	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios")
 	public List<Usuario> getAllUsuarios() {
 	    return usuarioRepository.findAll();

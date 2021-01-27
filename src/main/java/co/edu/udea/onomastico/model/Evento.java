@@ -23,36 +23,48 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+
 
 @Entity
 @Table(name = "evento")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Evento {
-
+	
+	@JsonView(Views.Public.class)
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name ="idevento")
 	private int id;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "nombre", nullable = false, length = 45)
 	private String nombre;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "fecha", nullable = false)
 	@Temporal(TemporalType.DATE)
 	private java.util.Date fecha;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "estado", nullable = false, length = 10)
 	private String estado;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "recurrencia", nullable = false, length = 10)
 	private String recurrencia;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "asociacion_id", nullable = false)
+	@JsonView(Views.Public.class)
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asociacion_id")
 	private Asociacion asociacion;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "plantilla_idplantilla", nullable = false)
+	@JsonView(Views.Public.class)
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plantilla_idplantilla")
 	private Plantilla plantilla;
 	
+	@JsonView(Views.Public.class)
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "condicion_por_evento", 
             joinColumns = { @JoinColumn(name = "evento_idevento") }, 

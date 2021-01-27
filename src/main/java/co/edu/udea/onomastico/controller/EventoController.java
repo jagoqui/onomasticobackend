@@ -14,10 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import co.edu.udea.onomastico.exceptions.BadRequestException;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Evento;
 import co.edu.udea.onomastico.model.Usuario;
+import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.repository.EventoRepository;
 import co.edu.udea.onomastico.repository.UsuarioRepository;
 
@@ -29,6 +32,7 @@ public class EventoController {
 	EventoRepository  eventoRepository;
 	
 	//obtener todos los usuarios
+	@JsonView(Views.Public.class)
 	@GetMapping("/")
 	public List<Evento> getAllEventos() {
 	    return eventoRepository.findAll();

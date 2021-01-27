@@ -42,12 +42,15 @@ public class Usuario implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	@JsonView(Views.Public.class)
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "nombre_usuario", length = 16, nullable = false)
 	private String nombre; 
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "email", length = 255, unique = true, nullable = false)
 	private String email; 
 	
@@ -55,23 +58,26 @@ public class Usuario implements Serializable {
 	@Column(name = "password", length = 32, nullable = false)
 	private String password; 
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "estado", length = 10, nullable = false)
 	private String estado; 
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "create_time", nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreatedDate
 	private java.util.Date createTime;
 	
+	@JsonView(Views.Public.class)
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "rol_id", nullable = false)
 	private Rol rol;
 	
+	@JsonView(Views.Public.class)
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "asociacion_por_usuario", 
             joinColumns = { @JoinColumn(name = "usuario_id") }, 
             inverseJoinColumns = { @JoinColumn(name = "asociacion_id") })
-	@JsonView(Views.Internal.class)
     private Set<Asociacion> asociacionPorUsuario = new HashSet<Asociacion>();
 	
 	public Usuario() {

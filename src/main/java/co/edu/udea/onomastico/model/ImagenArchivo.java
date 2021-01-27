@@ -11,15 +11,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 
 
 @Entity
 @Table(name = "imagen_archivo")
 public class ImagenArchivo {
 
+	@JsonView(Views.Public.class)
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "url_imagen")
 	private String urlImagen;
 

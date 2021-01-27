@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Table(name = "asociacion")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Asociacion implements Serializable {
 	
 	@JsonView(Views.Public.class)
