@@ -1,7 +1,5 @@
 package co.edu.udea.onomastico.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,15 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,7 +36,7 @@ public class ImageResourceController {
 	@RequestMapping(path = "/upload", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("plantilla_id") String id) {
-        String fileName = fileService.storeFile(file, id);
+        String fileName = fileService.storeFile(file);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/images/"+id+"/")

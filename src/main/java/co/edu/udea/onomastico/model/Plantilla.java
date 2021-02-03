@@ -26,20 +26,15 @@ public class Plantilla {
 	@Column(name = "cuerpo_texto")
 	private String cuerpoTexto;
 	
-	@JsonView(Views.Public.class)
-	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "imagen_archivo_id")
-	private ImagenArchivo imagenArchivo;
 	
 	public Plantilla() {
 		super();
 	}
 
-	public Plantilla(int id, String cuerpoTexto, ImagenArchivo imagenArchivo) {
+	public Plantilla(int id, String cuerpoTexto) {
 		super();
 		this.id = id;
 		this.cuerpoTexto = cuerpoTexto;
-		this.imagenArchivo = imagenArchivo;
 	}
 
 	
@@ -57,16 +52,6 @@ public class Plantilla {
 
 	public void setCuerpoTexto(String cuerpoTexto) {
 		this.cuerpoTexto = cuerpoTexto;
-	}
-
-	
-
-	public ImagenArchivo getImagenArchivo() {
-		return imagenArchivo;
-	}
-
-	public void setImagenArchivo(ImagenArchivo imagenArchivo) {
-		this.imagenArchivo = imagenArchivo;
 	}
 
 }

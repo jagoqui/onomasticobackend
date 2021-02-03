@@ -15,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Condicion;
-import co.edu.udea.onomastico.model.Usuario;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.repository.CondicionRepository;
 
