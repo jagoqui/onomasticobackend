@@ -1,5 +1,9 @@
 package co.edu.udea.onomastico.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -7,7 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -23,21 +28,35 @@ public class Plantilla {
 	private int id;
 	
 	@JsonView(Views.Public.class)
-	@Column(name = "cuerpo_texto")
-	private String cuerpoTexto;
+	@Column(name = "texto")
+	private String texto;
 	
+	@JsonView(Views.Public.class)
+	@ManyToMany(cascade={CascadeType.MERGE,CascadeType.REFRESH},fetch = FetchType.EAGER)
+    @JoinTable(name = "asociacion_por_plantilla", 
+            joinColumns = { @JoinColumn(name = "plantilla_idplantilla") }, 
+            inverseJoinColumns = { @JoinColumn(name = "asociacion_id") })
+    private Set<Asociacion> asociacionesPorPlantilla = new HashSet<Asociacion>();
 	
 	public Plantilla() {
 		super();
 	}
-
-	public Plantilla(int id, String cuerpoTexto) {
+	
+	public Plantilla(int id, String texto, Set<Asociacion> asociacionesPorPlantilla) {
 		super();
 		this.id = id;
-		this.cuerpoTexto = cuerpoTexto;
+		this.texto = texto;
+		this.asociacionesPorPlantilla = asociacionesPorPlantilla;
 	}
 
-	
+	public Set<Asociacion> getAsociacionesPorPlantilla() {
+		return asociacionesPorPlantilla;
+	}
+
+	public void setAsociacionesPorPlantilla(Set<Asociacion> asociacionesPorPlantilla) {
+		this.asociacionesPorPlantilla = asociacionesPorPlantilla;
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -46,12 +65,12 @@ public class Plantilla {
 		this.id = id;
 	}
 
-	public String getCuerpoTexto() {
-		return cuerpoTexto;
+	public String getTexto() {
+		return texto;
 	}
 
-	public void setCuerpoTexto(String cuerpoTexto) {
-		this.cuerpoTexto = cuerpoTexto;
+	public void setTexto(String cuerpoTexto) {
+		this.texto = cuerpoTexto;
 	}
 
 }

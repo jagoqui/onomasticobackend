@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import co.edu.udea.onomastico.model.ProgramaAcademico;
 import co.edu.udea.onomastico.model.Views;
-import co.edu.udea.onomastico.model.Vinculacion;
 import co.edu.udea.onomastico.repository.ProgramaAcademicoRepository;
 
 @RestController

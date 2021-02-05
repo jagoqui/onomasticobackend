@@ -1,9 +1,14 @@
 package co.edu.udea.onomastico.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,6 +33,15 @@ public class UsuarioCorreoController {
 
 	@Autowired
 	UsuarioCorreoRepository  usuarioRepository;
+	
+	@GetMapping("/usuariosemail/pag/{pageNo}/{pageSize}/{sortBy}")
+	public List<UsuarioCorreo> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, 
+			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        Page<UsuarioCorreo> pagedResult =  usuarioRepository.findAll(paging);
+        if(pagedResult.hasContent()) return pagedResult.getContent();
+        else return new ArrayList<UsuarioCorreo>();
+    }
 	
 	@GetMapping("/usuariosemail")
 	public List<UsuarioCorreo> getAllUsuarios() {

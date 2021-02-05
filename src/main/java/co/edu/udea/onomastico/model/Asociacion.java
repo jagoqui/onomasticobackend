@@ -40,6 +40,11 @@ public class Asociacion implements Serializable {
 	@ManyToMany(mappedBy = "asociacionPorUsuarioCorreo")
 	@JsonIgnoreProperties("asociacionPorUsuarioCorreo")
     private Set<UsuarioCorreo> usuariosCorreoAsociacion = new HashSet<>();
+	
+	@JsonView(Views.Internal.class)
+	@ManyToMany(mappedBy = "asociacionesPorPlantilla")
+	@JsonIgnoreProperties("asociacionesPorPlantilla")
+    private Set<Plantilla> plantillasAsociacion = new HashSet<>();
 
 	public Asociacion() {
 		super();

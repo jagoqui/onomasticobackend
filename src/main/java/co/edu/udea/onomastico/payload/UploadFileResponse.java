@@ -1,7 +1,12 @@
 package co.edu.udea.onomastico.payload;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
+import co.edu.udea.onomastico.model.Views;
+
 public class UploadFileResponse {
 	private String fileName;
+	@JsonView(Views.Public.class)
     private String fileDownloadUri;
     private String fileType;
     private long size;
