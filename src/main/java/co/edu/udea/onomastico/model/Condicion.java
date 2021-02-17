@@ -26,59 +26,62 @@ public class Condicion {
 	private int id;
 	
 	@JsonView(Views.Public.class)
-	@Column(name = "parametro_a", nullable = false, length = 45)
-	private String parametroA;
+	@Column(name = "condicion")
+	private String condicion;
 	
 	@JsonView(Views.Public.class)
-	@Column(name = "parametro_b", nullable = false, length = 45)
-	private String parametroB;
+	@Column(name = "parametro")
+	private String parametro;
 	
-	@JsonView(Views.Public.class)
-	@Column(name = "coparacion", nullable = false, length = 10)
-	private String comparacion;
 
 	@ManyToMany(mappedBy = "condicionesEvento")
     private Set<Evento> usuariosCorreoCondicion = new HashSet<Evento>();
+	
 	public Condicion() {
 		super();
 	}
-	public Condicion(int id, String parametroA, String parametroB, String comparacion,
-			Set<Evento> usuariosCorreoCondicion) {
+
+	
+	public Condicion(int id, String condicion, String parametro, Set<Evento> usuariosCorreoCondicion) {
 		super();
 		this.id = id;
-		this.parametroA = parametroA;
-		this.parametroB = parametroB;
-		this.comparacion = comparacion;
+		this.condicion = condicion;
+		this.parametro = parametro;
 		this.usuariosCorreoCondicion = usuariosCorreoCondicion;
 	}
+
+
 	public int getId() {
 		return id;
 	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getParametroA() {
-		return parametroA;
+
+	public String getCondicion() {
+		return condicion;
 	}
-	public void setParametroA(String parametroA) {
-		this.parametroA = parametroA;
+
+	public void setCondicion(String condicion) {
+		this.condicion = condicion;
 	}
-	public String getParametroB() {
-		return parametroB;
+
+	public String getParametro() {
+		return parametro;
 	}
-	public void setParametroB(String parametroB) {
-		this.parametroB = parametroB;
+
+	public void setParametro(String parametro) {
+		this.parametro = parametro;
 	}
-	public String getComparacion() {
-		return comparacion;
-	}
-	public void setComparacion(String comparacion) {
-		this.comparacion = comparacion;
-	}
+
 	public Set<Evento> getUsuariosCorreoCondicion() {
 		return usuariosCorreoCondicion;
 	}
+
 	public void setUsuariosCorreoCondicion(Set<Evento> usuariosCorreoCondicion) {
 		this.usuariosCorreoCondicion = usuariosCorreoCondicion;
 	}
+	
+	
 }

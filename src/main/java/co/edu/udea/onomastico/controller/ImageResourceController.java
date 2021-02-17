@@ -33,19 +33,19 @@ public class ImageResourceController {
 	@Autowired
 	private FileService fileService;
 	
-	@RequestMapping(path = "/upload", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("plantilla_id") String id) {
-        String fileName = fileService.storeFile(file);
-
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/images/"+id+"/")
-                .path(fileName)
-                .toUriString();
-
-        return new UploadFileResponse(fileName, fileDownloadUri,
-                file.getContentType(), file.getSize());
-    }
+//	@RequestMapping(path = "/upload", method = RequestMethod.POST)
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("plantilla_id") String id) {
+//        String fileName = fileService.storeFile(file);
+//
+//        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                .path("/images/"+id+"/")
+//                .path(fileName)
+//                .toUriString();
+//
+//        return new UploadFileResponse(fileName, fileDownloadUri,
+//                file.getContentType(), file.getSize());
+//    }
 	
 	@RequestMapping(path = "/{id}/{fileName:.+}", method = RequestMethod.GET)
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {

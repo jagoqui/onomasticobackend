@@ -89,6 +89,18 @@ public class UsuarioCorreo {
 	}
 
 	public UsuarioCorreo(UsuarioCorreoId id, String nombre, String apellido, String email, Date fechaNacimiento,
+			String estado, String genero) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.email = email;
+		this.fechaNacimiento = fechaNacimiento;
+		this.estado = estado;
+		this.genero = genero;
+	}
+
+	public UsuarioCorreo(UsuarioCorreoId id, String nombre, String apellido, String email, Date fechaNacimiento,
 			String estado, String genero, Set<Asociacion> asociacionPorUsuarioCorreo,
 			Set<ProgramaAcademico> programaAcademicoPorUsuarioCorreo, Set<Plataforma> plataformaPorUsuarioCorreo,
 			Set<Vinculacion> vinculacionPorUsuarioCorreo) {

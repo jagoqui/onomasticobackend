@@ -1,8 +1,13 @@
 package co.edu.udea.onomastico.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,6 +45,16 @@ public class PlantillasController {
 	public List<Plantilla> getAllPlantillas(){
 		return plantillaRepository.findAll();
 	}
+	
+	@JsonView(Views.Public.class)
+	@GetMapping("/plantillas/pag/{pageNo}/{pageSize}/{sortBy}")
+	public List<Plantilla> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, 
+			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        Page<Plantilla> pagedResult =  plantillaRepository.findAll(paging);
+        if(pagedResult.hasContent()) return pagedResult.getContent();
+        else return new ArrayList<Plantilla>();
+    }
 	
 	@JsonView(Views.Public.class)
 	@PostMapping("/plantillas")
