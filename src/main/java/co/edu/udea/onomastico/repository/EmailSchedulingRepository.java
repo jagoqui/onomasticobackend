@@ -29,33 +29,33 @@ public class EmailSchedulingRepository {
 		if(condiciones!=null) {
 		condiciones.forEach(condicion -> {
 			if (condicion.getCondicion().contains("fecha_nacimiento")) {
-				sql.append("AND DAY(fecha_nacimiento)= DAY(CURRENT_DATE) AND Month(fecha_nacimiento)=Month(CURRENT_DATE)");
+				sql.append("AND DAY(fecha_nacimiento)= DAY(CURRENT_DATE) AND Month(fecha_nacimiento)=Month(CURRENT_DATE) ");
 			} else if (condicion.getCondicion().contains("asociacion")) {
 				if(!sql.toString().contains("asociacion")) {
-					sql.insert(30, JOIN_ASOCIACION);
+					sql.insert(35, JOIN_ASOCIACION);
 					sql.append("AND asociacion_id = ");
-					sql.append(condicion.getParametro());
+					sql.append(condicion.getParametro()+" ");
 				}else {
 					sql.append("OR asociacion_id = ");
-					sql.append(condicion.getParametro());
+					sql.append(condicion.getParametro()+" ");
 				}
 			} else if (condicion.getCondicion().contains("vinculacion")) {
 				if(!sql.toString().contains("vinculacion")) {
-					sql.insert(30,JOIN_VINCULACION);
+					sql.insert(35,JOIN_VINCULACION);
 					sql.append("AND idvinculacion = ");
-					sql.append(condicion.getParametro());
+					sql.append(condicion.getParametro()+" ");
 				}else {
 					sql.append("OR idvinculacion = ");
-					sql.append(condicion.getParametro());
+					sql.append(condicion.getParametro()+" ");
 				}
 			} else if (condicion.getCondicion().contains("programa_academico")) {
 				if(!sql.toString().contains("programa_academico")) {
-					sql.insert(30, JOIN_PROGRAMA);
+					sql.insert(35, JOIN_PROGRAMA);
 					sql.append("AND programa_academico_codigo =");
-					sql.append(condicion.getParametro());
+					sql.append(condicion.getParametro()+" ");
 				}else {
 					sql.append("OR programa_academico_codigo =");
-					sql.append(condicion.getParametro());
+					sql.append(condicion.getParametro()+" ");
 				}
 			}
 		});
