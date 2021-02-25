@@ -38,6 +38,13 @@ public class AsociacionController {
 		
 	}
 	
+	@JsonView(Views.Public.class)
+	@GetMapping("/asociaciones/{id}")
+	public Asociacion getAsociacionById(@PathVariable(value = "id") Integer asociacionId) {
+	    return asociacionRepository.findById(asociacionId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Asociacion"+"id"+asociacionId));
+	}
+	
 	@DeleteMapping("/asociaciones/{id}")
 	public ResponseEntity<?> deleteAsociacion(@PathVariable(value = "id") Integer asociacionId) {
 		Asociacion asociacion = asociacionRepository.findById(asociacionId)

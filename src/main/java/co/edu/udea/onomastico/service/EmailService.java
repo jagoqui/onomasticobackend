@@ -26,7 +26,7 @@ public class EmailService {
 			helper.setFrom("aplicaciononomastico@udea.edu.co");
 			helper.setTo(to);
 			helper.setSubject(subject);
-			helper.setText("<html><body><div style=\"max-width: 800px; margin: auto;\">" + text + "</div></body></html>", true);
+			helper.setText("<html><body><div style=\"max-width: 900px; margin: auto;\">" + text + "</div></body></html>", true);
 			emailSender.send(message);
 		} catch (MessagingException e) {
 			logger.error("Error enviando Email a: " + to + ", error: " + e.getMessage(), e);

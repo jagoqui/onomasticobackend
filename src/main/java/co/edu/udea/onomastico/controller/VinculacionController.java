@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
-import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.model.Vinculacion;
 import co.edu.udea.onomastico.repository.VinculacionRepository;
@@ -36,6 +35,13 @@ public class VinculacionController {
 	public Vinculacion addVinculacion(@RequestBody Vinculacion vinculacion) {
 		vinculacionRepository.save(vinculacion);
 		return vinculacion;
+	}
+	
+	@JsonView(Views.Public.class)
+	@GetMapping("/vinculaciones/{id}")
+	public Vinculacion getVinculacionById(@PathVariable(value = "id") Integer vinculacionId) {
+	    return vinculacionRepository.findById(vinculacionId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Vinculacion"+"id"+vinculacionId));
 	}
 	
 	@DeleteMapping("/vinculaciones/{id}")

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +37,12 @@ public class CondicionController {
 		condicionRepository.save(condicion);
 		return condicion;
 		
+	}
+	@JsonView(Views.Public.class)
+	@GetMapping("/condicion/{id}")
+	public Condicion getCondicionById(@PathVariable(value = "id") Integer condicionId) {
+	    return condicionRepository.findById(condicionId)
+	            .orElseThrow(() -> new ResourceNotFoundException("condicion"+"id"+condicionId));
 	}
 	@PutMapping("/condicion/{id}")
 	public Condicion updateCondicion(@PathVariable(value = "id") Integer condicionId,

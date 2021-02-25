@@ -59,6 +59,10 @@ public class PlantillasController {
 	@JsonView(Views.Public.class)
 	@PostMapping("/plantillas")
 	public ResponseEntity<PlantillaResponse> addPlantilla(@RequestPart("file") MultipartFile file, @RequestPart("plantilla") Plantilla plantilla){
+		StringBuilder text = new StringBuilder("<div id=\"editorContent\" style=\"background-image: url('http://arquimedes.udea.edu.co:8096/onomastico/images/");
+		text.append(String.valueOf(plantilla.getId()) + "background.jpg'); background-repeat: no-repeat; background-position: center center; background-size: cover; height: auto; min-height: 100%; color: black;\">");
+		text.append(plantilla.getTexto());
+		plantilla.setTexto(text.toString());
 		Plantilla newPlantilla = plantillaRepository.save(plantilla);
 		UploadFileResponse up = plantillaService.uploadPlantillaImage(file, String.valueOf(newPlantilla.getId()));
 		PlantillaResponse pr = new PlantillaResponse(up, newPlantilla);
@@ -79,7 +83,10 @@ public class PlantillasController {
 		Plantilla  plantillaToUpdate =  plantillaRepository.findById(plantillaId)
 	            .orElseThrow(() -> new ResourceNotFoundException("plantilla" + "id"+plantillaId));
 	
-		plantillaToUpdate.setTexto(plantilla.getTexto());
+		StringBuilder text = new StringBuilder("<div id=\"editorContent\" style=\"background-image: url('http://arquimedes.udea.edu.co:8096/onomastico/images/");
+		text.append(String.valueOf(plantillaId) + "background.jpg'); background-repeat: no-repeat; background-position: center center; background-size: cover; height: auto; min-height: 100%; color: black;\">");
+		text.append(plantilla.getTexto());
+		plantillaToUpdate.setTexto(text.toString());
 		plantillaToUpdate.setAsociacionesPorPlantilla(plantilla.getAsociacionesPorPlantilla());;
 		UploadFileResponse up = plantillaService.uploadPlantillaImage(file, String.valueOf(plantillaId));
 		

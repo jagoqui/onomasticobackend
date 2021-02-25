@@ -19,10 +19,10 @@ public class PlantillaService {
 	Logger logger = LoggerFactory.getLogger(PlantillaService.class);
 	
 	public UploadFileResponse uploadPlantillaImage(MultipartFile file, String id) {
-        String fileName = fileService.storeFile(file);
+        String fileName = fileService.storeFile(file, id);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/images/"+id+"/")
+                .path("/images/")
                 .path(fileName)
                 .toUriString();
 

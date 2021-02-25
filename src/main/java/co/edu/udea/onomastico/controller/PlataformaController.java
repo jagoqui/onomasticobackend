@@ -30,6 +30,13 @@ public class PlataformaController {
 	    return plataformaRepository.findAll();
 	}
 	
+	@JsonView(Views.Public.class)
+	@GetMapping("/plataformas/{id}")
+	public Plataforma getPlataformaById(@PathVariable(value = "id") Integer plataformaId) {
+	    return plataformaRepository.findById(plataformaId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Plataforma"+"id"+plataformaId));
+	}
+	
 	@PostMapping("/plataformas")
 	@JsonView(Views.Public.class)
 	public Plataforma addPlataforma(@RequestBody Plataforma plataforma) {

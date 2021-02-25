@@ -39,13 +39,14 @@ public class EmailScheduling {
     @Autowired
     EmailService emailService;
     
-    //@Scheduled(cron = "0 8 * * * ?")
+    //cron everyday at 8:00 am
+    //@Scheduled(cron = "0 0 8 * * ?")
     public String scheduleDailyEmails() {
     	StringBuilder emails = new StringBuilder();
     	List<Evento> eventos = eventoService.findAllEventos();
     	eventos.forEach(evento ->{
     		System.out.print(evento.getNombre());
-    		 emailService.sendEmail("jcarolina.escobar@udea.edu.co","prueba", getTextoByReciper(evento.getPlantilla(), "Jenny", LocalDateTime.now()));
+    		 //emailService.sendEmail("jcarolina.escobar@udea.edu.co","prueba", getTextoByReciper(evento.getPlantilla(), "Jenny", LocalDateTime.now()));
     		 List<UsuarioCorreo> destinatarios = getRecipers(evento);
     		 if(destinatarios != null) {
     		 destinatarios.forEach(destino ->{
@@ -67,18 +68,29 @@ public class EmailScheduling {
 	}
 
 	private String getTextoByReciper(Plantilla plantilla, UsuarioCorreo destino) {
-		StringBuilder text = new StringBuilder("<div id=\"editorContent\" style=\"background-image: url('http://arquimedes.udea.edu.co:8096/onomastico/images/");
+		StringBuilder text = new StringBuilder("<div style=\\\"max-width: 900px; margin: auto;\\\"><div id=\"editorContent\" style=\"background-image: url('http://arquimedes.udea.edu.co:8096/onomastico/images/");
 		text.append(String.valueOf(plantilla.getId()) + "/background.jpg'); background-repeat: no-repeat; background-position: center center; background-size: cover; height: auto; min-height: 100%; color: black;\">");
 		text.append(plantilla.getTexto());
-		String target = "&lt;Nombre&gt;";
-		if(text.toString().contains(target)) {
-			String replacement = destino.getNombre().toLowerCase();
-			int startIndex = text.indexOf(target);
-			int stopIndex = startIndex + target.length();
-			text.replace(startIndex, stopIndex, replacement);
+		String[] targets = {"&lt;Nombre&gt;","&lt;Fecha&gt;","&lt;Asociacion&gt;","&lt;Vinculacion&gt;"};
+		String[] replacements = {destino.getNombre(), date.toString(), destino.getAsociacionPorUsuarioCorreo().toString(), destino.getVinculacionPorUsuarioCorreo().toString()};
+		for(int i=0; i<targets.length;i++) {
+			StringBuilder tempText = replaceText(targets[i],text,replacements[i]);
+			text = tempText;
 		}
-		text.append("</div><p> <a href='https://www.w3schools.com'>unsuscribe</a> </p>");
+		text.append("</div><div><p> Si quieres dejar de recibir nuestras tarjetas, <a href='http://arquimedes.udea.edu.co/onomastico/mail-users-subscription-status/");
+		text.append(destino.getEmail());
+		text.append("'>pulsa aquí</a>  para darte de baja.</p></div></div>");
 		return text.toString();
+	}
+	
+	private StringBuilder replaceText(String target, StringBuilder texto, String replacement) {
+		if(texto.toString().contains(target)) {
+			int startIndex = texto.indexOf(target);
+			int stopIndex = startIndex + target.length();
+			texto.replace(startIndex, stopIndex, replacement);
+		}
+		return texto;
+		
 	}
 
 	private List<UsuarioCorreo> getRecipers(Evento evento) {

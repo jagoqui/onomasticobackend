@@ -55,17 +55,17 @@ public class Evento {
 	private String recurrencia;
 	
 	@JsonView(Views.Public.class)
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "asociacion_id")
 	private Asociacion asociacion;
 	
 	@JsonView(Views.Public.class)
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "plantilla_idplantilla")
 	private Plantilla plantilla;
 	
 	@JsonView(Views.Public.class)
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "condicion_por_evento", 
             joinColumns = { @JoinColumn(name = "evento_idevento") }, 
             inverseJoinColumns = { @JoinColumn(name = "condicion_idcondicion") })
