@@ -3,6 +3,7 @@ package co.edu.udea.onomastico.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,7 @@ import co.edu.udea.onomastico.model.Usuario;
 import co.edu.udea.onomastico.model.UsuarioCorreo;
 import co.edu.udea.onomastico.model.UsuarioCorreoId;
 import co.edu.udea.onomastico.repository.UsuarioCorreoRepository;
+
 
 
 @CrossOrigin(origins = "*")
@@ -56,6 +59,17 @@ public class UsuarioCorreoController {
 			return newUser;
 		}else throw new BadRequestException("usuario de correo existente");
 	}
+	
+	//ususcribe with ecriptedemail
+	@PutMapping("/usuariosemail/{email}")
+		public UsuarioCorreo unsuscribe(@PathVariable(value = "email") String encriptedEmail) {
+			String email = new String(Base64.getDecoder().decode(encriptedEmail));
+			UsuarioCorreo user = usuarioRepository.findByEmail(email)
+					.orElseThrow(() -> new ResourceNotFoundException("UsuarioCorreo"+"email"+email));
+			user.setEstado("INACTIVO");
+			usuarioRepository.save(user);
+			return user;
+		}
 	
 	@GetMapping("/usuariosemail/{tipo}/{numero}")
 	public Optional<UsuarioCorreo> getUsuarioById(@PathVariable(value = "tipo") String tipo, 

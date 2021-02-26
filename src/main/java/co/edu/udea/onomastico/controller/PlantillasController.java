@@ -59,11 +59,12 @@ public class PlantillasController {
 	@JsonView(Views.Public.class)
 	@PostMapping("/plantillas")
 	public ResponseEntity<PlantillaResponse> addPlantilla(@RequestPart("file") MultipartFile file, @RequestPart("plantilla") Plantilla plantilla){
+		Plantilla newPlantilla = plantillaRepository.save(plantilla);
 		StringBuilder text = new StringBuilder("<div id=\"editorContent\" style=\"background-image: url('http://arquimedes.udea.edu.co:8096/onomastico/images/");
-		text.append(String.valueOf(plantilla.getId()) + "background.jpg'); background-repeat: no-repeat; background-position: center center; background-size: cover; height: auto; min-height: 100%; color: black;\">");
+		text.append(String.valueOf(newPlantilla.getId()) + "background.jpg'); background-repeat: no-repeat; background-position: center center; background-size: cover; height: auto; min-height: 100%; color: black;\">");
 		text.append(plantilla.getTexto());
 		plantilla.setTexto(text.toString());
-		Plantilla newPlantilla = plantillaRepository.save(plantilla);
+		newPlantilla = plantillaRepository.save(plantilla);
 		UploadFileResponse up = plantillaService.uploadPlantillaImage(file, String.valueOf(newPlantilla.getId()));
 		PlantillaResponse pr = new PlantillaResponse(up, newPlantilla);
 		return  new ResponseEntity<>(pr, HttpStatus.OK);
