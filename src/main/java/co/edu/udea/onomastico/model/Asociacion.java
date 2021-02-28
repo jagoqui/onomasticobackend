@@ -43,20 +43,26 @@ public class Asociacion implements Serializable {
 	
 	@JsonView(Views.Internal.class)
 	@ManyToMany(mappedBy = "asociacionesPorPlantilla")
-	@JsonIgnoreProperties("asociacionesPorPlantilla")
     private Set<Plantilla> plantillasAsociacion = new HashSet<>();
+	
+	@JsonView(Views.Internal.class)
+	@ManyToMany(mappedBy = "programaAcademicoPorAsociacion")
+    private Set<ProgramaAcademico> programasAsociacion = new HashSet<>();
 
 	public Asociacion() {
 		super();
 	}
 
 	public Asociacion(int id, String nombre, Set<Usuario> usuariosAsociacion,
-			Set<UsuarioCorreo> usuariosCorreoAsociacion) {
+			Set<UsuarioCorreo> usuariosCorreoAsociacion, Set<Plantilla> plantillasAsociacion,
+			Set<ProgramaAcademico> programasAsociacion) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.usuariosAsociacion = usuariosAsociacion;
 		this.usuariosCorreoAsociacion = usuariosCorreoAsociacion;
+		this.plantillasAsociacion = plantillasAsociacion;
+		this.programasAsociacion = programasAsociacion;
 	}
 
 	public int getId() {
@@ -89,5 +95,21 @@ public class Asociacion implements Serializable {
 
 	public void setUsuariosCorreoAsociacion(Set<UsuarioCorreo> usuariosCorreoAsociacion) {
 		this.usuariosCorreoAsociacion = usuariosCorreoAsociacion;
+	}
+
+	public Set<Plantilla> getPlantillasAsociacion() {
+		return plantillasAsociacion;
+	}
+
+	public void setPlantillasAsociacion(Set<Plantilla> plantillasAsociacion) {
+		this.plantillasAsociacion = plantillasAsociacion;
+	}
+
+	public Set<ProgramaAcademico> getProgramasAsociacion() {
+		return programasAsociacion;
+	}
+
+	public void setProgramasAsociacion(Set<ProgramaAcademico> programasAsociacion) {
+		this.programasAsociacion = programasAsociacion;
 	}
 }	

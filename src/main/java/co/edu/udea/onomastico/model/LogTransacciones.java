@@ -55,6 +55,11 @@ public class LogTransacciones implements Serializable{
 		this.fecha = fecha;
 		this.usuario = usuario;
 	}
+	
+	public LogTransacciones(String transaccion) {
+		super();
+		this.transaccion = transaccion;
+	}
 
 	public int getId() {
 		return id;

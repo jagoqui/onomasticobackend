@@ -3,11 +3,18 @@ package co.edu.udea.onomastico.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -26,16 +33,27 @@ public class ProgramaAcademico {
 	@ManyToMany(mappedBy = "programaAcademicoPorUsuarioCorreo")
 	@JsonView(Views.Internal.class)
     private Set<UsuarioCorreo> usuariosCorreoProgramaAcademico = new HashSet<>();
+	
+	@JsonView(Views.Internal.class)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "programa_academico_por_asociacion", joinColumns = {
+			@JoinColumn(name = "programa_academico_codigo")
+			}, inverseJoinColumns = {
+					@JoinColumn(name = "asociacion_id") })
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private Set<Asociacion> programaAcademicoPorAsociacion = new HashSet<Asociacion>();
 
 	public ProgramaAcademico() {
 		super();
 	}
 
-	public ProgramaAcademico(int codigo, String nombre, Set<UsuarioCorreo> usuariosCorreoProgramaAcademico) {
+	public ProgramaAcademico(int codigo, String nombre, Set<UsuarioCorreo> usuariosCorreoProgramaAcademico,
+			Set<Asociacion> programaAcademicoPorAsociacion) {
 		super();
 		this.codigo = codigo;
 		this.nombre = nombre;
 		this.usuariosCorreoProgramaAcademico = usuariosCorreoProgramaAcademico;
+		this.programaAcademicoPorAsociacion = programaAcademicoPorAsociacion;
 	}
 
 	public int getCodigo() {
@@ -58,9 +76,16 @@ public class ProgramaAcademico {
 		return usuariosCorreoProgramaAcademico;
 	}
 
-	public void setUsuariosCorreoProgramaAcademico(Set<UsuarioCorreo> usuariosCorreo) {
-		this.usuariosCorreoProgramaAcademico = usuariosCorreo;
+	public void setUsuariosCorreoProgramaAcademico(Set<UsuarioCorreo> usuariosCorreoProgramaAcademico) {
+		this.usuariosCorreoProgramaAcademico = usuariosCorreoProgramaAcademico;
 	}
 
+	public Set<Asociacion> getProgramaAcademicoPorAsociacion() {
+		return programaAcademicoPorAsociacion;
+	}
+
+	public void setProgramaAcademicoPorAsociacion(Set<Asociacion> programaAcademicoPorAsociacion) {
+		this.programaAcademicoPorAsociacion = programaAcademicoPorAsociacion;
+	}
 	
 }
