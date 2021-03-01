@@ -68,7 +68,7 @@ public class Evento {
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "condicion_por_evento", 
             joinColumns = { @JoinColumn(name = "evento_idevento") }, 
-            inverseJoinColumns = { @JoinColumn(name = "condicion_idcondicion") })
+            inverseJoinColumns = { @JoinColumn(name = "condicion_condicion"), @JoinColumn(name = "condicion_parametro")})
     private Set<Condicion> condicionesEvento = new HashSet<Condicion>();
 
 	public Evento() {

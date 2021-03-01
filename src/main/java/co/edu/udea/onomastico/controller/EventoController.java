@@ -21,6 +21,7 @@ import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.job.EmailScheduling;
 import co.edu.udea.onomastico.model.Evento;
 import co.edu.udea.onomastico.model.Views;
+import co.edu.udea.onomastico.payload.CondicionResponse;
 import co.edu.udea.onomastico.service.EventoService;
 
 @RestController
@@ -44,8 +45,8 @@ public class EventoController {
 	    return emailScheduling.scheduleDailyEmails();
 	}
 	@JsonView(Views.Public.class)
-	@GetMapping("/evento/condicones/{id}")
-	public List<Object> getCondiciones(@PathVariable(value = "id") Integer userid) {
+	@GetMapping("/evento/condiciones/{id}")
+	public List<CondicionResponse> getCondiciones(@PathVariable(value = "id") Integer userid) {
 	    return eventoService.getConditionsForUser(userid);
 	}
 	

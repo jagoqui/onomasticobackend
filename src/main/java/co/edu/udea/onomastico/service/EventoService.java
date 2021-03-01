@@ -15,7 +15,12 @@ import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Evento;
 import co.edu.udea.onomastico.model.LogTransacciones;
+import co.edu.udea.onomastico.model.ProgramaAcademico;
 import co.edu.udea.onomastico.model.Usuario;
+import co.edu.udea.onomastico.model.Vinculacion;
+import co.edu.udea.onomastico.payload.CondicionResponse;
+import co.edu.udea.onomastico.payload.ParametroResponse;
+import co.edu.udea.onomastico.payload.ValorResponse;
 import co.edu.udea.onomastico.repository.CondicionRepository;
 import co.edu.udea.onomastico.repository.EventoRepository;
 import co.edu.udea.onomastico.repository.ProgramaAcademicoRepository;
@@ -47,19 +52,39 @@ public class EventoService {
 		return eventoRepository.findAll();
 	}
 	
-	public List<Object> getConditionsForUser(Integer id){
-		List<Object> condiciones = new ArrayList<Object>();
-		List<Object> programas = new ArrayList<Object>();
+	public List<CondicionResponse> getConditionsForUser(Integer id){
+		List<CondicionResponse> condiciones = new ArrayList<CondicionResponse>();
 		Usuario usuario = usuarioRepository.findById(id).orElse(null);
 		Set<Asociacion> asociaciones = usuario.getAsociacionPorUsuario();
-		condiciones.add(usuario.getAsociacionPorUsuario());
+		List<ValorResponse> valoresFecha = new ArrayList<ValorResponse>();
+		valoresFecha.add(new ValorResponse(1,"cumpleaños"));
+		condiciones.add(new CondicionResponse("fecha_nacimiento", new ParametroResponse(1,valoresFecha)));
+		List<ValorResponse> valoresGenero = new ArrayList<ValorResponse>();
+		valoresGenero.add(new ValorResponse(1,"MASCULINO"));
+		valoresGenero.add(new ValorResponse(2,"FEMENINO"));
+		condiciones.add(new CondicionResponse("genero", new ParametroResponse(1,valoresGenero)));
 		if(asociaciones != null) {
+			List<ValorResponse> valoresAsociacion = new ArrayList<ValorResponse>();
 			asociaciones.forEach(asociacion ->{
-				programas.add(programaAcademicoRepository.findByProgramaAcademicoPorAsociacion(asociacion));
+				List<ProgramaAcademico> programas = new ArrayList<ProgramaAcademico>();
+				valoresAsociacion.add(new ValorResponse(asociacion.getId(),asociacion.getNombre()));
+				programas = programaAcademicoRepository.findByProgramaAcademicoPorAsociacion(asociacion);
+				List<ValorResponse> valoresPrograma = new ArrayList<ValorResponse>();
+				programas.forEach(programa ->{
+					valoresPrograma.add(new ValorResponse(programa.getCodigo(),programa.getNombre()));
+				});
+				condiciones.add(new CondicionResponse("programa_academico", new ParametroResponse(asociacion.getId(),valoresPrograma)));
 			});
+			condiciones.add(new CondicionResponse("asociacion", new ParametroResponse(1,valoresAsociacion)));
 		}
-		condiciones.add(programas);
-		condiciones.add(vinculacionRepository.findAll());
+		List<Vinculacion> vinculaciones= vinculacionRepository.findAll();
+		if(vinculaciones != null) {
+			List<ValorResponse> valoresVinculacion = new ArrayList<ValorResponse>();
+			vinculaciones.forEach(vinculacion ->{
+				valoresVinculacion.add(new ValorResponse(vinculacion.getId(),vinculacion.getNombre()));
+			});
+			condiciones.add(new CondicionResponse("vinculacion", new ParametroResponse(1,valoresVinculacion)));
+		}
 		return condiciones;
 	}
 	public Evento AddEvento(Evento evento, Integer usuarioId) {

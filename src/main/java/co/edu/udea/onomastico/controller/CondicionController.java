@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Condicion;
+import co.edu.udea.onomastico.model.CondicionId;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.repository.CondicionRepository;
 
@@ -39,31 +40,34 @@ public class CondicionController {
 		
 	}
 	@JsonView(Views.Public.class)
-	@GetMapping("/condicion/{id}")
-	public Condicion getCondicionById(@PathVariable(value = "id") Integer condicionId) {
+	@GetMapping("/condicion/{condicion}/{parametro}")
+	public Condicion getCondicionById(@PathVariable(value = "condicion") String condicion,
+			@PathVariable(value = "parametro") String parametro) {
+		CondicionId condicionId = new CondicionId(condicion,parametro);
 	    return condicionRepository.findById(condicionId)
 	            .orElseThrow(() -> new ResourceNotFoundException("condicion"+"id"+condicionId));
 	}
-	@PutMapping("/condicion/{id}")
-	public Condicion updateCondicion(@PathVariable(value = "id") Integer condicionId,
+	@PutMapping("/condicion/{condicion}/{parametro}")
+	public Condicion updateCondicion(@PathVariable(value = "condicion") String condicion,
+			@PathVariable(value = "parametro") String parametro,
 	                                         @RequestBody Condicion detallesCondicion) {
-
-		Condicion  condicion =  condicionRepository.findById(condicionId)
+		CondicionId condicionId = new CondicionId(condicion,parametro);
+		Condicion  condicionToupdate =  condicionRepository.findById(condicionId)
 	            .orElseThrow(() -> new ResourceNotFoundException("condicion" + "id"+condicionId));
 
-		condicion.setCondicion(detallesCondicion.getCondicion());
-		condicion.setParametro(detallesCondicion.getParametro());
-
-		Condicion updatedcondicion = condicionRepository.save(condicion);
+		condicionToupdate.setId(detallesCondicion.getId());
+		Condicion updatedcondicion = condicionRepository.save(condicionToupdate);
 	    return updatedcondicion;
 	}
 	
-	@DeleteMapping("/condicion/{id}")
-	public ResponseEntity<?> deleteCondicion(@PathVariable(value = "id") Integer condicionId) {
-		Condicion condicion = condicionRepository.findById(condicionId)
+	@DeleteMapping("/condicion/{condicion}/{parametro}")
+	public ResponseEntity<?> deleteCondicion(@PathVariable(value = "condicion") String condicion,
+			@PathVariable(value = "parametro") String parametro) {
+		CondicionId condicionId = new CondicionId(condicion,parametro);
+		Condicion condicionToDelete = condicionRepository.findById(condicionId)
 	            .orElseThrow(() -> new ResourceNotFoundException("condicion"+"id"+condicionId));
 
-		condicionRepository.delete(condicion);
+		condicionRepository.delete(condicionToDelete);
 
 	    return ResponseEntity.ok().build();
 	}

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,20 +21,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 public class Condicion {
 
 	@JsonView(Views.Public.class)
-	@Id
-	@Column(name ="idcondicion")
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private int id;
+	@EmbeddedId
+	private CondicionId id;
 	
-	@JsonView(Views.Public.class)
-	@Column(name = "condicion")
-	private String condicion;
-	
-	@JsonView(Views.Public.class)
-	@Column(name = "parametro")
-	private String parametro;
-	
-
 	@ManyToMany(mappedBy = "condicionesEvento")
     private Set<Evento> usuariosCorreoCondicion = new HashSet<Evento>();
 	
@@ -41,38 +31,18 @@ public class Condicion {
 		super();
 	}
 
-	
-	public Condicion(int id, String condicion, String parametro, Set<Evento> usuariosCorreoCondicion) {
+	public Condicion(CondicionId id, Set<Evento> usuariosCorreoCondicion) {
 		super();
 		this.id = id;
-		this.condicion = condicion;
-		this.parametro = parametro;
 		this.usuariosCorreoCondicion = usuariosCorreoCondicion;
 	}
 
-
-	public int getId() {
+	public CondicionId getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(CondicionId id) {
 		this.id = id;
-	}
-
-	public String getCondicion() {
-		return condicion;
-	}
-
-	public void setCondicion(String condicion) {
-		this.condicion = condicion;
-	}
-
-	public String getParametro() {
-		return parametro;
-	}
-
-	public void setParametro(String parametro) {
-		this.parametro = parametro;
 	}
 
 	public Set<Evento> getUsuariosCorreoCondicion() {
@@ -82,6 +52,5 @@ public class Condicion {
 	public void setUsuariosCorreoCondicion(Set<Evento> usuariosCorreoCondicion) {
 		this.usuariosCorreoCondicion = usuariosCorreoCondicion;
 	}
-	
-	
+
 }
