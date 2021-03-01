@@ -1,5 +1,7 @@
 package co.edu.udea.onomastico.payload;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonView;
 
 import co.edu.udea.onomastico.model.Views;
@@ -8,8 +10,8 @@ public class CondicionResponse {
 	@JsonView(Views.Public.class)
 	private String condicion;
 	@JsonView(Views.Public.class)
-	private ParametroResponse parametro;
-	public CondicionResponse(String condicion, ParametroResponse parametro) {
+	private List<ParametroResponse> parametro;
+	public CondicionResponse(String condicion, List<ParametroResponse> parametro) {
 		super();
 		this.condicion = condicion;
 		this.parametro = parametro;
@@ -20,11 +22,10 @@ public class CondicionResponse {
 	public void setCondicion(String condicion) {
 		this.condicion = condicion;
 	}
-	public ParametroResponse getParametro() {
+	public List<ParametroResponse> getParametro() {
 		return parametro;
 	}
-	public void setParametro(ParametroResponse parametro) {
+	public void setParametro(List<ParametroResponse> parametro) {
 		this.parametro = parametro;
 	}
-	
 }

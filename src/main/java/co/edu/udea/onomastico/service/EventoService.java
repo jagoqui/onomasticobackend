@@ -58,13 +58,19 @@ public class EventoService {
 		Set<Asociacion> asociaciones = usuario.getAsociacionPorUsuario();
 		List<ValorResponse> valoresFecha = new ArrayList<ValorResponse>();
 		valoresFecha.add(new ValorResponse(1,"cumpleaños"));
-		condiciones.add(new CondicionResponse("fecha_nacimiento", new ParametroResponse(1,valoresFecha)));
+		List<ParametroResponse> parametrosFecha = new ArrayList<ParametroResponse>();
+		parametrosFecha.add(new ParametroResponse(1,valoresFecha));
+		condiciones.add(new CondicionResponse("fecha_nacimiento", parametrosFecha));
 		List<ValorResponse> valoresGenero = new ArrayList<ValorResponse>();
 		valoresGenero.add(new ValorResponse(1,"MASCULINO"));
 		valoresGenero.add(new ValorResponse(2,"FEMENINO"));
-		condiciones.add(new CondicionResponse("genero", new ParametroResponse(1,valoresGenero)));
+		List<ParametroResponse> parametrosGenero = new ArrayList<ParametroResponse>();
+		parametrosGenero.add(new ParametroResponse(1,valoresGenero));
+		condiciones.add(new CondicionResponse("genero", parametrosGenero));
 		if(asociaciones != null) {
 			List<ValorResponse> valoresAsociacion = new ArrayList<ValorResponse>();
+			List<ParametroResponse> parametrosPrograma = new ArrayList<ParametroResponse>();
+			List<ParametroResponse> parametrosAsociacion = new ArrayList<ParametroResponse>();
 			asociaciones.forEach(asociacion ->{
 				List<ProgramaAcademico> programas = new ArrayList<ProgramaAcademico>();
 				valoresAsociacion.add(new ValorResponse(asociacion.getId(),asociacion.getNombre()));
@@ -73,17 +79,21 @@ public class EventoService {
 				programas.forEach(programa ->{
 					valoresPrograma.add(new ValorResponse(programa.getCodigo(),programa.getNombre()));
 				});
-				condiciones.add(new CondicionResponse("programa_academico", new ParametroResponse(asociacion.getId(),valoresPrograma)));
+				parametrosPrograma.add(new ParametroResponse(asociacion.getId(),valoresPrograma));
 			});
-			condiciones.add(new CondicionResponse("asociacion", new ParametroResponse(1,valoresAsociacion)));
+			condiciones.add(new CondicionResponse("programa_academico", parametrosPrograma));
+			parametrosAsociacion.add(new ParametroResponse(1,valoresAsociacion));
+			condiciones.add(new CondicionResponse("asociacion", parametrosAsociacion));
 		}
 		List<Vinculacion> vinculaciones= vinculacionRepository.findAll();
+		List<ParametroResponse> parametrosVincuacion = new ArrayList<ParametroResponse>();
 		if(vinculaciones != null) {
 			List<ValorResponse> valoresVinculacion = new ArrayList<ValorResponse>();
 			vinculaciones.forEach(vinculacion ->{
 				valoresVinculacion.add(new ValorResponse(vinculacion.getId(),vinculacion.getNombre()));
 			});
-			condiciones.add(new CondicionResponse("vinculacion", new ParametroResponse(1,valoresVinculacion)));
+			parametrosVincuacion.add(new ParametroResponse(1,valoresVinculacion));
+			condiciones.add(new CondicionResponse("vinculacion", parametrosVincuacion));
 		}
 		return condiciones;
 	}
