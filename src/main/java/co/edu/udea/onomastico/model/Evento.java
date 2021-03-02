@@ -54,10 +54,10 @@ public class Evento {
 	@Column(name = "recurrencia", nullable = false, length = 10)
 	private String recurrencia;
 	
-	@JsonView(Views.Public.class)
-	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "asociacion_id")
-	private Asociacion asociacion;
+//	@JsonView(Views.Public.class)
+//	@ManyToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "asociacion_id")
+//	private Asociacion asociacion;
 	
 	@JsonView(Views.Public.class)
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -65,17 +65,14 @@ public class Evento {
 	private Plantilla plantilla;
 	
 	@JsonView(Views.Public.class)
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "condicion_por_evento", 
-            joinColumns = { @JoinColumn(name = "evento_idevento") }, 
-            inverseJoinColumns = { @JoinColumn(name = "condicion_condicion"), @JoinColumn(name = "condicion_parametro")})
+	@OneToMany(mappedBy = "eventoCondicion", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Condicion> condicionesEvento = new HashSet<Condicion>();
 
 	public Evento() {
 		super();
 	}
 
-public Evento(int id, String nombre, Date fecha, String estado, String recurrencia, Asociacion asociacion,
+public Evento(int id, String nombre, Date fecha, String estado, String recurrencia,
 		Plantilla plantilla, Set<Condicion> condicionesEvento) {
 	super();
 	this.id = id;
@@ -83,7 +80,7 @@ public Evento(int id, String nombre, Date fecha, String estado, String recurrenc
 	this.fecha = fecha;
 	this.estado = estado;
 	this.recurrencia = recurrencia;
-	this.asociacion = asociacion;
+	//this.asociacion = asociacion;
 	this.plantilla = plantilla;
 	this.condicionesEvento = condicionesEvento;
 }
@@ -128,13 +125,13 @@ public void setRecurrencia(String recurrencia) {
 	this.recurrencia = recurrencia;
 }
 
-public Asociacion getAsociacion() {
-	return asociacion;
-}
-
-public void setAsociacion(Asociacion asociacion) {
-	this.asociacion = asociacion;
-}
+//public Asociacion getAsociacion() {
+//	return asociacion;
+//}
+//
+//public void setAsociacion(Asociacion asociacion) {
+//	this.asociacion = asociacion;
+//}
 
 public Plantilla getPlantilla() {
 	return plantilla;

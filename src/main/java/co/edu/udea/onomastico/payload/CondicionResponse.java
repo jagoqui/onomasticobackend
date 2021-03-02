@@ -10,11 +10,11 @@ public class CondicionResponse {
 	@JsonView(Views.Public.class)
 	private String condicion;
 	@JsonView(Views.Public.class)
-	private List<ParametroResponse> parametro;
-	public CondicionResponse(String condicion, List<ParametroResponse> parametro) {
+	private List<ParametroResponse> parametros;
+	public CondicionResponse(String condicion, List<ParametroResponse> parametros) {
 		super();
 		this.condicion = condicion;
-		this.parametro = parametro;
+		this.parametros = parametros;
 	}
 	public String getCondicion() {
 		return condicion;
@@ -22,10 +22,10 @@ public class CondicionResponse {
 	public void setCondicion(String condicion) {
 		this.condicion = condicion;
 	}
-	public List<ParametroResponse> getParametro() {
-		return parametro;
+	public List<ParametroResponse> getParametros() {
+		return parametros;
 	}
-	public void setParametro(List<ParametroResponse> parametro) {
-		this.parametro = parametro;
+	public void setParametros(List<ParametroResponse> parametros) {
+		this.parametros = parametros;
 	}
 }

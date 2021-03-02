@@ -105,7 +105,7 @@ public class EventoService {
 	}
 	public  Evento updateEvento(Integer eventoId, Evento detallesEvento, Integer usuarioId) {
 		Evento  evento =  eventoRepository.findById(eventoId).orElseThrow(() -> new ResourceNotFoundException("Evento" + "id"+eventoId));
-		evento.setAsociacion(detallesEvento.getAsociacion());
+		//evento.setAsociacion(detallesEvento.getAsociacion());
 		evento.setEstado(detallesEvento.getEstado());
 		evento.setFecha(detallesEvento.getFecha());
 		evento.setNombre(detallesEvento.getNombre());

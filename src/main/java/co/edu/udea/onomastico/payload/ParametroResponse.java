@@ -10,11 +10,11 @@ public class ParametroResponse {
 	@JsonView(Views.Public.class)
 	private int id;
 	@JsonView(Views.Public.class)
-	private List<ValorResponse> valor;
-	public ParametroResponse(int id, List<ValorResponse> valor) {
+	private List<ValorResponse> valores;
+	public ParametroResponse(int id, List<ValorResponse> valores) {
 		super();
 		this.id = id;
-		this.valor = valor;
+		this.valores = valores;
 	}
 	public int getId() {
 		return id;
@@ -22,11 +22,11 @@ public class ParametroResponse {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public List<ValorResponse> getValor() {
-		return valor;
+	public List<ValorResponse> getValores() {
+		return valores;
 	}
-	public void setValor(List<ValorResponse> valor) {
-		this.valor = valor;
+	public void setValor(List<ValorResponse> valores) {
+		this.valores = valores;
 	}
 	
 }

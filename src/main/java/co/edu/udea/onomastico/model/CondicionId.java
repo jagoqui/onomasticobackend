@@ -14,6 +14,10 @@ public class CondicionId implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	@JsonView(Views.Public.class)
+	@Column(name = "evento_idevento")
+	private int eventoId ;
 
 	@JsonView(Views.Public.class)
 	@Column(name = "condicion")
@@ -27,10 +31,19 @@ public class CondicionId implements Serializable{
 		super();
 	}
 
-	public CondicionId(String condicion, String parametro) {
+	public CondicionId(int eventoId, String condicion, String parametro) {
 		super();
+		this.eventoId = eventoId;
 		this.condicion = condicion;
 		this.parametro = parametro;
+	}
+
+	public int getEventoId() {
+		return eventoId;
+	}
+
+	public void setEventoId(int eventoId) {
+		this.eventoId = eventoId;
 	}
 
 	public String getCondicion() {
@@ -49,11 +62,16 @@ public class CondicionId implements Serializable{
 		this.parametro = parametro;
 	}
 
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((condicion == null) ? 0 : condicion.hashCode());
+		result = prime * result + eventoId;
 		result = prime * result + ((parametro == null) ? 0 : parametro.hashCode());
 		return result;
 	}
@@ -71,6 +89,8 @@ public class CondicionId implements Serializable{
 			if (other.condicion != null)
 				return false;
 		} else if (!condicion.equals(other.condicion))
+			return false;
+		if (eventoId != other.eventoId)
 			return false;
 		if (parametro == null) {
 			if (other.parametro != null)

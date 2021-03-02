@@ -1,40 +1,33 @@
 package co.edu.udea.onomastico.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
-@Table(name = "condicion")
+@Table(name = "condicion_por_evento")
 public class Condicion {
 
 	@JsonView(Views.Public.class)
 	@EmbeddedId
 	private CondicionId id;
 	
-	@ManyToMany(mappedBy = "condicionesEvento")
-    private Set<Evento> usuariosCorreoCondicion = new HashSet<Evento>();
+	@ManyToOne 
+    @JoinColumn(name = "evento_idevento",referencedColumnName = "idevento",insertable = false, updatable = false) 
+    private Evento eventoCondicion;
 	
 	public Condicion() {
 		super();
 	}
 
-	public Condicion(CondicionId id, Set<Evento> usuariosCorreoCondicion) {
+	public Condicion(CondicionId id, Evento eventoCondicion) {
 		super();
 		this.id = id;
-		this.usuariosCorreoCondicion = usuariosCorreoCondicion;
+		this.eventoCondicion = eventoCondicion;
 	}
 
 	public CondicionId getId() {
@@ -45,12 +38,13 @@ public class Condicion {
 		this.id = id;
 	}
 
-	public Set<Evento> getUsuariosCorreoCondicion() {
-		return usuariosCorreoCondicion;
+	public Evento getEventoCondicion() {
+		return eventoCondicion;
 	}
 
-	public void setUsuariosCorreoCondicion(Set<Evento> usuariosCorreoCondicion) {
-		this.usuariosCorreoCondicion = usuariosCorreoCondicion;
+	public void setEventoCondicion(Evento eventoCondicion) {
+		this.eventoCondicion = eventoCondicion;
 	}
 
+	
 }
