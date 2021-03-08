@@ -31,7 +31,7 @@ public class Plantilla {
 	@Column(name = "texto")
 	private String texto;
 	
-	@JsonView(Views.Public.class)
+	@JsonView(Views.Internal.class)
 	@ManyToMany(cascade={CascadeType.MERGE,CascadeType.REFRESH},fetch = FetchType.EAGER)
     @JoinTable(name = "asociacion_por_plantilla", 
             joinColumns = { @JoinColumn(name = "plantilla_idplantilla") }, 

@@ -12,6 +12,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,8 @@ import java.util.Base64;
 
 @Service
 public class EmailScheduling {
+	@Value("${app.images}")
+	private String IMAGE_SERVER;
 	private static final Logger logger = LoggerFactory.getLogger(EmailScheduling.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
     private static final LocalDate date = LocalDate.now();
@@ -45,7 +48,7 @@ public class EmailScheduling {
     //@Scheduled(cron = "0 0 8 * * ?")
     public String scheduleDailyEmails() {
     	StringBuilder emails = new StringBuilder();
-    	List<Evento> eventos = eventoService.findAllEventos();
+    	List<Evento> eventos = eventoService.getAllEventos();
     	eventos.forEach(evento ->{
     		System.out.print(evento.getNombre());
     		 //emailService.sendEmail("apoyodesarrolloingenieria6@udea.edu.co","prueba", getTextoByReciper(evento.getPlantilla(), "Jenny", LocalDateTime.now()));
@@ -61,9 +64,8 @@ public class EmailScheduling {
     }
 
 	private String getTextoByReciper(Plantilla plantilla, String string, LocalDateTime now) {
-		StringBuilder text = new StringBuilder("<div id=\"editorContent\" style=\"background-image: url('http://arquimedes.udea.edu.co:8096/onomastico/images/");
-		text.append(String.valueOf(plantilla.getId()) + "background.jpg'); background-repeat: no-repeat; background-position: center center; background-size: cover; height: auto; min-height: 300px; color: black;\">");
-		text.append(plantilla.getTexto());
+		String textoPlantilla = plantilla.getTexto();
+		StringBuilder text = new StringBuilder(textoPlantilla);
 		String[] targets = {"<font color=\"#e74c3c\">&lt;Nombre&gt;</font>","<font color=\"#16a085\">&lt;Fecha&gt;</font>"};
 		String[] replacements = {string, date.toString()};
 		for(int i=0; i<targets.length;i++) {
@@ -79,11 +81,11 @@ public class EmailScheduling {
 	}
 
 	private String getTextoByReciper(Plantilla plantilla, UsuarioCorreo destino) {
-		StringBuilder text = new StringBuilder("<div id=\"editorContent\" style=\"background-image: url('http://arquimedes.udea.edu.co:8096/onomastico/images/");
-		text.append(String.valueOf(plantilla.getId()) + "background.jpg'); background-repeat: no-repeat; background-position: center center; background-size: cover; height: auto; min-height: 300px; color: black;\">");
-		text.append(plantilla.getTexto());
-		String[] targets = {"<font color=\"#e74c3c\">&lt;Nombre&gt;</font>","<font color=\"#16a085\">&lt;Fecha&gt;</font>","&lt;Asociacion&gt;","&lt;Vinculacion&gt;"};
+		String textoPlantilla = plantilla.getTexto();
+		StringBuilder text = new StringBuilder(textoPlantilla);
+		String[] targets = {"&lt;Nombre&gt;","&lt;Fecha&gt;","&lt;Asociación&gt;","&lt;Vinculacion&gt;"};
 		String nombre = capitalizeFirstLetter(getFirstWord(destino.getNombre()));
+		System.out.print(destino.getAsociacionPorUsuarioCorreo());
 		String[] replacements = {nombre, date.toString(), destino.getAsociacionPorUsuarioCorreo().toString(), destino.getVinculacionPorUsuarioCorreo().toString()};
 		for(int i=0; i<targets.length;i++) {
 			StringBuilder tempText = replaceText(targets[i],text,replacements[i]);

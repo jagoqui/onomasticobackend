@@ -13,46 +13,38 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
-import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Views;
-import co.edu.udea.onomastico.repository.AsociacionRepository;
+import co.edu.udea.onomastico.service.AsociacionService;
 
 @RestController
 public class AsociacionController {
 
 	@Autowired
-	AsociacionRepository asociacionRepository;
+	AsociacionService asociacionService;
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/asociaciones")
 	public List<Asociacion> getAllAsociaciones() {
-	    return asociacionRepository.findAll();
+	    return asociacionService.getAllAsociaciones();
 	}
 	
 	@JsonView(Views.Public.class)
 	@PostMapping("/asociaciones")
 	public Asociacion addAsociacion(@RequestBody Asociacion asociacion) {
-		asociacionRepository.save(asociacion);
-		return asociacion;
+		return asociacionService.addAsociacion(asociacion);
 		
 	}
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/asociaciones/{id}")
 	public Asociacion getAsociacionById(@PathVariable(value = "id") Integer asociacionId) {
-	    return asociacionRepository.findById(asociacionId)
-	            .orElseThrow(() -> new ResourceNotFoundException("Asociacion"+"id"+asociacionId));
+	    return asociacionService.getAsociacionById(asociacionId);
 	}
 	
 	@DeleteMapping("/asociaciones/{id}")
 	public ResponseEntity<?> deleteAsociacion(@PathVariable(value = "id") Integer asociacionId) {
-		Asociacion asociacion = asociacionRepository.findById(asociacionId)
-	            .orElseThrow(() -> new ResourceNotFoundException("Asociacion"+"id"+asociacionId));
-
-		asociacionRepository.delete(asociacion);
-
-	    return ResponseEntity.ok().build();
+		return asociacionService.deleteAsociacion(asociacionId);
 	}
 
 }

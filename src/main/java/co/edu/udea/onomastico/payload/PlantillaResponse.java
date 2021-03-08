@@ -28,6 +28,4 @@ public class PlantillaResponse {
 	public void setPlantilla(Plantilla plantilla) {
 		this.plantilla = plantilla;
 	}
-
-	
 }

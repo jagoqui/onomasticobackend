@@ -13,44 +13,36 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
-import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.model.Vinculacion;
-import co.edu.udea.onomastico.repository.VinculacionRepository;
+import co.edu.udea.onomastico.service.VinculacionService;
 
 @RestController
 public class VinculacionController {
 
 	@Autowired
-	VinculacionRepository vinculacionRepository;
+	VinculacionService  vinculacionService;
 	
 	@GetMapping("/vinculaciones")
 	@JsonView(Views.Public.class)
 	public List<Vinculacion> getAllVinculaciones() {
-	    return vinculacionRepository.findAll();
+	    return vinculacionService.getAllVinculaciones();
 	}
 	
 	@PostMapping("/vinculaciones")
 	@JsonView(Views.Public.class)
 	public Vinculacion addVinculacion(@RequestBody Vinculacion vinculacion) {
-		vinculacionRepository.save(vinculacion);
-		return vinculacion;
+		return vinculacionService.addVinculacion(vinculacion);
 	}
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/vinculaciones/{id}")
 	public Vinculacion getVinculacionById(@PathVariable(value = "id") Integer vinculacionId) {
-	    return vinculacionRepository.findById(vinculacionId)
-	            .orElseThrow(() -> new ResourceNotFoundException("Vinculacion"+"id"+vinculacionId));
+	    return vinculacionService.getVinculacionById(vinculacionId);
 	}
 	
 	@DeleteMapping("/vinculaciones/{id}")
 	public ResponseEntity<?> deleteVinculacion(@PathVariable(value = "id") Integer vinculacionId) {
-		Vinculacion vinculacion = vinculacionRepository.findById(vinculacionId)
-	            .orElseThrow(() -> new ResourceNotFoundException("Asociacion"+"id"+vinculacionId));
-
-		vinculacionRepository.delete(vinculacion);
-
-	    return ResponseEntity.ok().build();
+		return vinculacionService.deleteVinculacion(vinculacionId);
 	}
 }

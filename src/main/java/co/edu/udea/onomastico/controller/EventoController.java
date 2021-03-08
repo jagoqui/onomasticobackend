@@ -22,6 +22,7 @@ import co.edu.udea.onomastico.job.EmailScheduling;
 import co.edu.udea.onomastico.model.Evento;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.payload.CondicionResponse;
+import co.edu.udea.onomastico.payload.EventoResponse;
 import co.edu.udea.onomastico.service.EventoService;
 
 @RestController
@@ -36,8 +37,8 @@ public class EventoController {
 	//obtener todos los usuarios
 	@JsonView(Views.Public.class)
 	@GetMapping("/")
-	public List<Evento> getAllEventos() {
-	    return eventoService.findAllEventos();
+	public List<EventoResponse> getAllEventos() {
+	    return eventoService.findAllEventosResponse();
 	}
 	
 	@GetMapping("/evento")
@@ -52,25 +53,25 @@ public class EventoController {
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/evento/pag/{pageNo}/{pageSize}/{sortBy}")
-	public List<Evento> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, 
+	public List<EventoResponse> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, 
 			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
         return eventoService.getAllEventos(pageNo, pageSize, sortBy);
     }
 	
 	@JsonView(Views.Public.class)
-	@PostMapping("/evento")
-	public Evento AddEvento(@RequestBody Evento evento, @RequestBody Integer usuarioId) {
+	@PostMapping("/evento/{usuarioId}")
+	public Evento AddEvento(@RequestBody Evento evento,  @PathVariable(value = "usuarioId") Integer usuarioId) {
 		return eventoService.AddEvento(evento, usuarioId);
 	}
-	
+	@JsonView(Views.Public.class)
 	@GetMapping("/evento/{id}")
-	public Evento getEventoById(@PathVariable(value = "id") Integer eventoId) {
+	public EventoResponse getEventoById(@PathVariable(value = "id") Integer eventoId) {
 	    return eventoService.getEventoById(eventoId);
 	}
 	
-	@PutMapping("/evento/{id}")
+	@PutMapping("/evento/{id}/{usuarioId}")
 	public  Evento updateEvento(@PathVariable(value = "id") Integer eventoId,
-	                             @RequestBody Evento detallesEvento, @RequestBody Integer userId) {
+	                             @RequestBody Evento detallesEvento, @PathVariable(value = "usuarioId")  Integer userId) {
 	    return eventoService.updateEvento(eventoId, detallesEvento, userId);
 	}
 }
