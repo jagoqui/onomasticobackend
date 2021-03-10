@@ -1,6 +1,8 @@
 package co.edu.udea.onomastico.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -9,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
@@ -17,10 +20,13 @@ import co.edu.udea.onomastico.model.Condicion;
 import co.edu.udea.onomastico.model.CondicionId;
 import co.edu.udea.onomastico.model.Evento;
 import co.edu.udea.onomastico.model.LogTransacciones;
+import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.model.ProgramaAcademico;
 import co.edu.udea.onomastico.model.Usuario;
 import co.edu.udea.onomastico.model.Vinculacion;
+import co.edu.udea.onomastico.payload.CondicionRequest;
 import co.edu.udea.onomastico.payload.CondicionResponse;
+import co.edu.udea.onomastico.payload.EventoRequest;
 import co.edu.udea.onomastico.payload.EventoResponse;
 import co.edu.udea.onomastico.payload.ParametroResponse;
 import co.edu.udea.onomastico.payload.ValorResponse;
@@ -76,22 +82,32 @@ public class EventoService {
 		return getEventoResponseFormat(eventos);
 	}
 	
-	public Evento AddEvento(Evento evento, Integer usuarioId) {
-		Set<Condicion> tempCondiciones = evento.getCondicionesEvento();
+	public EventoResponse AddEvento(EventoRequest eventoRequest, Integer usuarioId) {
+		Evento evento = new Evento();
+		evento.setFecha(eventoRequest.getFecha());
+		evento.setEstado(eventoRequest.getEstado());
+		evento.setNombre(eventoRequest.getNombre());
+		evento.setPlantilla(eventoRequest.getPlantilla());
+		evento.setRecurrencia(eventoRequest.getRecurrencia());
 		evento.setCondicionesEvento(null);
 	    Evento newEvento = eventoRepository.save(evento);
-	    tempCondiciones.forEach(condicion ->{
-	    	CondicionId tempCondicion = condicion.getId();
-	    	tempCondicion.setEventoId(newEvento.getId());;
-	    	condicion.setId(tempCondicion);
+	    Integer newEventoId = newEvento.getId();
+	    Set<CondicionRequest> condicionRequest = eventoRequest.getCondicionesEvento();
+	    Set<Condicion> condiciones =  new HashSet<Condicion>();
+	    condicionRequest.forEach(condicion->{
+	    	condiciones.add(new Condicion(new CondicionId(newEventoId,condicion.getCondicion(),condicion.getParametro()), newEvento));
 	    });
-	    newEvento.setCondicionesEvento(tempCondiciones);
+	    newEvento.setCondicionesEvento(condiciones);
 	    eventoRepository.save(newEvento);
 	    LogTransacciones transaccion = new LogTransacciones("Añadir evento:"+evento.toString());
 		transaccionesService.createTransaccion(usuarioId, transaccion);
-	    return newEvento;
+		List<Evento> eventos = new ArrayList<Evento>();
+		eventos.add(newEvento);
+		List<EventoResponse> eventoResponse = getEventoResponseFormat(eventos);
+	    return eventoResponse.get(0);
 	}
-	public  Evento updateEvento(Integer eventoId, Evento detallesEvento, Integer usuarioId) {
+	
+	public  EventoResponse updateEvento(Integer eventoId, EventoRequest detallesEvento, Integer usuarioId) {
 		Evento  evento =  eventoRepository.findById(eventoId).orElseThrow(() -> new ResourceNotFoundException("Evento" + "id"+eventoId));
 		//evento.setAsociacion(detallesEvento.getAsociacion());
 		evento.setEstado(detallesEvento.getEstado());
@@ -99,11 +115,19 @@ public class EventoService {
 		evento.setNombre(detallesEvento.getNombre());
 		evento.setRecurrencia(detallesEvento.getRecurrencia());
 		evento.setPlantilla(detallesEvento.getPlantilla());
-		evento.setCondicionesEvento(detallesEvento.getCondicionesEvento());
+		 Set<CondicionRequest> condicionRequest = detallesEvento.getCondicionesEvento();
+		    Set<Condicion> condiciones =  new HashSet<Condicion>();
+		    condicionRequest.forEach(condicion->{
+		    	condiciones.add(new Condicion(new CondicionId(evento.getId(),condicion.getCondicion(),condicion.getParametro()), evento));
+		    });
+		evento.setCondicionesEvento(condiciones);
 		Evento updatedEvento = eventoRepository.save(evento);
 		LogTransacciones transaccion = new LogTransacciones("Editar evento:"+evento.toString());
 		transaccionesService.createTransaccion(usuarioId, transaccion);
-		return updatedEvento;
+		List<Evento> eventos = new ArrayList<Evento>();
+		eventos.add(updatedEvento);
+		List<EventoResponse> eventoResponse = getEventoResponseFormat(eventos);
+	    return eventoResponse.get(0);
 	}
 	
 	public List<CondicionResponse> getConditionsForUser(Integer id){
@@ -233,4 +257,11 @@ public class EventoService {
 		return eventoResponse;
 	}
 	
+	public ResponseEntity<?> deleteEvento(Integer eventoId, Integer usuarioId) {
+		Evento evento = eventoRepository.findById(eventoId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
+
+		eventoRepository.delete(evento);
+		return ResponseEntity.ok().build();
+	}
 }

@@ -66,7 +66,7 @@ public class PlantillaService {
         else return new ArrayList<Plantilla>();
     }
 	
-	public ResponseEntity<PlantillaResponse> addPlantilla(MultipartFile file, Plantilla plantilla){
+	public ResponseEntity<PlantillaResponse> addPlantilla(MultipartFile file, Plantilla plantilla, Integer usuarioId){
 		Plantilla newPlantilla = plantillaRepository.save(plantilla);
 		StringBuilder text = new StringBuilder("<div id=\"editorContent\" style=\"background-image: url('"+IMAGE_SERVER);
 		text.append(String.valueOf(newPlantilla.getId()) + "background.jpg'); background-repeat: no-repeat; background-position: center center; background-size: cover; height: auto; min-height: 100%; color: black;\">");
@@ -83,7 +83,7 @@ public class PlantillaService {
 	            .orElseThrow(() -> new ResourceNotFoundException("Plantilla"+"id"+plantillaId));
 	}
 	
-	public ResponseEntity<PlantillaResponse> updatePlantilla(MultipartFile file, Plantilla plantilla, Integer plantillaId) {
+	public ResponseEntity<PlantillaResponse> updatePlantilla(MultipartFile file, Plantilla plantilla, Integer plantillaId, Integer usuarioId) {
 		
 		Plantilla  plantillaToUpdate =  plantillaRepository.findById(plantillaId)
 	            .orElseThrow(() -> new ResourceNotFoundException("plantilla" + "id"+plantillaId));
@@ -100,9 +100,9 @@ public class PlantillaService {
 	    return new ResponseEntity<>(pr, HttpStatus.OK);
 	}
 	
-	public ResponseEntity<?> deletePlantilla(Integer plantillaId) {
+	public ResponseEntity<?> deletePlantilla(Integer plantillaId, Integer usuarioId) {
 		Plantilla plantilla = plantillaRepository.findById(plantillaId)
-	            .orElseThrow(() -> new ResourceNotFoundException("Usuario"+"id"+plantillaId));
+	            .orElseThrow(() -> new ResourceNotFoundException("Plantilla"+"id"+plantillaId));
 
 		plantillaRepository.delete(plantilla);
 		return ResponseEntity.ok().build();

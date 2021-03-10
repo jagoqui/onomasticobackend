@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +24,7 @@ import co.edu.udea.onomastico.job.EmailScheduling;
 import co.edu.udea.onomastico.model.Evento;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.payload.CondicionResponse;
+import co.edu.udea.onomastico.payload.EventoRequest;
 import co.edu.udea.onomastico.payload.EventoResponse;
 import co.edu.udea.onomastico.service.EventoService;
 
@@ -60,7 +63,7 @@ public class EventoController {
 	
 	@JsonView(Views.Public.class)
 	@PostMapping("/evento/{usuarioId}")
-	public Evento AddEvento(@RequestBody Evento evento,  @PathVariable(value = "usuarioId") Integer usuarioId) {
+	public EventoResponse AddEvento(@RequestBody EventoRequest evento,  @PathVariable(value = "usuarioId") Integer usuarioId) {
 		return eventoService.AddEvento(evento, usuarioId);
 	}
 	@JsonView(Views.Public.class)
@@ -69,9 +72,15 @@ public class EventoController {
 	    return eventoService.getEventoById(eventoId);
 	}
 	
+	@JsonView(Views.Public.class)
 	@PutMapping("/evento/{id}/{usuarioId}")
-	public  Evento updateEvento(@PathVariable(value = "id") Integer eventoId,
-	                             @RequestBody Evento detallesEvento, @PathVariable(value = "usuarioId")  Integer userId) {
+	public  EventoResponse updateEvento(@PathVariable(value = "id") Integer eventoId,
+	                             @RequestBody EventoRequest  detallesEvento, @PathVariable(value = "usuarioId")  Integer userId) {
 	    return eventoService.updateEvento(eventoId, detallesEvento, userId);
+	}
+	
+	@DeleteMapping("/evento/{id}")
+	public ResponseEntity<?> deletePlantilla(@PathVariable(value = "id") Integer eventoId,@PathVariable(value = "usuarioId") Integer usuarioId) {
+		return eventoService.deleteEvento(eventoId, usuarioId);
 	}
 }

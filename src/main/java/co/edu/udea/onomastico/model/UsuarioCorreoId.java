@@ -4,14 +4,18 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 @Embeddable
 public class UsuarioCorreoId implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 
+	@JsonView(Views.Public.class)
 	@Column(name = "tipo_identificacion", length = 10)
 	private String tipoIdentificacion;
-	 
+	
+	@JsonView(Views.Public.class)
 	@Column(name = "numero_identificacion", length = 12)
 	private String numeroIdentificacion;
 

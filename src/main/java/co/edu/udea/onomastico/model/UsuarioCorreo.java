@@ -21,33 +21,42 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Table(name = "usuario_correo")
 public class UsuarioCorreo {
 
+	@JsonView(Views.Public.class)
 	@EmbeddedId
 	private UsuarioCorreoId id;
 
+	@JsonView(Views.Public.class)
 	@Column(name = "nombre", length = 150, nullable = false)
 	private String nombre;
 
+	@JsonView(Views.Public.class)
 	@Column(name = "apellido", length = 150, nullable = false)
 	private String apellido;
 
+	@JsonView(Views.Public.class)
 	@Column(name = "email", length = 250, nullable = false)
 	private String email;
 
+	@JsonView(Views.Public.class)
 	@Column(name = "fecha_nacimiento", nullable = false)
 	@Temporal(TemporalType.DATE)
 	private java.util.Date fechaNacimiento;
 
+	@JsonView(Views.Public.class)
 	@Column(name = "estado", length = 10, nullable = false)
 	private String estado;
 
+	@JsonView(Views.Public.class)
 	@Column(name = "genero", length = 10)
 	private String genero;
 
+	@JsonView(Views.Public.class)
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "asociacion_por_correo_usuario", joinColumns = {
 			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
@@ -57,6 +66,7 @@ public class UsuarioCorreo {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<Asociacion> asociacionPorUsuarioCorreo = new HashSet<Asociacion>();
 	
+	@JsonView(Views.Public.class)
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "programa_academico_por_usuario_correo", joinColumns = {
 			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
@@ -66,6 +76,7 @@ public class UsuarioCorreo {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<ProgramaAcademico> programaAcademicoPorUsuarioCorreo = new HashSet<ProgramaAcademico>();
 
+	@JsonView(Views.Public.class)
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "plataforma_por_usuario_correo", joinColumns = {
 			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
@@ -75,6 +86,7 @@ public class UsuarioCorreo {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<Plataforma> plataformaPorUsuarioCorreo = new HashSet<Plataforma>();
 
+	@JsonView(Views.Public.class)
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "vinculacion_por_usuario_correo", joinColumns = {
 			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),

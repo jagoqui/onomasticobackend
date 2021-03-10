@@ -44,9 +44,9 @@ public class PlantillasController {
     }
 	
 	@JsonView(Views.Public.class)
-	@PostMapping("/plantillas")
-	public ResponseEntity<PlantillaResponse> addPlantilla(@RequestPart("file") MultipartFile file, @RequestPart("plantilla") Plantilla plantilla){
-		return  plantillaService.addPlantilla(file, plantilla);
+	@PostMapping("/plantillas/{usuarioId}")
+	public ResponseEntity<PlantillaResponse> addPlantilla(@RequestPart("file") MultipartFile file, @RequestPart("plantilla") Plantilla plantilla, @PathVariable(value = "usuarioId") Integer usuarioId){
+		return  plantillaService.addPlantilla(file, plantilla, usuarioId);
 	}
 	
 	@JsonView(Views.Public.class)
@@ -56,13 +56,13 @@ public class PlantillasController {
 	}
 	
 	@JsonView(Views.Public.class)
-	@PutMapping("/plantillas/{id}")
-	public ResponseEntity<PlantillaResponse> updatePlantilla(@RequestPart("file") MultipartFile file, @RequestPart("plantilla") Plantilla plantilla, @PathVariable(value = "id") Integer plantillaId) {
-	    return plantillaService.updatePlantilla(file, plantilla, plantillaId);
+	@PutMapping("/plantillas/{id}/{usuarioId}")
+	public ResponseEntity<PlantillaResponse> updatePlantilla(@RequestPart("file") MultipartFile file, @RequestPart("plantilla") Plantilla plantilla, @PathVariable(value = "id") Integer plantillaId, @PathVariable(value = "usuarioId") Integer usuarioId) {
+	    return plantillaService.updatePlantilla(file, plantilla, plantillaId, usuarioId);
 	}
 	
-	@DeleteMapping("/plantillas/{id}")
-	public ResponseEntity<?> deletePlantilla(@PathVariable(value = "id") Integer plantillaId) {
-		return plantillaService.deletePlantilla(plantillaId);
+	@DeleteMapping("/plantillas/{id}/{usuarioId}")
+	public ResponseEntity<?> deletePlantilla(@PathVariable(value = "id") Integer plantillaId, @PathVariable(value = "usuarioId") Integer usuarioId) {
+		return plantillaService.deletePlantilla(plantillaId, usuarioId);
 	}
 }
