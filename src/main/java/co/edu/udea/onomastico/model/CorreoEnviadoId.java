@@ -33,6 +33,7 @@ public class CorreoEnviadoId implements Serializable{
 	public CorreoEnviadoId() {
 		super();
 	}
+	
 
 	public String getTipoIdentificacion() {
 		return tipoIdentificacion;

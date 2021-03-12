@@ -29,7 +29,6 @@ import co.edu.udea.onomastico.payload.UploadFileResponse;
 import co.edu.udea.onomastico.service.FileService;
 
 @RestController
-@RequestMapping(path = "/images")
 public class ImageResourceController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ImageResourceController.class);
@@ -37,10 +36,10 @@ public class ImageResourceController {
 	@Autowired
 	private FileService fileService;
 	
-	@RequestMapping(path = "/upload", method = RequestMethod.POST)
+	@RequestMapping(path = "/upload/{name}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("plantilla_id") String id) {
-        String fileName = fileService.storeFile(file, id);
+    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, @PathVariable(value = "name") String name) {
+        String fileName = fileService.storeFile(file, name);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/images/")
@@ -51,7 +50,7 @@ public class ImageResourceController {
                 file.getContentType(), file.getSize());
     }
 	
-	@RequestMapping(path = "/{fileName:.+}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+	@RequestMapping(path = "/images/{fileName:.+}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
 	@ResponseBody
     public ResponseEntity<InputStreamResource> getImage(@PathVariable String fileName, HttpServletRequest request) throws IOException{
         // Load file as Resource

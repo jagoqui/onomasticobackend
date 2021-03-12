@@ -53,6 +53,8 @@ public class CorreoEnviado {
 	public CorreoEnviado() {
 		super();
 	}
+	
+	
 
 	public CorreoEnviadoId getId() {
 		return id;

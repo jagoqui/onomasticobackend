@@ -33,7 +33,7 @@ public class FileService {
 	        }
 	    }
 	    
-	    public String storeFile(MultipartFile file, String id) {
+	    public String storeFile(MultipartFile file, String name) {
 	        // Normalize file name
 	        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 	        try {
@@ -41,7 +41,7 @@ public class FileService {
 	            if(fileName.contains("..")) {
 	                throw new FileStorageException("Filename contains invalid sequence " + fileName);
 	            }
-	            fileName = StringUtils.cleanPath(id+"background.jpg");
+	            fileName = StringUtils.cleanPath(name);
 	            Path targetLocation = this.fileStorageLocation.resolve(fileName);
 	            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 	            return fileName;

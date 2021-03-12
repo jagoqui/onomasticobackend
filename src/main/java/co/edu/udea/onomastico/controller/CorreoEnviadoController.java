@@ -18,33 +18,30 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import co.edu.udea.onomastico.model.CorreoEnviado;
 import co.edu.udea.onomastico.model.Views;
-import co.edu.udea.onomastico.repository.CorreoEnviadoRepository;
+import co.edu.udea.onomastico.service.CorreoEnviadoService;
 
 @RestController
 public class CorreoEnviadoController {
 
 	@Autowired
-	CorreoEnviadoRepository correoEnviadoRepository;
+	CorreoEnviadoService correoEnviadoService;
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/emails")
 	public List<CorreoEnviado> getAllEmails() {
-		return correoEnviadoRepository.findAll();
+		return correoEnviadoService.getAllEmails();
 	}
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/emails/pag/{pageNo}/{pageSize}/{sortBy}")
 	public List<CorreoEnviado> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, 
 			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        Page<CorreoEnviado> pagedResult =  correoEnviadoRepository.findAll(paging);
-        if(pagedResult.hasContent()) return pagedResult.getContent();
-        else return new ArrayList<CorreoEnviado>();
+        return correoEnviadoService.getAllUsuariosCorreo(pageNo, pageSize, sortBy);
     }
 	
 	@PostMapping("/emails")
 	public CorreoEnviado addCorreoEnviado(@RequestBody CorreoEnviado correoEnviado) {
-		return correoEnviadoRepository.save(correoEnviado);
+		return correoEnviadoService.addCorreoEnviado(correoEnviado);
 	}
 	
 //	@GetMapping("/emails/{tipo}/{numero}/{fecha}/{id_evento}")

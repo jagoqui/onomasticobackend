@@ -46,8 +46,8 @@ public class PlantillaService {
 	
 	Logger logger = LoggerFactory.getLogger(PlantillaService.class);
 	
-	public UploadFileResponse uploadPlantillaImage(MultipartFile file, String id) {
-        String fileName = fileService.storeFile(file, id);
+	public UploadFileResponse uploadPlantillaImage(MultipartFile file, String name) {
+        String fileName = fileService.storeFile(file, name);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/images/")
@@ -73,7 +73,8 @@ public class PlantillaService {
 		text.append(plantilla.getTexto());
 		plantilla.setTexto(text.toString());
 		newPlantilla = plantillaRepository.save(plantilla);
-		UploadFileResponse up = uploadPlantillaImage(file, String.valueOf(newPlantilla.getId()));
+		String name = String.valueOf(newPlantilla.getId()) + "background.jpg";
+		UploadFileResponse up = uploadPlantillaImage(file, name);
 		PlantillaResponse pr = new PlantillaResponse(up, newPlantilla);
 		return  new ResponseEntity<>(pr, HttpStatus.OK);
 	}
@@ -93,7 +94,8 @@ public class PlantillaService {
 		text.append(plantilla.getTexto());
 		plantillaToUpdate.setTexto(text.toString());
 		plantillaToUpdate.setAsociacionesPorPlantilla(plantilla.getAsociacionesPorPlantilla());;
-		UploadFileResponse up = uploadPlantillaImage(file, String.valueOf(plantillaId));
+		String name = String.valueOf(plantillaId) + "background.jpg";
+		UploadFileResponse up = uploadPlantillaImage(file, name);
 		
 		Plantilla updatedPlantilla = plantillaRepository.save(plantillaToUpdate);
 		PlantillaResponse pr = new PlantillaResponse(up, updatedPlantilla);
