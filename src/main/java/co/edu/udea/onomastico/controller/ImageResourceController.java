@@ -30,8 +30,6 @@ import co.edu.udea.onomastico.service.FileService;
 
 @RestController
 public class ImageResourceController {
-	
-	private static final Logger logger = LoggerFactory.getLogger(ImageResourceController.class);
 
 	@Autowired
 	private FileService fileService;
