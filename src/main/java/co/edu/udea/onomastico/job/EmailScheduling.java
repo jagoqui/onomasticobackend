@@ -56,7 +56,7 @@ public class EmailScheduling {
     	List<Evento> eventos = eventoService.getAllEventos();
     	eventos.forEach(evento ->{
     		System.out.print(evento.getNombre());
-    		 emailService.sendEmail("apoyodesarrolloingenieria6@udea.edu.co","prueba", getTextoByReciper(evento.getPlantilla(), "Jenny", LocalDateTime.now()));
+    		 //emailService.sendEmail("apoyodesarrolloingenieria6@udea.edu.co","prueba", getTextoByReciper(evento.getPlantilla(), "Jenny", LocalDateTime.now()));
     		 List<UsuarioCorreo> destinatarios = getRecipers(evento);
     		 if(destinatarios != null) {
     		 destinatarios.forEach(destino ->{
