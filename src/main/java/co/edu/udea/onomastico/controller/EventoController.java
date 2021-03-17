@@ -79,8 +79,16 @@ public class EventoController {
 	    return eventoService.updateEvento(eventoId, detallesEvento, userId);
 	}
 	
-	@DeleteMapping("/evento/{id}")
-	public ResponseEntity<?> deletePlantilla(@PathVariable(value = "id") Integer eventoId,@PathVariable(value = "usuarioId") Integer usuarioId) {
+	@DeleteMapping("/evento/{id}/{usuarioId}")
+	public ResponseEntity<?> deleteEvento(@PathVariable(value = "id") Integer eventoId,@PathVariable(value = "usuarioId") Integer usuarioId) {
 		return eventoService.deleteEvento(eventoId, usuarioId);
+	}
+	@GetMapping("/evento/desactivar/{id}/{usuarioId}")
+	public ResponseEntity<?> deactivateEvento(@PathVariable(value = "id") Integer eventoId,@PathVariable(value = "usuarioId") Integer usuarioId) {
+		return eventoService.deactivateEvento(eventoId, usuarioId);
+	}
+	@GetMapping("/evento/activar/{id}/{usuarioId}")
+	public ResponseEntity<?> activateEvento(@PathVariable(value = "id") Integer eventoId,@PathVariable(value = "usuarioId") Integer usuarioId) {
+		return eventoService.activateEvento(eventoId, usuarioId);
 	}
 }

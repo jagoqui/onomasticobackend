@@ -34,6 +34,12 @@ public class ImageResourceController {
 	@Autowired
 	private FileService fileService;
 	
+	@RequestMapping(path = "/delete/{name}", method = RequestMethod.DELETE)
+    public  ResponseEntity<?> deleteFile(@PathVariable(value = "name") String name) {
+        fileService.deleteFile(name);
+		return ResponseEntity.ok().build();
+    }
+	
 	@RequestMapping(path = "/upload/{name}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, @PathVariable(value = "name") String name) {

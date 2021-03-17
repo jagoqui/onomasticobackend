@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.model.Views;
-import co.edu.udea.onomastico.payload.PlantillaResponse;
 import co.edu.udea.onomastico.repository.PlantillaRepository;
 import co.edu.udea.onomastico.service.PlantillaService;
 
@@ -37,16 +36,28 @@ public class PlantillasController {
 	}
 	
 	@JsonView(Views.Public.class)
+	@GetMapping("/plantillas/asociacion/{id}")
+	public List<Plantilla> getAllPlantillasPorAsociacion(@PathVariable(value = "id") Integer id){
+		return plantillaRepository.findByAsociacionesPorPlantilla(new Asociacion(1,"Facultad de Ingenieria"));
+	}
+	
+	@JsonView(Views.Public.class)
 	@GetMapping("/plantillas/pag/{pageNo}/{pageSize}/{sortBy}")
 	public List<Plantilla> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, 
 			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
         return plantillaService.getAllUsuariosCorreo(pageNo, pageSize, sortBy);
     }
 	
+//	@JsonView(Views.Public.class)
+//	@PostMapping("/plantillas/{usuarioId}")
+//	public ResponseEntity<PlantillaResponse> addPlantilla(@RequestPart("file") MultipartFile file, @RequestPart("plantilla") Plantilla plantilla, @RequestPart("tempImage") String tempImg, @PathVariable(value = "usuarioId") Integer usuarioId){
+//		return  plantillaService.addPlantilla(file, plantilla, usuarioId, tempImg);
+//	}
+	
 	@JsonView(Views.Public.class)
 	@PostMapping("/plantillas/{usuarioId}")
-	public ResponseEntity<PlantillaResponse> addPlantilla(@RequestPart("file") MultipartFile file, @RequestPart("plantilla") Plantilla plantilla, @PathVariable(value = "usuarioId") Integer usuarioId){
-		return  plantillaService.addPlantilla(file, plantilla, usuarioId);
+	public ResponseEntity<Plantilla> addPlantilla(@RequestPart("plantilla") Plantilla plantilla, @PathVariable(value = "usuarioId") Integer usuarioId){
+		return  plantillaService.addPlantilla(plantilla, usuarioId);
 	}
 	
 	@JsonView(Views.Public.class)
@@ -55,10 +66,16 @@ public class PlantillasController {
 	    return plantillaService.getPantillaById(plantillaId);
 	}
 	
+//	@JsonView(Views.Public.class)
+//	@PutMapping("/plantillas/{id}/{usuarioId}")
+//	public ResponseEntity<PlantillaResponse> updatePlantilla(@RequestPart("file") MultipartFile file, @RequestPart("plantilla") Plantilla plantilla,  @RequestPart("tempImage") String tempImg, @PathVariable(value = "id") Integer plantillaId, @PathVariable(value = "usuarioId") Integer usuarioId) {
+//	    return plantillaService.updatePlantilla(file, plantilla, plantillaId, usuarioId, tempImg);
+//	}
+	
 	@JsonView(Views.Public.class)
 	@PutMapping("/plantillas/{id}/{usuarioId}")
-	public ResponseEntity<PlantillaResponse> updatePlantilla(@RequestPart("file") MultipartFile file, @RequestPart("plantilla") Plantilla plantilla, @PathVariable(value = "id") Integer plantillaId, @PathVariable(value = "usuarioId") Integer usuarioId) {
-	    return plantillaService.updatePlantilla(file, plantilla, plantillaId, usuarioId);
+	public ResponseEntity<Plantilla> updatePlantilla( @RequestPart("plantilla") Plantilla plantilla,  @PathVariable(value = "id") Integer plantillaId, @PathVariable(value = "usuarioId") Integer usuarioId) {
+	    return plantillaService.updatePlantilla(plantilla, plantillaId, usuarioId);
 	}
 	
 	@DeleteMapping("/plantillas/{id}/{usuarioId}")

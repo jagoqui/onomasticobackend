@@ -50,6 +50,22 @@ public class FileService {
 	        }
 	    }
 	    
+	    public String deleteFile(String name) {
+	        // Normalize file name
+	    	 String fileName = StringUtils.cleanPath(name);
+	        try {
+	            // Check if the file's name contains invalid characters
+	        	if(fileName.contains("..")) {
+	                throw new FileStorageException("Filename contains invalid sequence " + fileName);
+	            }
+	            Path targetLocation = this.fileStorageLocation.resolve(fileName);
+	            Files.delete(targetLocation);
+	            return name;
+	        } catch (IOException ex) {
+	            throw new FileStorageException("Could not delete file " + fileName + ". Please try again!", ex);
+	        }
+	    }
+	    
 	    public Resource loadFileAsResource(String fileName) {
 	        try {
 	            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();

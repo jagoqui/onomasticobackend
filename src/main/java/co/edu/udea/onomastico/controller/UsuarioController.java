@@ -2,6 +2,7 @@ package co.edu.udea.onomastico.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import co.edu.udea.onomastico.exceptions.BadRequestException;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
+import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Usuario;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.repository.UsuarioRepository;
@@ -42,6 +44,7 @@ public class UsuarioController {
 	    return usuarioRepository.findAll();
 	}
 	
+	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios/pag/{pageNo}/{pageSize}/{sortBy}")
 	public List<Usuario> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, 
 			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
@@ -52,6 +55,7 @@ public class UsuarioController {
     }
 	
 	//crear usuario
+	@JsonView(Views.Public.class)
 	@PostMapping("/usuarios")
 	public Usuario AddUsuario(@RequestBody Usuario usuario) {
 		if(!usuarioRepository.findByEmail(usuario.getEmail()).isEmpty()) throw new BadRequestException("usuario existente");
@@ -61,12 +65,22 @@ public class UsuarioController {
 	    Usuario newuser = usuarioRepository.save(usuario);
 	    return newuser;
 	}
+	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios/{id}")
 	public Usuario getUsuarioById(@PathVariable(value = "id") Integer usuarioId) {
 	    return usuarioRepository.findById(usuarioId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Usuario"+"id"+usuarioId));
 	}
 	
+	@JsonView(Views.Public.class)
+	@GetMapping("/usuarios/asociacion/{id}")
+	public Set<Asociacion> getAsociacionUsuarioById(@PathVariable(value = "id") Integer usuarioId) {
+	    Usuario usuario = usuarioRepository.findById(usuarioId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Usuario"+"id"+usuarioId));
+		return usuario.getAsociacionPorUsuario();
+	}
+	
+	@JsonView(Views.Public.class)
 	@PutMapping("/usuarios/{id}")
 	public  Usuario updateUsuario(@PathVariable(value = "id") Integer usuarioId,
 	                                         @RequestBody Usuario detallesUsuario) {
@@ -89,7 +103,6 @@ public class UsuarioController {
 	            .orElseThrow(() -> new ResourceNotFoundException("Usuario"+"id"+usuarioId));
 
 	    usuarioRepository.delete(usuario);
-
 	    return ResponseEntity.ok().build();
 	}
 

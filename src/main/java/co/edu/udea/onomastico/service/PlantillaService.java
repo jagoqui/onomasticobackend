@@ -9,16 +9,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import com.fasterxml.jackson.annotation.JsonView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +23,6 @@ import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.payload.PlantillaResponse;
 import co.edu.udea.onomastico.payload.UploadFileResponse;
 import co.edu.udea.onomastico.repository.PlantillaRepository;
-
 @Service
 public class PlantillaService {
 
@@ -66,17 +57,24 @@ public class PlantillaService {
         else return new ArrayList<Plantilla>();
     }
 	
-	public ResponseEntity<PlantillaResponse> addPlantilla(MultipartFile file, Plantilla plantilla, Integer usuarioId){
+//	public ResponseEntity<PlantillaResponse> addPlantilla(MultipartFile file, Plantilla plantilla, Integer usuarioId, String tempImgName){
+//		Plantilla newPlantilla = plantillaRepository.save(plantilla);
+//		String imageName = String.valueOf(newPlantilla.getId()) + "background.jpg";
+//		String texto = plantilla.getTexto();
+//		String replacement = IMAGE_SERVER + imageName;
+//		String target = IMAGE_SERVER + tempImgName ;
+//		String str = texto.replaceAll(target, replacement);
+//		plantilla.setTexto(str);
+//		newPlantilla = plantillaRepository.save(plantilla);
+//		UploadFileResponse up = uploadPlantillaImage(file, imageName);
+//		PlantillaResponse pr = new PlantillaResponse(up, newPlantilla);
+//		return  new ResponseEntity<>(pr, HttpStatus.OK);
+//	}
+	
+	public ResponseEntity<Plantilla> addPlantilla(Plantilla plantilla, Integer usuarioId){
 		Plantilla newPlantilla = plantillaRepository.save(plantilla);
-		StringBuilder text = new StringBuilder("<div id=\"editorContent\" style=\"background-image: url('"+IMAGE_SERVER);
-		text.append(String.valueOf(newPlantilla.getId()) + "background.jpg'); background-repeat: no-repeat; background-position: center center; background-size: cover; height: auto; min-height: 100%; color: black;\">");
-		text.append(plantilla.getTexto());
-		plantilla.setTexto(text.toString());
 		newPlantilla = plantillaRepository.save(plantilla);
-		String name = String.valueOf(newPlantilla.getId()) + "background.jpg";
-		UploadFileResponse up = uploadPlantillaImage(file, name);
-		PlantillaResponse pr = new PlantillaResponse(up, newPlantilla);
-		return  new ResponseEntity<>(pr, HttpStatus.OK);
+		return  new ResponseEntity<>(newPlantilla, HttpStatus.OK);
 	}
 	
 	public Plantilla getPantillaById(Integer plantillaId) {
@@ -84,22 +82,33 @@ public class PlantillaService {
 	            .orElseThrow(() -> new ResourceNotFoundException("Plantilla"+"id"+plantillaId));
 	}
 	
-	public ResponseEntity<PlantillaResponse> updatePlantilla(MultipartFile file, Plantilla plantilla, Integer plantillaId, Integer usuarioId) {
+//	public ResponseEntity<PlantillaResponse> updatePlantilla(MultipartFile file, Plantilla plantilla, Integer plantillaId, Integer usuarioId, String tempImgName) {
+//		
+//		Plantilla  plantillaToUpdate =  plantillaRepository.findById(plantillaId)
+//	            .orElseThrow(() -> new ResourceNotFoundException("plantilla" + "id"+plantillaId));
+//		String imageName = String.valueOf(plantillaId) + "background.jpg";
+//		String texto = plantilla.getTexto();
+//		String replacement = IMAGE_SERVER + imageName;
+//		String target = IMAGE_SERVER + tempImgName ;
+//		String str = texto.replaceAll(target, replacement);
+//		plantillaToUpdate.setTexto(str);
+//		plantillaToUpdate.setAsociacionesPorPlantilla(plantilla.getAsociacionesPorPlantilla());;
+//
+//		UploadFileResponse up = uploadPlantillaImage(file, imageName);
+//		
+//		Plantilla updatedPlantilla = plantillaRepository.save(plantillaToUpdate);
+//		PlantillaResponse pr = new PlantillaResponse(up, updatedPlantilla);
+//	    return new ResponseEntity<>(pr, HttpStatus.OK);
+//	}
+public ResponseEntity<Plantilla> updatePlantilla(Plantilla plantilla, Integer plantillaId, Integer usuarioId) {
 		
 		Plantilla  plantillaToUpdate =  plantillaRepository.findById(plantillaId)
 	            .orElseThrow(() -> new ResourceNotFoundException("plantilla" + "id"+plantillaId));
-	
-		StringBuilder text = new StringBuilder("<div id=\"editorContent\" style=\"background-image: url('"+IMAGE_SERVER);
-		text.append(String.valueOf(plantillaId) + "background.jpg'); background-repeat: no-repeat; background-position: center center; background-size: cover; height: auto; min-height: 100%; color: black;\">");
-		text.append(plantilla.getTexto());
-		plantillaToUpdate.setTexto(text.toString());
-		plantillaToUpdate.setAsociacionesPorPlantilla(plantilla.getAsociacionesPorPlantilla());;
-		String name = String.valueOf(plantillaId) + "background.jpg";
-		UploadFileResponse up = uploadPlantillaImage(file, name);
 		
+		plantillaToUpdate.setTexto(plantilla.getTexto());
+		plantillaToUpdate.setAsociacionesPorPlantilla(plantilla.getAsociacionesPorPlantilla());;
 		Plantilla updatedPlantilla = plantillaRepository.save(plantillaToUpdate);
-		PlantillaResponse pr = new PlantillaResponse(up, updatedPlantilla);
-	    return new ResponseEntity<>(pr, HttpStatus.OK);
+	    return new ResponseEntity<>(updatedPlantilla, HttpStatus.OK);
 	}
 	
 	public ResponseEntity<?> deletePlantilla(Integer plantillaId, Integer usuarioId) {

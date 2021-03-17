@@ -27,13 +27,13 @@ import co.edu.udea.onomastico.service.CorreoEnviadoService;
 import co.edu.udea.onomastico.service.EmailService;
 import co.edu.udea.onomastico.service.EventoService;
 import co.edu.udea.onomastico.util.DateUtil;
+import co.edu.udea.onomastico.util.StringUtil;
 import java.util.Base64;
 
 @Service
 public class EmailScheduling {
 	@Value("${app.images}")
 	private String IMAGE_SERVER;
-	private static final Logger logger = LoggerFactory.getLogger(EmailScheduling.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
     private static final LocalDate date = LocalDate.now();
     
@@ -75,7 +75,7 @@ public class EmailScheduling {
 		String[] targets = {"<font color=\"#e74c3c\">&lt;Nombre&gt;</font>","<font color=\"#16a085\">&lt;Fecha&gt;</font>"};
 		String[] replacements = {string, date.toString()};
 		for(int i=0; i<targets.length;i++) {
-			StringBuilder tempText = replaceText(targets[i],text,replacements[i]);
+			StringBuilder tempText = StringUtil.replaceText(targets[i],text,replacements[i]);
 			text = tempText;
 		}
 		text.append("</div><div><p> Si quieres dejar de recibir nuestras tarjetas, <a href='http://arquimedes.udea.edu.co/onomastico/mail-users-subscription-status/");
@@ -89,12 +89,12 @@ public class EmailScheduling {
 	private String getTextoByReciper(Plantilla plantilla, UsuarioCorreo destino) {
 		String textoPlantilla = plantilla.getTexto();
 		StringBuilder text = new StringBuilder(textoPlantilla);
-		String[] targets = {"&lt;Nombre&gt;","&lt;Fecha&gt;","&lt;Asociación&gt;","&lt;Vinculacion&gt;"};
-		String nombre = capitalizeFirstLetter(getFirstWord(destino.getNombre()));
+		String[] targets = {"&lt;NOMBRE&gt;","&lt;FECHA&gt;","&lt;FALCUTAD/ESCUELA&gt;","&lt;ESTAMENTO&gt;"};
+		String nombre = StringUtil.capitalizeFirstLetter(StringUtil.getFirstWord(destino.getNombre()));
 		System.out.print(destino.getAsociacionPorUsuarioCorreo());
 		String[] replacements = {nombre, date.toString(), destino.getAsociacionPorUsuarioCorreo().toString(), destino.getVinculacionPorUsuarioCorreo().toString()};
 		for(int i=0; i<targets.length;i++) {
-			StringBuilder tempText = replaceText(targets[i],text,replacements[i]);
+			StringBuilder tempText = StringUtil.replaceText(targets[i],text,replacements[i]);
 			text = tempText;
 		}
 		text.append("</div><div><p> Si quieres dejar de recibir nuestras tarjetas, <a href='http://arquimedes.udea.edu.co/onomastico/mail-users-subscription-status/");
@@ -104,27 +104,6 @@ public class EmailScheduling {
 		return text.toString();
 	}
 	
-	private String getFirstWord(String sentence) {
-		if(sentence.contains(" ")) {
-			int stopIndex = sentence.indexOf(" ");
-			return sentence.substring(0, stopIndex);
-		}
-		return sentence;
-	}
-	private String capitalizeFirstLetter(String text) {
-		  return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
-	}
-	
-	private StringBuilder replaceText(String target, StringBuilder texto, String replacement) {
-		if(texto.toString().contains(target)) {
-			int startIndex = texto.indexOf(target);
-			int stopIndex = startIndex + target.length();
-			texto.replace(startIndex, stopIndex, replacement);
-		}
-		return texto;
-		
-	}
-
 	private List<UsuarioCorreo> getRecipers(Evento evento) {
 		String recurrencia = evento.getRecurrencia();
 		Date fechaEvento = evento.getFecha();

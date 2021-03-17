@@ -72,8 +72,9 @@ public class EventoService {
 	
 	public List<EventoResponse> getAllEventos(Integer pageNo, Integer pageSize, String sortBy){
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        List<Evento> pagedResult =  eventoRepository.findAll(paging).toList();
-        if(!pagedResult.isEmpty()) return getEventoResponseFormat(pagedResult);
+        Page<Evento> pagedResult =  eventoRepository.findAll(paging);
+        List<Evento> eventos = pagedResult.getContent();
+        if(!pagedResult.isEmpty()) return getEventoResponseFormat(eventos);
         else return new ArrayList<EventoResponse>();
     }
 	
@@ -186,6 +187,32 @@ public class EventoService {
 	    return eventoResponse.get(0);
 	}
 	
+	public ResponseEntity<?> deactivateEvento(Integer eventoId, Integer usuarioId) {
+		Evento evento = eventoRepository.findById(eventoId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
+		evento.setEstado("INACTIVO");
+		Evento nuevo = eventoRepository.save(evento);
+		System.out.print(nuevo.getEstado());
+		return ResponseEntity.ok().build();
+	}
+	
+	public ResponseEntity<?> activateEvento(Integer eventoId, Integer usuarioId) {
+		Evento evento = eventoRepository.findById(eventoId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
+		evento.setEstado("ACTIVO");
+		Evento nuevo = eventoRepository.save(evento);
+		System.out.print(nuevo.getEstado());
+		return ResponseEntity.ok().build();
+	}
+	
+	public ResponseEntity<?> deleteEvento(Integer eventoId, Integer usuarioId) {
+		Evento evento = eventoRepository.findById(eventoId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
+
+		eventoRepository.delete(evento);
+		return ResponseEntity.ok().build();
+	}
+	
 	
 	public List<EventoResponse> getEventoResponseFormat(List<Evento> eventos){
 		List<EventoResponse> eventoResponse = new ArrayList<EventoResponse>();
@@ -255,13 +282,5 @@ public class EventoService {
 					condicionesResponse));
 		});
 		return eventoResponse;
-	}
-	
-	public ResponseEntity<?> deleteEvento(Integer eventoId, Integer usuarioId) {
-		Evento evento = eventoRepository.findById(eventoId)
-	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
-
-		eventoRepository.delete(evento);
-		return ResponseEntity.ok().build();
 	}
 }

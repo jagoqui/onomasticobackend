@@ -53,6 +53,12 @@ public class Asociacion implements Serializable {
 		super();
 	}
 
+	public Asociacion(int id, String nombre) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+	}
+
 	public Asociacion(int id, String nombre, Set<Usuario> usuariosAsociacion,
 			Set<UsuarioCorreo> usuariosCorreoAsociacion, Set<Plantilla> plantillasAsociacion,
 			Set<ProgramaAcademico> programasAsociacion) {
