@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,16 +37,16 @@ public class PlantillasController {
 	}
 	
 	@JsonView(Views.Public.class)
-	@GetMapping("/plantillas/asociacion/{id}")
-	public List<Plantilla> getAllPlantillasPorAsociacion(@PathVariable(value = "id") Integer id){
-		return plantillaRepository.findByAsociacionesPorPlantilla(new Asociacion(1,"Facultad de Ingenieria"));
+	@GetMapping("/plantillas/asociacion")
+	public List<Plantilla> getAllPlantillasPorAsociacion(@RequestBody List<Asociacion> asociaciones){
+		return plantillaService.getPlantillasByAsociacion(asociaciones);
 	}
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/plantillas/pag/{pageNo}/{pageSize}/{sortBy}")
 	public List<Plantilla> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, 
 			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
-        return plantillaService.getAllUsuariosCorreo(pageNo, pageSize, sortBy);
+        return plantillaService.getAllPlantillas(pageNo, pageSize, sortBy);
     }
 	
 //	@JsonView(Views.Public.class)

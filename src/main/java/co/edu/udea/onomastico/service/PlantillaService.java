@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
+import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.payload.PlantillaResponse;
 import co.edu.udea.onomastico.payload.UploadFileResponse;
@@ -50,12 +51,21 @@ public class PlantillaService {
     }
 	
 	
-	public List<Plantilla> getAllUsuariosCorreo(Integer pageNo, Integer pageSize, String sortBy){
+	public List<Plantilla> getAllPlantillas(Integer pageNo, Integer pageSize, String sortBy){
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         Page<Plantilla> pagedResult =  plantillaRepository.findAll(paging);
         if(pagedResult.hasContent()) return pagedResult.getContent();
         else return new ArrayList<Plantilla>();
     }
+	
+	public List<Plantilla> getPlantillasByAsociacion(List<Asociacion> asociaciones){
+		List<Plantilla> merge = new ArrayList<Plantilla>();
+		asociaciones.forEach(asociacion ->{
+			List<Plantilla> temp = plantillaRepository.findByAsociacionesPorPlantilla(asociacion);
+			if(temp!= null && !temp.isEmpty())merge.addAll(temp);
+		});
+		return merge;
+	}
 	
 //	public ResponseEntity<PlantillaResponse> addPlantilla(MultipartFile file, Plantilla plantilla, Integer usuarioId, String tempImgName){
 //		Plantilla newPlantilla = plantillaRepository.save(plantilla);
