@@ -82,6 +82,10 @@ public class EventoService {
 		List<Evento> eventos = eventoRepository.findAll();
 		return getEventoResponseFormat(eventos);
 	}
+	public  List<EventoResponse> getEventosByPlantilla(Plantilla plantilla) {
+		List<Evento> eventos = eventoRepository.findEventoByPlantilla(plantilla);
+		return getEventoResponseFormat(eventos);
+	}
 	
 	public EventoResponse AddEvento(EventoRequest eventoRequest, Integer usuarioId) {
 		Evento evento = new Evento();

@@ -77,7 +77,7 @@ public class PlantillaService {
 		return  new ResponseEntity<>(newPlantilla, HttpStatus.OK);
 	}
 	
-	public Plantilla getPantillaById(Integer plantillaId) {
+	public Plantilla getPlantillaById(Integer plantillaId) {
 	    return plantillaRepository.findById(plantillaId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Plantilla"+"id"+plantillaId));
 	}

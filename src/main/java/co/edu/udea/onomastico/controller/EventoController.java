@@ -22,11 +22,13 @@ import com.fasterxml.jackson.annotation.JsonView;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.job.EmailScheduling;
 import co.edu.udea.onomastico.model.Evento;
+import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.payload.CondicionResponse;
 import co.edu.udea.onomastico.payload.EventoRequest;
 import co.edu.udea.onomastico.payload.EventoResponse;
 import co.edu.udea.onomastico.service.EventoService;
+import co.edu.udea.onomastico.service.PlantillaService;
 
 @RestController
 public class EventoController {
@@ -36,6 +38,9 @@ public class EventoController {
 	
 	@Autowired
 	EmailScheduling emailScheduling;
+	
+	@Autowired
+	PlantillaService plantillaService;
 	
 	//obtener todos los usuarios
 	@JsonView(Views.Public.class)
@@ -79,15 +84,23 @@ public class EventoController {
 	    return eventoService.updateEvento(eventoId, detallesEvento, userId);
 	}
 	
+	@JsonView(Views.Public.class)
+	@GetMapping("/evento/plantilla/{plantillaId}")
+	public  List<EventoResponse> getEventosByPlantilla(@PathVariable(value = "plantillaId") Integer plantillaId) throws ResourceNotFoundException {
+		Plantilla plantilla = plantillaService.getPlantillaById(plantillaId);
+	    return eventoService.getEventosByPlantilla(plantilla);
+	}
+	
 	@DeleteMapping("/evento/{id}/{usuarioId}")
 	public ResponseEntity<?> deleteEvento(@PathVariable(value = "id") Integer eventoId,@PathVariable(value = "usuarioId") Integer usuarioId) {
 		return eventoService.deleteEvento(eventoId, usuarioId);
 	}
-	@GetMapping("/evento/desactivar/{id}/{usuarioId}")
+	
+	@PutMapping("/evento/desactivar/{id}/{usuarioId}")
 	public ResponseEntity<?> deactivateEvento(@PathVariable(value = "id") Integer eventoId,@PathVariable(value = "usuarioId") Integer usuarioId) {
 		return eventoService.deactivateEvento(eventoId, usuarioId);
 	}
-	@GetMapping("/evento/activar/{id}/{usuarioId}")
+	@PutMapping("/evento/activar/{id}/{usuarioId}")
 	public ResponseEntity<?> activateEvento(@PathVariable(value = "id") Integer eventoId,@PathVariable(value = "usuarioId") Integer usuarioId) {
 		return eventoService.activateEvento(eventoId, usuarioId);
 	}

@@ -62,8 +62,8 @@ public class PlantillasController {
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/plantillas/{id}")
-	public Plantilla getPantillaById(@PathVariable(value = "id") Integer plantillaId) {
-	    return plantillaService.getPantillaById(plantillaId);
+	public Plantilla getPlantillaById(@PathVariable(value = "id") Integer plantillaId) {
+	    return plantillaService.getPlantillaById(plantillaId);
 	}
 	
 //	@JsonView(Views.Public.class)
