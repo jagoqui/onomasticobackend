@@ -25,6 +25,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -160,4 +161,8 @@ public class Usuario implements Serializable {
 	public void setAsociacionPorUsuario(Set<Asociacion> asociacionPorUsuario) {
 		this.asociacionPorUsuario = asociacionPorUsuario;
 	}
+	
+	public static String hash(String password,int row) {
+        return BCrypt.hashpw(password, BCrypt.gensalt(row));
+    }
 }
