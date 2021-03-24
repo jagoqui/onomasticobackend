@@ -70,6 +70,15 @@ public class EventoService {
 	    return eventoRepository.findAll();
 	}
 	
+	public List<Object> getAllEventosByAsociacion(List<Asociacion> asociaciones) {
+		List<Object> merge = new ArrayList<>();
+		asociaciones.forEach(asociacion->{
+			List<Object> temp = condicionRepository.getEventosIdByAsociacion(asociacion.getId());
+			merge.addAll(temp);
+		});
+	    return merge;
+	}
+	
 	public List<EventoResponse> getAllEventos(Integer pageNo, Integer pageSize, String sortBy){
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         Page<Evento> pagedResult =  eventoRepository.findAll(paging);

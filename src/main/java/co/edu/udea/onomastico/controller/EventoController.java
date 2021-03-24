@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.job.EmailScheduling;
+import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Evento;
 import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.model.Views;
@@ -89,6 +90,12 @@ public class EventoController {
 	public  List<EventoResponse> getEventosByPlantilla(@PathVariable(value = "plantillaId") Integer plantillaId) throws ResourceNotFoundException {
 		Plantilla plantilla = plantillaService.getPlantillaById(plantillaId);
 	    return eventoService.getEventosByPlantilla(plantilla);
+	}
+	
+	@JsonView(Views.Public.class)
+	@GetMapping("/evento/asociacion")
+	public  List<Object> getEventosByAsociacion(@RequestBody List<Asociacion> asociaciones) throws ResourceNotFoundException {
+	    return eventoService.getAllEventosByAsociacion(asociaciones);
 	}
 	
 	@DeleteMapping("/evento/{id}/{usuarioId}")

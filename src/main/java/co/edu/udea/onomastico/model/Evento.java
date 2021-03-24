@@ -85,6 +85,16 @@ public Evento(int id, String nombre, Date fecha, String estado, String recurrenc
 	this.condicionesEvento = condicionesEvento;
 }
 
+public Evento(int id, String nombre, Date fecha, String estado, String recurrencia, Plantilla plantilla) {
+	super();
+	this.id = id;
+	this.nombre = nombre;
+	this.fecha = fecha;
+	this.estado = estado;
+	this.recurrencia = recurrencia;
+	this.plantilla = plantilla;
+}
+
 public int getId() {
 	return id;
 }
