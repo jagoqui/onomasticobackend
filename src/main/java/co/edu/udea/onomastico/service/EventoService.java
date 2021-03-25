@@ -131,7 +131,7 @@ public class EventoService {
 	    });
 	    newEvento.setCondicionesEvento(condiciones);
 	    eventoRepository.save(newEvento);
-	    LogTransacciones transaccion = new LogTransacciones("Añadir evento:"+evento.toString());
+	    LogTransacciones transaccion = new LogTransacciones("Añadir evento:"+evento.getId()+" "+evento.getNombre());
 		transaccionesService.createTransaccion(usuarioId, transaccion);
 		List<Evento> eventos = new ArrayList<Evento>();
 		eventos.add(newEvento);
@@ -154,7 +154,7 @@ public class EventoService {
 		    });
 		evento.setCondicionesEvento(condiciones);
 		Evento updatedEvento = eventoRepository.save(evento);
-		LogTransacciones transaccion = new LogTransacciones("Editar evento:"+evento.toString());
+		LogTransacciones transaccion = new LogTransacciones("Editar evento:"+evento.getId()+" "+evento.getNombre());
 		transaccionesService.createTransaccion(usuarioId, transaccion);
 		List<Evento> eventos = new ArrayList<Evento>();
 		eventos.add(updatedEvento);
@@ -185,7 +185,6 @@ public class EventoService {
 				List<ProgramaAcademico> programas = new ArrayList<ProgramaAcademico>();
 				valoresAsociacion.add(new ValorResponse(asociacion.getId(),asociacion.getNombre()));
 				programas = programaAcademicoService.findByProgramaAcademicoPorAsociacion(asociacion);
-						//programaAcademicoRepository.findByProgramaAcademicoPorAsociacion(asociacion);
 				List<ValorResponse> valoresPrograma = new ArrayList<ValorResponse>();
 				programas.forEach(programa ->{
 					valoresPrograma.add(new ValorResponse(programa.getCodigo(),programa.getNombre()));
@@ -224,7 +223,8 @@ public class EventoService {
 	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
 		evento.setEstado("INACTIVO");
 		Evento nuevo = eventoRepository.save(evento);
-		System.out.print(nuevo.getEstado());
+		LogTransacciones transaccion = new LogTransacciones("Editar evento:"+nuevo.getId()+"desactivar");
+		transaccionesService.createTransaccion(usuarioId, transaccion);
 		return ResponseEntity.ok().build();
 	}
 	
@@ -233,7 +233,8 @@ public class EventoService {
 	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
 		evento.setEstado("ACTIVO");
 		Evento nuevo = eventoRepository.save(evento);
-		System.out.print(nuevo.getEstado());
+		LogTransacciones transaccion = new LogTransacciones("Editar evento:"+nuevo.getId()+"activar");
+		transaccionesService.createTransaccion(usuarioId, transaccion);
 		return ResponseEntity.ok().build();
 	}
 	

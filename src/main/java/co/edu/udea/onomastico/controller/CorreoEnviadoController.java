@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -28,20 +29,16 @@ public class CorreoEnviadoController {
 	}
 	
 	@JsonView(Views.Public.class)
-	@GetMapping("/emails/pag/{pageNo}/{pageSize}/{sortBy}")
-	public List<CorreoEnviado> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, 
-			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
-        return correoEnviadoService.getAllUsuariosCorreo(pageNo, pageSize, sortBy);
+	@GetMapping("/emails/pag")
+	public List<CorreoEnviado> getAllUsuariosCorreo(@RequestParam Integer npage, 
+			@RequestParam Integer psize,@RequestParam String sort){
+        return correoEnviadoService.getAllUsuariosCorreo(npage, psize, sort);
     }
 	
+	@JsonView(Views.Public.class)
 	@PostMapping("/emails")
 	public CorreoEnviado addCorreoEnviado(@RequestBody CorreoEnviado correoEnviado) {
 		return correoEnviadoService.addCorreoEnviado(correoEnviado);
 	}
-	
-//	@GetMapping("/emails/{tipo}/{numero}/{fecha}/{id_evento}")
-//	public CorreoEnviado getEmailById(@PathVariable(value = "id") Integer eventoId) {
-//	    return correoEnviadoRepository.findById(eventoId)
-//	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
-//	}
+
 }

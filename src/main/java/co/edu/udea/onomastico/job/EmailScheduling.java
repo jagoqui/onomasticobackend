@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import co.edu.udea.onomastico.model.Condicion;
 import co.edu.udea.onomastico.model.CorreoEnviado;
+import co.edu.udea.onomastico.model.CorreoEnviadoId;
 import co.edu.udea.onomastico.model.Evento;
 import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.model.UsuarioCorreo;
@@ -57,12 +58,13 @@ public class EmailScheduling {
     	eventos.forEach(evento ->{
     		System.out.print(evento.getNombre());
     		 //emailService.sendEmail("apoyodesarrolloingenieria6@udea.edu.co","prueba", getTextoByReciper(evento.getPlantilla(), "Jenny", LocalDateTime.now()));
-    		 List<UsuarioCorreo> destinatarios = getRecipers(evento);
+    		 //correoEnviadoService.addCorreoEnviado(new CorreoEnviado(new CorreoEnviadoId("apoyodesarrolloingenieria6@udea.edu.co"),"prueba")); 
+    		List<UsuarioCorreo> destinatarios = getRecipers(evento);
     		 if(destinatarios != null) {
     		 destinatarios.forEach(destino ->{
     			 emails.append(getTextoByReciper(evento.getPlantilla(), destino)); 
     			 //emailService.sendEmail(destino.getEmail(),evento.getNombre(), getTextoByReciper(evento.getPlantilla(), destino));
-    			 correoEnviadoService.addCorreoEnviado(new CorreoEnviado());
+    			 correoEnviadoService.addCorreoEnviado(new CorreoEnviado(new CorreoEnviadoId(destino.getEmail()),evento.getNombre()));
     		 });
     		 }
     	});

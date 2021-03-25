@@ -1,9 +1,8 @@
 package co.edu.udea.onomastico.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
@@ -16,14 +15,8 @@ public class CorreoEnviadoId implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	@Column(name = "usuario_correo_tipo_identificacion")
-	private String tipoIdentificacion;
-	 
-	@Column(name = "usuario_correo_numero_identificacion")
-	private String numeroIdentificacion;
-	
-	@Column(name = "evento_idevento")
-	private int eventoId ;
+	@Column(name = "email")
+	private String email;
 	
 	@Column(name = "fecha", nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -33,30 +26,24 @@ public class CorreoEnviadoId implements Serializable{
 	public CorreoEnviadoId() {
 		super();
 	}
+
+	public CorreoEnviadoId(String email, Date fecha) {
+		super();
+		this.email = email;
+		this.fecha = fecha;
+	}
 	
-
-	public String getTipoIdentificacion() {
-		return tipoIdentificacion;
+	public CorreoEnviadoId(String email) {
+		super();
+		this.email = email;
 	}
 
-	public void setTipoIdentificacion(String tipoIdentificacion) {
-		this.tipoIdentificacion = tipoIdentificacion;
+	public String getEmail() {
+		return email;
 	}
 
-	public String getNumeroIdentificacion() {
-		return numeroIdentificacion;
-	}
-
-	public void setNumeroIdentificacion(String numeroIdentificacion) {
-		this.numeroIdentificacion = numeroIdentificacion;
-	}
-
-	public int getEventoId() {
-		return eventoId;
-	}
-
-	public void setEventoId(int eventoId) {
-		this.eventoId = eventoId;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public java.util.Date getFecha() {
@@ -71,10 +58,8 @@ public class CorreoEnviadoId implements Serializable{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + eventoId;
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		result = prime * result + ((fecha == null) ? 0 : fecha.hashCode());
-		result = prime * result + ((numeroIdentificacion == null) ? 0 : numeroIdentificacion.hashCode());
-		result = prime * result + ((tipoIdentificacion == null) ? 0 : tipoIdentificacion.hashCode());
 		return result;
 	}
 
@@ -87,24 +72,16 @@ public class CorreoEnviadoId implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		CorreoEnviadoId other = (CorreoEnviadoId) obj;
-		if (eventoId != other.eventoId)
+		if (email == null) {
+			if (other.email != null)
+				return false;
+		} else if (!email.equals(other.email))
 			return false;
 		if (fecha == null) {
 			if (other.fecha != null)
 				return false;
 		} else if (!fecha.equals(other.fecha))
 			return false;
-		if (numeroIdentificacion == null) {
-			if (other.numeroIdentificacion != null)
-				return false;
-		} else if (!numeroIdentificacion.equals(other.numeroIdentificacion))
-			return false;
-		if (tipoIdentificacion == null) {
-			if (other.tipoIdentificacion != null)
-				return false;
-		} else if (!tipoIdentificacion.equals(other.tipoIdentificacion))
-			return false;
 		return true;
 	}
-
 }

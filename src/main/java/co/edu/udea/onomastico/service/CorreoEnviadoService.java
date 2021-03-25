@@ -32,4 +32,5 @@ public class CorreoEnviadoService {
 	public CorreoEnviado addCorreoEnviado(CorreoEnviado correoEnviado) {
 		return correoEnviadoRepository.save(correoEnviado);
 	}
+
 }

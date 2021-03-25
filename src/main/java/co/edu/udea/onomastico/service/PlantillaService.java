@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Asociacion;
+import co.edu.udea.onomastico.model.LogTransacciones;
 import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.model.Usuario;
 import co.edu.udea.onomastico.payload.UploadFileResponse;
@@ -37,6 +38,9 @@ public class PlantillaService {
 	
 	@Autowired
 	UsuarioService usuarioService;
+	
+	@Autowired
+	LogTransaccionesService transaccionesService;
 	
 	@Value("${app.images}")
 	private String IMAGE_SERVER;
@@ -105,6 +109,8 @@ public class PlantillaService {
 	public ResponseEntity<Plantilla> addPlantilla(Plantilla plantilla, Integer usuarioId){
 		Plantilla newPlantilla = plantillaRepository.save(plantilla);
 		newPlantilla = plantillaRepository.save(plantilla);
+		LogTransacciones transaccion = new LogTransacciones("Añadir plantilla:"+newPlantilla.getId());
+		transaccionesService.createTransaccion(usuarioId, transaccion);
 		return  new ResponseEntity<>(newPlantilla, HttpStatus.OK);
 	}
 	
@@ -139,6 +145,8 @@ public ResponseEntity<Plantilla> updatePlantilla(Plantilla plantilla, Integer pl
 		plantillaToUpdate.setTexto(plantilla.getTexto());
 		plantillaToUpdate.setAsociacionesPorPlantilla(plantilla.getAsociacionesPorPlantilla());;
 		Plantilla updatedPlantilla = plantillaRepository.save(plantillaToUpdate);
+		LogTransacciones transaccion = new LogTransacciones("Editar plantilla:"+updatedPlantilla.getId());
+		transaccionesService.createTransaccion(usuarioId, transaccion);
 	    return new ResponseEntity<>(updatedPlantilla, HttpStatus.OK);
 	}
 	

@@ -27,34 +27,20 @@ public class CorreoEnviado {
 	
 	@EmbeddedId
 	private CorreoEnviadoId id = new CorreoEnviadoId(); 
-
-	@JsonView(Views.Public.class)
-	@ManyToOne(optional=false)
-	@JoinColumns({
-			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion",insertable = false, updatable = false),
-			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion",insertable = false, updatable = false), })
-	private UsuarioCorreo usuarioCorreoEnviado;
 	
 	@JsonView(Views.Public.class)
-	@ManyToOne(optional=false)
-	@JoinColumns({
-		@JoinColumn(name = "evento_idevento", referencedColumnName = "idevento",insertable = false, updatable = false) })
-	private Evento eventoEnviado;
-	
-//	@Column(name = "fecha", nullable = false, updatable = false)
-//	@Temporal(TemporalType.TIMESTAMP)
-//	@CreatedDate
-//	private java.util.Date fecha;
-	
-	@JsonView(Views.Public.class)
-	@Column(name = "email",nullable = false, length = 250)
-	private String email;
+	@Column(name = "asunto",nullable = false, length = 250)
+	private String asunto;
 
 	public CorreoEnviado() {
 		super();
 	}
 	
-	
+	public CorreoEnviado(CorreoEnviadoId id, String asunto) {
+		super();
+		this.id = id;
+		this.asunto = asunto;
+	}
 
 	public CorreoEnviadoId getId() {
 		return id;
@@ -64,28 +50,13 @@ public class CorreoEnviado {
 		this.id = id;
 	}
 
-	public UsuarioCorreo getUsuarioCorreoEnviado() {
-		return usuarioCorreoEnviado;
+	public String getAsunto() {
+		return asunto;
 	}
 
-	public void setUsuarioCorreoEnviado(UsuarioCorreo usuarioCorreoEnviado) {
-		this.usuarioCorreoEnviado = usuarioCorreoEnviado;
+	public void setAsunto(String asunto) {
+		this.asunto = asunto;
 	}
-
-	public Evento getEventoEnviado() {
-		return eventoEnviado;
-	}
-
-	public void setEventoEnviado(Evento eventoEnviado) {
-		this.eventoEnviado = eventoEnviado;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
+	
 }
 
