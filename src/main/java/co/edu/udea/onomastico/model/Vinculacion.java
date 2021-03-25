@@ -3,17 +3,17 @@ package co.edu.udea.onomastico.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
@@ -30,6 +30,7 @@ public class Vinculacion {
 	@Column(name = "nombre", nullable = false)
 	private String nombre;
 
+	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToMany(mappedBy = "vinculacionPorUsuarioCorreo")
 	@JsonView(Views.Internal.class)
     private Set<UsuarioCorreo> usuariosCorreoVinculacion = new HashSet<>();

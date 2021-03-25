@@ -23,6 +23,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -70,11 +72,13 @@ public class Usuario implements Serializable {
 	private java.util.Date createTime;
 	
 	@JsonView(Views.Public.class)
+	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "rol_id", nullable = false)
 	private Rol rol;
 	
 	@JsonView(Views.Public.class)
+	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "asociacion_por_usuario", 
             joinColumns = { @JoinColumn(name = "usuario_id") }, 

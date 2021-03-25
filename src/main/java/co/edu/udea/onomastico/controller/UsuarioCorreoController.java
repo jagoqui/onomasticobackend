@@ -22,13 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
-
-import co.edu.udea.onomastico.exceptions.ResourceAlreadyExitsException;
-import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.UsuarioCorreo;
-import co.edu.udea.onomastico.model.UsuarioCorreoId;
 import co.edu.udea.onomastico.model.Views;
-import co.edu.udea.onomastico.repository.UsuarioCorreoRepository;
+import co.edu.udea.onomastico.service.UsuarioCorreoService;
 
 
 
@@ -37,85 +33,58 @@ import co.edu.udea.onomastico.repository.UsuarioCorreoRepository;
 public class UsuarioCorreoController {
 
 	@Autowired
-	UsuarioCorreoRepository  usuarioRepository;
+	UsuarioCorreoService  usuarioService;
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuariosemail/pag/{pageNo}/{pageSize}/{sortBy}")
 	public List<UsuarioCorreo> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, 
 			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        Page<UsuarioCorreo> pagedResult =  usuarioRepository.findAll(paging);
-        if(pagedResult.hasContent()) return pagedResult.getContent();
-        else return new ArrayList<UsuarioCorreo>();
+        return usuarioService.getAllUsuariosCorreo(pageNo, pageSize, sortBy);
     }
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuariosemail")
 	public List<UsuarioCorreo> getAllUsuarios() {
-	    return usuarioRepository.findAll();
+	    return usuarioService.getAllUsuarios();
 	}
 	
 	//crear usuario
 	@PostMapping("/usuariosemail")
 	public UsuarioCorreo createUsuario(@RequestBody UsuarioCorreo usuario) {
-		if(usuario.getEmail()!=null && usuarioRepository.findById(usuario.getId()).isEmpty()) {
-			if(usuarioRepository.findByEmail(usuario.getEmail())!=null) throw new ResourceAlreadyExitsException(usuario.getEmail()+" ya se encuentra en uso");
-			UsuarioCorreo newUser = usuarioRepository.save(usuario);
-			return newUser;
-		}else throw new ResourceAlreadyExitsException("usuario de correo existente");
+		return usuarioService.createUsuario(usuario);
 	}
 	
-	//ususcribe with ecriptedemail
+	//ususcribe with ecripted email
 	@JsonView(Views.Public.class)
 	@PutMapping("/unsuscribe/{email}")
-		public UsuarioCorreo unsuscribe(@PathVariable(value = "email") String encriptedEmail) {
-			String email = new String(Base64.getDecoder().decode(encriptedEmail));
-			UsuarioCorreo user = usuarioRepository.findByEmail(email)
-					.orElseThrow(() -> new ResourceNotFoundException("UsuarioCorreo"+"email"+email));
-			user.setEstado("INACTIVO");
-			usuarioRepository.save(user);
-			return user;
-		}
+	public UsuarioCorreo unsuscribe(@PathVariable(value = "email") String encriptedEmail) {
+		return usuarioService.unsuscribe(encriptedEmail);
+	}
+	
+	//ususcribe with ecripted email
+	@JsonView(Views.Public.class)
+	@PutMapping("/usuariosemail/suscribe/{email}")
+	public UsuarioCorreo suscribe(@PathVariable(value = "email") String nonencriptedEmail) {
+		return usuarioService.suscribe(nonencriptedEmail);
+	}
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuariosemail/{tipo}/{numero}")
 	public Optional<UsuarioCorreo> getUsuarioById(@PathVariable(value = "tipo") String tipo, 
 			@PathVariable(value = "numero")String numero) {
-		UsuarioCorreoId id = new UsuarioCorreoId(tipo,numero);
-	    return usuarioRepository.findById(id);
+		return usuarioService.getUsuarioById(tipo, numero);
 	}
 	
 	@JsonView(Views.Public.class)
 	@PutMapping("/usuariosemail/{tipo}/{numero}")
 	public  UsuarioCorreo updateUsuario(@PathVariable(value = "tipo") String tipo, 
-			@PathVariable(value = "numero")String numero,
-			@RequestBody UsuarioCorreo detallesUsuario) {
-		UsuarioCorreoId usuarioId = new UsuarioCorreoId(tipo,numero);
-		UsuarioCorreo  usuario =  usuarioRepository.findById(usuarioId)
-	            .orElseThrow(() -> new ResourceNotFoundException("UsuarioCorreo" + "id"+ usuarioId));
-
-		usuario.setNombre(detallesUsuario.getNombre());;
-		usuario.setEmail(detallesUsuario.getEmail());
-		usuario.setApellido(detallesUsuario.getApellido());
-		usuario.setGenero(detallesUsuario.getGenero());
-		usuario.setEstado(detallesUsuario.getEstado());
-		usuario.setFechaNacimiento(detallesUsuario.getFechaNacimiento());
-		usuario.setPlataformaPorUsuarioCorreo(detallesUsuario.getPlataformaPorUsuarioCorreo());
-		usuario.setAsociacionPorUsuarioCorreo(detallesUsuario.getAsociacionPorUsuarioCorreo());
-		usuario.setProgramaAcademicoPorUsuarioCorreo(detallesUsuario.getProgramaAcademicoPorUsuarioCorreo());
-		usuario.setVinculacionPorUsuarioCorreo(detallesUsuario.getVinculacionPorUsuarioCorreo());
-		UsuarioCorreo updatedUsuario = usuarioRepository.save(usuario);
-	    return updatedUsuario;
+			@PathVariable(value = "numero")String numero, @RequestBody UsuarioCorreo detallesUsuario) {
+		return usuarioService.updateUsuario(tipo, numero, detallesUsuario);
 	}
 	
 	@DeleteMapping("/usuariosemail/{tipo}/{numero}")
 	public ResponseEntity<?> deleteUsuario(@PathVariable(value = "tipo") String tipo, 
 			@PathVariable(value = "numero")String numero) {
-		UsuarioCorreoId usuarioId = new UsuarioCorreoId(tipo,numero);
-		UsuarioCorreo usuario = usuarioRepository.findById(usuarioId)
-	            .orElseThrow(() -> new ResourceNotFoundException("UsuarioCorreo"+"id"+usuarioId));
-	    
-		usuarioRepository.delete(usuario);
-	    return ResponseEntity.ok().build();
+		return usuarioService.deleteUsuario(tipo, numero);
 	}
 }

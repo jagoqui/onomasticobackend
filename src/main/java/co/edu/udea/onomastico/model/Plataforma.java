@@ -11,6 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
@@ -28,6 +31,7 @@ public class Plataforma {
 	private String nombre;
 	
 	@ManyToMany(mappedBy = "plataformaPorUsuarioCorreo")
+	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@JsonView(Views.Internal.class)
     private Set<UsuarioCorreo> usuariosCorreoPlataforma = new HashSet<>();
 

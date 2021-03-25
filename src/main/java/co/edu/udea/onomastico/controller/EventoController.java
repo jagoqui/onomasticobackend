@@ -2,6 +2,7 @@ package co.edu.udea.onomastico.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -94,7 +95,7 @@ public class EventoController {
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/evento/asociacion")
-	public  List<Object> getEventosByAsociacion(@RequestBody List<Asociacion> asociaciones) throws ResourceNotFoundException {
+	public  List<Object> getEventosByAsociacion(@RequestBody Set<Asociacion> asociaciones) throws ResourceNotFoundException {
 	    return eventoService.getAllEventosByAsociacion(asociaciones);
 	}
 	

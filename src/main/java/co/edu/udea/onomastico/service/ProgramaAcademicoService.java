@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
+import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.ProgramaAcademico;
 import co.edu.udea.onomastico.repository.ProgramaAcademicoRepository;
 
@@ -18,6 +19,10 @@ public class ProgramaAcademicoService {
 	
 	public List<ProgramaAcademico> getAllProgramasAcademicos() {
 	    return programaAcademicoRepository.findAll();
+	}
+	
+	public List<ProgramaAcademico> findByProgramaAcademicoPorAsociacion(Asociacion asociacion){
+		return programaAcademicoRepository.findByProgramaAcademicoPorAsociacion(asociacion);
 	}
 	
 	public ProgramaAcademico getProgramaAcademicoById(Integer programaId) {

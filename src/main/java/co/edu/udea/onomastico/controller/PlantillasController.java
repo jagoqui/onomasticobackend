@@ -1,6 +1,7 @@
 package co.edu.udea.onomastico.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,9 +39,14 @@ public class PlantillasController {
 	}
 	
 	@JsonView(Views.Public.class)
-	@GetMapping("/plantillas/asociacion")
-	public List<Plantilla> getAllPlantillasPorAsociacion(@RequestBody List<Asociacion> asociaciones){
-		return plantillaService.getPlantillasByAsociacion(asociaciones);
+	@GetMapping("/plantillas/usuario")
+	public List<Plantilla> getAllPlantillasPorAsociacion(@RequestParam Integer id){
+		return plantillaService.getAllPlantillasByUsuario(id);
+	}
+	@JsonView(Views.Public.class)
+	@GetMapping("/plantillas/usuario/pag")
+	public List<Plantilla> getAllPlantillasPorAsociacionPag(@RequestParam Integer id,@RequestParam Integer npage,@RequestParam Integer psize,@RequestParam String sort){
+		return plantillaService.getAllPlantillasByUsuarioPag(id, npage, psize, sort);
 	}
 	
 	@JsonView(Views.Public.class)

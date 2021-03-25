@@ -30,17 +30,18 @@ public class ProgramaAcademico {
 	@JsonView(Views.Public.class)
 	private String nombre;
 	
+	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToMany(mappedBy = "programaAcademicoPorUsuarioCorreo")
 	@JsonView(Views.Internal.class)
     private Set<UsuarioCorreo> usuariosCorreoProgramaAcademico = new HashSet<>();
 	
 	@JsonView(Views.Internal.class)
+	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "programa_academico_por_asociacion", joinColumns = {
 			@JoinColumn(name = "programa_academico_codigo")
 			}, inverseJoinColumns = {
 					@JoinColumn(name = "asociacion_id") })
-	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<Asociacion> programaAcademicoPorAsociacion = new HashSet<Asociacion>();
 
 	public ProgramaAcademico() {

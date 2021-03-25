@@ -14,6 +14,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -32,20 +35,24 @@ public class Asociacion implements Serializable {
 	private String nombre;
 	
 	@JsonView(Views.Internal.class)
+	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToMany(mappedBy = "asociacionPorUsuario")
 	@JsonIgnoreProperties("asociacionPorUsuario")
     private Set<Usuario> usuariosAsociacion = new HashSet<>();
 	
 	@JsonView(Views.Internal.class)
+	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToMany(mappedBy = "asociacionPorUsuarioCorreo")
 	@JsonIgnoreProperties("asociacionPorUsuarioCorreo")
     private Set<UsuarioCorreo> usuariosCorreoAsociacion = new HashSet<>();
 	
 	@JsonView(Views.Internal.class)
+	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToMany(mappedBy = "asociacionesPorPlantilla")
     private Set<Plantilla> plantillasAsociacion = new HashSet<>();
 	
 	@JsonView(Views.Internal.class)
+	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToMany(mappedBy = "programaAcademicoPorAsociacion")
     private Set<ProgramaAcademico> programasAsociacion = new HashSet<>();
 

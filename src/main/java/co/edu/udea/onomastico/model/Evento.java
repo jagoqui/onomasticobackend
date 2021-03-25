@@ -60,11 +60,13 @@ public class Evento {
 //	private Asociacion asociacion;
 	
 	@JsonView(Views.Public.class)
+	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "plantilla_idplantilla")
 	private Plantilla plantilla;
 	
 	@JsonView(Views.Public.class)
+	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@OneToMany(mappedBy = "eventoCondicion", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Condicion> condicionesEvento = new HashSet<Condicion>();
 

@@ -3,6 +3,7 @@ package co.edu.udea.onomastico.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Plantilla;
-import co.edu.udea.onomastico.payload.PlantillaResponse;
+import co.edu.udea.onomastico.model.Usuario;
 import co.edu.udea.onomastico.payload.UploadFileResponse;
 import co.edu.udea.onomastico.repository.PlantillaRepository;
 @Service
@@ -32,6 +34,9 @@ public class PlantillaService {
 	
 	@Autowired
 	PlantillaRepository plantillaRepository;
+	
+	@Autowired
+	UsuarioService usuarioService;
 	
 	@Value("${app.images}")
 	private String IMAGE_SERVER;
@@ -58,7 +63,23 @@ public class PlantillaService {
         else return new ArrayList<Plantilla>();
     }
 	
-	public List<Plantilla> getPlantillasByAsociacion(List<Asociacion> asociaciones){
+	public List<Plantilla> getAllPlantillasByUsuario(Integer usuarioId){
+		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
+		List<Plantilla> plantillas = getPlantillasByAsociacion(asociaciones);
+		return plantillas;
+	}
+	
+	public List<Plantilla> getAllPlantillasByUsuarioPag(Integer usuarioId, Integer pageNo, Integer pageSize, String sortBy) throws ResourceNotFoundException{
+		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
+		List<Plantilla> plantillas = getPlantillasByAsociacion(asociaciones);
+		Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+		final int start = (int)paging.getOffset();
+		final int end = Math.min((start + paging.getPageSize()), plantillas.size());
+		final Page<Plantilla> page = new PageImpl<>(plantillas.subList(start, end), paging, plantillas.size());
+		return page.toList();
+	}
+	
+	public List<Plantilla> getPlantillasByAsociacion(Set<Asociacion> asociaciones){
 		List<Plantilla> merge = new ArrayList<Plantilla>();
 		asociaciones.forEach(asociacion ->{
 			List<Plantilla> temp = plantillaRepository.findByAsociacionesPorPlantilla(asociacion);

@@ -15,6 +15,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
@@ -32,6 +35,7 @@ public class Plantilla {
 	private String texto;
 	
 	@JsonView(Views.Internal.class)
+	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToMany(cascade={CascadeType.MERGE,CascadeType.REFRESH},fetch = FetchType.EAGER)
     @JoinTable(name = "asociacion_por_plantilla", 
             joinColumns = { @JoinColumn(name = "plantilla_idplantilla") }, 
