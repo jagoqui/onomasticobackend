@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -67,34 +68,31 @@ public class EventoService {
 	public List<Evento> getAllEventos() {
 	    return eventoRepository.findAll();
 	}
-	public List<Object> getAllEventosByUsuario(Integer usuarioId){
+	public List<EventoResponse> getAllEventosByUsuario(Integer usuarioId){
 		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
-		List<Object> eventos = getAllEventosByAsociacion(asociaciones);
-		return eventos;
+		List<Evento> eventos = getAllEventosByAsociacion(asociaciones);
+		return getEventoResponseFormat(eventos);
 	}
 	
-	public List<Object> getAllPlantillasByUsuarioPag(Integer usuarioId, Integer pageNo, Integer pageSize, String sortBy){
+	public List<EventoResponse> getAllEventosByUsuarioPag(Integer usuarioId, Integer pageNo, Integer pageSize, String sortBy){
 		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
-		List<Object> eventos = getAllEventosByAsociacion(asociaciones);
+		List<Evento> eventosAsociacion = getAllEventosByAsociacion(asociaciones);
+		List<EventoResponse> eventos = getEventoResponseFormat(eventosAsociacion);
 		Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 		final int start = (int)paging.getOffset();
 		final int end = Math.min((start + paging.getPageSize()), eventos.size());
-		final Page<Object> page = new PageImpl<>(eventos.subList(start, end), paging, eventos.size());
+		final Page<EventoResponse> page = new PageImpl<>(eventos.subList(start, end), paging, eventos.size());
 		return page.toList();
 	}
-	public List<Object> getAllEventosByUsuario(List<Asociacion> asociaciones) {
-		List<Object> merge = new ArrayList<>();
+	
+	public List<Evento> getAllEventosByAsociacion(Set<Asociacion> asociaciones) {
+		List<Evento> merge = new ArrayList<>();
 		asociaciones.forEach(asociacion->{
-			List<Object> temp = condicionRepository.getEventosIdByAsociacion(asociacion.getId());
-			merge.addAll(temp);
-		});
-	    return merge;
-	}
-	public List<Object> getAllEventosByAsociacion(Set<Asociacion> asociaciones) {
-		List<Object> merge = new ArrayList<>();
-		asociaciones.forEach(asociacion->{
-			List<Object> temp = condicionRepository.getEventosIdByAsociacion(asociacion.getId());
-			merge.addAll(temp);
+			List<Integer> indexes = condicionRepository.getEventosIdByAsociacion(asociacion.getId());
+			indexes.forEach(index->{
+				List<Evento> temp = eventoRepository.findById(index).stream().collect(Collectors.toList());
+				merge.addAll(temp);
+			});
 		});
 	    return merge;
 	}

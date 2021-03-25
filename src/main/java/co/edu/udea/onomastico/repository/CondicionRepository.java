@@ -12,8 +12,8 @@ import co.edu.udea.onomastico.model.CondicionId;
 @Repository
 public interface CondicionRepository extends JpaRepository<Condicion, CondicionId> {
 	
-	@Query(value = "SELECT  e.* FROM condicion_por_evento ce JOIN evento e ON e.idevento = ce.evento_idevento WHERE ce.condicion = 'asociacion' AND ce.parametro = ?1", 
+	@Query(value = "SELECT  e.idevento FROM condicion_por_evento ce JOIN evento e ON e.idevento = ce.evento_idevento WHERE ce.condicion = 'asociacion' AND ce.parametro = ?1", 
 			  nativeQuery = true)
-	List<Object> getEventosIdByAsociacion(Integer parametro);
+	List<Integer> getEventosIdByAsociacion(Integer parametro);
 	
 }

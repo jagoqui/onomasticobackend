@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -94,9 +95,14 @@ public class EventoController {
 	}
 	
 	@JsonView(Views.Public.class)
-	@GetMapping("/evento/asociacion")
-	public  List<Object> getEventosByAsociacion(@RequestBody Set<Asociacion> asociaciones) throws ResourceNotFoundException {
-	    return eventoService.getAllEventosByAsociacion(asociaciones);
+	@GetMapping("/evento/usuario")
+	public List<EventoResponse> getAllPlantillasPorAsociacion(@RequestParam Integer id){
+		return eventoService.getAllEventosByUsuario(id);
+	}
+	@JsonView(Views.Public.class)
+	@GetMapping("/evento/usuario/pag")
+	public List<EventoResponse> getAllPlantillasPorAsociacionPag(@RequestParam Integer id,@RequestParam Integer npage,@RequestParam Integer psize,@RequestParam String sort){
+		return eventoService.getAllEventosByUsuarioPag(id, npage, psize, sort);
 	}
 	
 	@DeleteMapping("/evento/{id}/{usuarioId}")
