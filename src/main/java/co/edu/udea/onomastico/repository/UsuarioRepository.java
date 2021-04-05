@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Usuario;
 
 @Repository
@@ -16,4 +17,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 	List<Usuario> findByIdIn(List<Long> usuariosIds);
 
 	Boolean existsByEmail(String email);
+	
+	List<Usuario> findByAsociacionPorUsuario(Asociacion asociacion);
 }

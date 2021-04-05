@@ -21,6 +21,7 @@ import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.repository.PlantillaRepository;
+import co.edu.udea.onomastico.security.JwtTokenProvider;
 import co.edu.udea.onomastico.service.PlantillaService;
 
 @RestController
@@ -32,6 +33,12 @@ public class PlantillasController {
 	@Autowired
 	PlantillaService plantillaService;
 	
+	@Autowired
+	FeignClientInterceptor interceptor;
+	
+	@Autowired
+	JwtTokenProvider tokenProvider;
+	
 	@JsonView(Views.Public.class)
 	@GetMapping("/plantillas")
 	public List<Plantilla> getAllPlantillas(){
@@ -41,12 +48,14 @@ public class PlantillasController {
 	@JsonView(Views.Public.class)
 	@GetMapping("/plantillas/usuario")
 	public List<Plantilla> getAllPlantillasPorAsociacion(@RequestParam Integer id){
-		return plantillaService.getAllPlantillasByUsuario(id);
+		Integer usuarioId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
+		return plantillaService.getAllPlantillasByUsuario(usuarioId);
 	}
 	@JsonView(Views.Public.class)
 	@GetMapping("/plantillas/usuario/pag")
 	public List<Plantilla> getAllPlantillasPorAsociacionPag(@RequestParam Integer id,@RequestParam Integer npage,@RequestParam Integer psize,@RequestParam String sort){
-		return plantillaService.getAllPlantillasByUsuarioPag(id, npage, psize, sort);
+		Integer usuarioId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
+		return plantillaService.getAllPlantillasByUsuarioPag(usuarioId, npage, psize, sort);
 	}
 	
 	@JsonView(Views.Public.class)
@@ -65,7 +74,8 @@ public class PlantillasController {
 	@JsonView(Views.Public.class)
 	@PostMapping("/plantillas/{usuarioId}")
 	public ResponseEntity<Plantilla> addPlantilla(@RequestPart("plantilla") Plantilla plantilla, @PathVariable(value = "usuarioId") Integer usuarioId){
-		return  plantillaService.addPlantilla(plantilla, usuarioId);
+		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
+		return  plantillaService.addPlantilla(plantilla, userId);
 	}
 	
 	@JsonView(Views.Public.class)
@@ -83,11 +93,13 @@ public class PlantillasController {
 	@JsonView(Views.Public.class)
 	@PutMapping("/plantillas/{id}/{usuarioId}")
 	public ResponseEntity<Plantilla> updatePlantilla( @RequestPart("plantilla") Plantilla plantilla,  @PathVariable(value = "id") Integer plantillaId, @PathVariable(value = "usuarioId") Integer usuarioId) {
-	    return plantillaService.updatePlantilla(plantilla, plantillaId, usuarioId);
+		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
+		return plantillaService.updatePlantilla(plantilla, plantillaId, userId);
 	}
 	
 	@DeleteMapping("/plantillas/{id}/{usuarioId}")
 	public ResponseEntity<?> deletePlantilla(@PathVariable(value = "id") Integer plantillaId, @PathVariable(value = "usuarioId") Integer usuarioId) {
-		return plantillaService.deletePlantilla(plantillaId, usuarioId);
+		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
+		return plantillaService.deletePlantilla(plantillaId, userId);
 	}
 }

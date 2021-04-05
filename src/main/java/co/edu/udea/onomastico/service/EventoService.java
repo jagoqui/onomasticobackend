@@ -129,6 +129,12 @@ public class EventoService {
 	    condicionRequest.forEach(condicion->{
 	    	condiciones.add(new Condicion(new CondicionId(newEventoId,condicion.getCondicion(),condicion.getParametro()), newEvento));
 	    });
+	    if(!condiciones.toString().contains("asociacion")) {
+	    	Set<Asociacion> as = usuarioService.getAsociacionUsuarioById(usuarioId);
+	    	as.forEach(asociacion ->{
+	    		condiciones.add(new Condicion(new CondicionId(newEventoId,"asociacion",String.valueOf(asociacion.getId())), newEvento));
+	    	});
+	    }
 	    newEvento.setCondicionesEvento(condiciones);
 	    eventoRepository.save(newEvento);
 	    LogTransacciones transaccion = new LogTransacciones("Añadir evento:"+evento.getId()+" "+evento.getNombre());
@@ -208,34 +214,36 @@ public class EventoService {
 		return condiciones;
 	}
 	
-	
 	public EventoResponse getEventoById(Integer eventoId) {
 		Evento evento = eventoRepository.findById(eventoId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
+	    return getEventoResponseFormate(evento);
+	}
+	public EventoResponse getEventoResponseFormate(Evento evento) {
 		List<Evento> eventos = new ArrayList<Evento>();
 		eventos.add(evento);
 		List<EventoResponse> eventoResponse = getEventoResponseFormat(eventos);
-	    return eventoResponse.get(0);
+		return eventoResponse.get(0);
 	}
 	
-	public ResponseEntity<?> deactivateEvento(Integer eventoId, Integer usuarioId) {
+	public EventoResponse deactivateEvento(Integer eventoId, Integer usuarioId) {
 		Evento evento = eventoRepository.findById(eventoId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
 		evento.setEstado("INACTIVO");
 		Evento nuevo = eventoRepository.save(evento);
 		LogTransacciones transaccion = new LogTransacciones("Editar evento:"+nuevo.getId()+"desactivar");
 		transaccionesService.createTransaccion(usuarioId, transaccion);
-		return ResponseEntity.ok().build();
+		return getEventoResponseFormate(nuevo);
 	}
 	
-	public ResponseEntity<?> activateEvento(Integer eventoId, Integer usuarioId) {
+	public EventoResponse activateEvento(Integer eventoId, Integer usuarioId) {
 		Evento evento = eventoRepository.findById(eventoId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
 		evento.setEstado("ACTIVO");
 		Evento nuevo = eventoRepository.save(evento);
 		LogTransacciones transaccion = new LogTransacciones("Editar evento:"+nuevo.getId()+"activar");
 		transaccionesService.createTransaccion(usuarioId, transaccion);
-		return ResponseEntity.ok().build();
+		return getEventoResponseFormate(nuevo);
 	}
 	
 	public ResponseEntity<?> deleteEvento(Integer eventoId, Integer usuarioId) {

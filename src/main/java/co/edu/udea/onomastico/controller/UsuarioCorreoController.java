@@ -18,12 +18,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
 import co.edu.udea.onomastico.model.UsuarioCorreo;
 import co.edu.udea.onomastico.model.Views;
+import co.edu.udea.onomastico.payload.EventoResponse;
+import co.edu.udea.onomastico.security.JwtTokenProvider;
 import co.edu.udea.onomastico.service.UsuarioCorreoService;
 
 
@@ -31,9 +34,22 @@ import co.edu.udea.onomastico.service.UsuarioCorreoService;
 @CrossOrigin(origins = "*")
 @RestController
 public class UsuarioCorreoController {
+	
+	@Autowired
+	FeignClientInterceptor interceptor;
+	
+	@Autowired
+	JwtTokenProvider tokenProvider;
 
 	@Autowired
 	UsuarioCorreoService  usuarioService;
+	
+	@JsonView(Views.Public.class)
+	@GetMapping("/usuariosemail/pag")
+	public List<UsuarioCorreo> getAllPlantillasPorAsociacionPag(@RequestParam Integer npage,@RequestParam Integer psize,@RequestParam String sort){
+		Integer usuarioId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
+		return usuarioService.getAllUsuarioCorreoByUsuarioPag(usuarioId, npage, psize, sort);
+	}
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuariosemail/pag/{pageNo}/{pageSize}/{sortBy}")

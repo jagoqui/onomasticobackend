@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,6 +31,9 @@ public class UsuarioCorreoService {
 	@Autowired
 	UsuarioCorreoRepository usuarioCorreoRepository;
 	
+	@Autowired
+	UsuarioService usuarioService;
+	
 	public List<UsuarioCorreo> findByBirhday(){
 		return usuarioCorreoRepository.findByBirthday();
 	}
@@ -48,6 +54,31 @@ public class UsuarioCorreoService {
 		return usuarioCorreoRepository.findByVinculacionPorUsuarioCorreo(vinculacion);
 	}
 	
+	
+	public List<UsuarioCorreo> getAllUsuarioCorreoByUsuario(Integer usuarioId){
+		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
+		List<UsuarioCorreo> usuarioCorreo =  getUsuariosCorreosByAsociacion(asociaciones);
+		return usuarioCorreo;
+	}
+	
+	public List<UsuarioCorreo> getAllUsuarioCorreoByUsuarioPag(Integer usuarioId, Integer pageNo, Integer pageSize, String sortBy) throws ResourceNotFoundException{
+		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
+		List<UsuarioCorreo> usuarioCorreos = getUsuariosCorreosByAsociacion(asociaciones);
+		Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+		final int start = (int)paging.getOffset();
+		final int end = Math.min((start + paging.getPageSize()), usuarioCorreos.size());
+		final Page<UsuarioCorreo> page = new PageImpl<>(usuarioCorreos.subList(start, end), paging, usuarioCorreos.size());
+		return page.toList();
+	}
+	
+	public List<UsuarioCorreo> getUsuariosCorreosByAsociacion(Set<Asociacion> asociaciones){
+		List<UsuarioCorreo> merge = new ArrayList<UsuarioCorreo>();
+		asociaciones.forEach(asociacion ->{
+			List<UsuarioCorreo> temp = usuarioCorreoRepository.findByAsociacionPorUsuarioCorreo(asociacion);
+			if(temp!= null && !temp.isEmpty())merge.addAll(temp);
+		});
+		return merge;
+	}
 	
 	public List<UsuarioCorreo> getAllUsuariosCorreo(Integer pageNo, Integer pageSize, String sortBy){
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));

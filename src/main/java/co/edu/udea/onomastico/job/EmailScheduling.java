@@ -22,11 +22,14 @@ import co.edu.udea.onomastico.model.CorreoEnviado;
 import co.edu.udea.onomastico.model.CorreoEnviadoId;
 import co.edu.udea.onomastico.model.Evento;
 import co.edu.udea.onomastico.model.Plantilla;
-import co.edu.udea.onomastico.model.UsuarioCorreo;
+import co.edu.udea.onomastico.payload.EmailQueryResponse;
 import co.edu.udea.onomastico.repository.EmailSchedulingRepository;
+import co.edu.udea.onomastico.service.AsociacionService;
 import co.edu.udea.onomastico.service.CorreoEnviadoService;
 import co.edu.udea.onomastico.service.EmailService;
 import co.edu.udea.onomastico.service.EventoService;
+import co.edu.udea.onomastico.service.UsuarioCorreoService;
+import co.edu.udea.onomastico.service.VinculacionService;
 import co.edu.udea.onomastico.util.DateUtil;
 import co.edu.udea.onomastico.util.StringUtil;
 import java.util.Base64;
@@ -50,51 +53,47 @@ public class EmailScheduling {
     @Autowired
     CorreoEnviadoService correoEnviadoService;
     
+    @Autowired
+	UsuarioCorreoService  usuarioService;
+    
+    @Autowired
+	AsociacionService asociacionService;
+	
+	@Autowired
+	VinculacionService vinculacionService;
+    
     //cron everyday at 8:00 am
     //@Scheduled(cron = "0 0 8 * * ?")
     public String scheduleDailyEmails() {
     	StringBuilder emails = new StringBuilder();
     	List<Evento> eventos = eventoService.getAllEventos();
     	eventos.forEach(evento ->{
+    		if(!evento.getEstado().contains("INACTIVO")) {
     		System.out.print(evento.getNombre());
     		 //emailService.sendEmail("apoyodesarrolloingenieria6@udea.edu.co","prueba", getTextoByReciper(evento.getPlantilla(), "Jenny", LocalDateTime.now()));
     		 //correoEnviadoService.addCorreoEnviado(new CorreoEnviado(new CorreoEnviadoId("apoyodesarrolloingenieria6@udea.edu.co"),"prueba")); 
-    		List<UsuarioCorreo> destinatarios = getRecipers(evento);
+    		List<EmailQueryResponse> destinatarios = getRecipers(evento);
     		 if(destinatarios != null) {
     		 destinatarios.forEach(destino ->{
     			 emails.append(getTextoByReciper(evento.getPlantilla(), destino)); 
     			 //emailService.sendEmail(destino.getEmail(),evento.getNombre(), getTextoByReciper(evento.getPlantilla(), destino));
-    			 correoEnviadoService.addCorreoEnviado(new CorreoEnviado(new CorreoEnviadoId(destino.getEmail()),evento.getNombre()));
+    			 //correoEnviadoService.addCorreoEnviado(new CorreoEnviado(new CorreoEnviadoId(destino.getEmail()),evento.getNombre()));
     		 });
     		 }
+    		}
     	});
 		return emails.toString();
     }
 
-	private String getTextoByReciper(Plantilla plantilla, String string, LocalDateTime now) {
+	private String getTextoByReciper(Plantilla plantilla, EmailQueryResponse destino) {
 		String textoPlantilla = plantilla.getTexto();
-		StringBuilder text = new StringBuilder(textoPlantilla);
-		String[] targets = {"<font color=\"#e74c3c\">&lt;Nombre&gt;</font>","<font color=\"#16a085\">&lt;Fecha&gt;</font>"};
-		String[] replacements = {string, date.toString()};
-		for(int i=0; i<targets.length;i++) {
-			StringBuilder tempText = StringUtil.replaceText(targets[i],text,replacements[i]);
-			text = tempText;
-		}
-		text.append("</div><div><p> Si quieres dejar de recibir nuestras tarjetas, <a href='http://arquimedes.udea.edu.co/onomastico/mail-users-subscription-status/");
-		String email = "jcarolina.escobar@udea.edu.co";
-		String encriptedEmail = Base64.getEncoder().encodeToString(email.getBytes());
-		text.append(encriptedEmail);
-		text.append("'>pulsa aquí</a>  para darte de baja.</p></div></div>");
-		return text.toString();
-	}
-
-	private String getTextoByReciper(Plantilla plantilla, UsuarioCorreo destino) {
-		String textoPlantilla = plantilla.getTexto();
+		String asociacion = getAsociacionName(destino.getAsociacionId());
+		String vinculacion = getVinculacionName(destino.getVinculacionId());
+		System.out.print("v"+vinculacion+"  id  "+destino.getVinculacionId());
 		StringBuilder text = new StringBuilder(textoPlantilla);
 		String[] targets = {"&lt;NOMBRE&gt;","&lt;FECHA&gt;","&lt;FALCUTAD/ESCUELA&gt;","&lt;ESTAMENTO&gt;"};
 		String nombre = StringUtil.capitalizeFirstLetter(StringUtil.getFirstWord(destino.getNombre()));
-		System.out.print(destino.getAsociacionPorUsuarioCorreo());
-		String[] replacements = {nombre, date.toString(), destino.getAsociacionPorUsuarioCorreo().toString(), destino.getVinculacionPorUsuarioCorreo().toString()};
+		String[] replacements = {nombre, date.toString(), asociacion, vinculacion};
 		for(int i=0; i<targets.length;i++) {
 			StringBuilder tempText = StringUtil.replaceText(targets[i],text,replacements[i]);
 			text = tempText;
@@ -105,8 +104,26 @@ public class EmailScheduling {
 		text.append("'>pulsa aquí</a>  para darte de baja.</p></div></div>");
 		return text.toString();
 	}
+	private String getAsociacionName(int id) {
+		String name;
+		try{
+			name = asociacionService.getAsociacionById(id).getNombre();
+		}catch(Exception e) {
+			name = "";
+		};
+		return name;
+	}
+	private String getVinculacionName(int id) {
+		String name;
+		try{
+			name = vinculacionService.getVinculacionById(id).getNombre();
+		}catch(Exception e) {
+			name = "";
+		};
+		return name;
+	}
 	
-	private List<UsuarioCorreo> getRecipers(Evento evento) {
+	private List<EmailQueryResponse> getRecipers(Evento evento) {
 		String recurrencia = evento.getRecurrencia();
 		Date fechaEvento = evento.getFecha();
 		if(recurrencia.contentEquals("DIARIA")) {

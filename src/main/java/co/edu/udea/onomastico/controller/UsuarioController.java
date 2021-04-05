@@ -17,13 +17,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
 import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Usuario;
+import co.edu.udea.onomastico.model.UsuarioCorreo;
 import co.edu.udea.onomastico.model.Views;
+import co.edu.udea.onomastico.security.JwtTokenProvider;
 import co.edu.udea.onomastico.service.UsuarioService;
 
 @RestController
@@ -32,11 +35,24 @@ public class UsuarioController {
 	@Autowired
 	UsuarioService  usuarioService;
 	
+	@Autowired
+	FeignClientInterceptor interceptor;
+	
+	@Autowired
+	JwtTokenProvider tokenProvider;
+	
 	//obtener todos los usuarios
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios")
 	public List<Usuario> getAllUsuarios() {
 	    return usuarioService.getAllUsuarios();
+	}
+	
+	@JsonView(Views.Public.class)
+	@GetMapping("/usuarios/pag")
+	public List<Usuario> getAllUsuariosPorAsociacionPag(@RequestParam Integer npage,@RequestParam Integer psize,@RequestParam String sort){
+		Integer usuarioId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
+		return usuarioService.getAllUsuariosByUsuarioPag(usuarioId, npage, psize, sort);
 	}
 	
 	@JsonView(Views.Public.class)

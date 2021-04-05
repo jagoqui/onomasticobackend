@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -40,6 +41,33 @@ public class UsuarioService {
         else return new ArrayList<Usuario>();
     }
 	
+	public List<Usuario> getAllUsuariosByUsuario(Integer usuarioId){
+		Set<Asociacion> asociaciones = getAsociacionUsuarioById(usuarioId);
+		List<Usuario> usuarios =  getUsuariosByAsociacion(asociaciones);
+		return usuarios;
+	}
+	
+	public List<Usuario> getAllUsuariosByUsuarioPag(Integer usuarioId, Integer pageNo, Integer pageSize, String sortBy) throws ResourceNotFoundException{
+		if(isAdmin(usuarioId)) {
+		Set<Asociacion> asociaciones = getAsociacionUsuarioById(usuarioId);
+		List<Usuario> usuarios = getUsuariosByAsociacion(asociaciones);
+		Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+		final int start = (int)paging.getOffset();
+		final int end = Math.min((start + paging.getPageSize()), usuarios.size());
+		final Page<Usuario> page = new PageImpl<>(usuarios.subList(start, end), paging, usuarios.size());
+		return page.toList();
+		} throw new BadRequestException("To complite this action the user must be an Admin");
+	}
+	
+	public List<Usuario> getUsuariosByAsociacion(Set<Asociacion> asociaciones){
+		List<Usuario> merge = new ArrayList<Usuario>();
+		asociaciones.forEach(asociacion ->{
+			List<Usuario> temp = usuarioRepository.findByAsociacionPorUsuario(asociacion);
+			if(temp!= null && !temp.isEmpty())merge.addAll(temp);
+		});
+		return merge;
+	}
+	
 
 	public Usuario AddUsuario(@RequestBody Usuario usuario) {
 		if(!usuarioRepository.findByEmail(usuario.getEmail()).isEmpty()) throw new BadRequestException("usuario existente");
@@ -59,6 +87,13 @@ public class UsuarioService {
 	    Usuario usuario = usuarioRepository.findById(usuarioId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Usuario"+"id"+usuarioId));
 		return usuario.getAsociacionPorUsuario();
+	}
+	
+	public boolean isAdmin(Integer usuarioId) {
+		Usuario usuario = usuarioRepository.findById(usuarioId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Usuario"+"id"+usuarioId));
+		if(usuario.getRol().getNombre().contains("ADMIN")) return true;
+		return false;
 	}
 	
 	public  Usuario updateUsuario(Integer usuarioId, Usuario detallesUsuario) {
