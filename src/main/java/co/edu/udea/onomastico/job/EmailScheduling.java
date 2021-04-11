@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import co.edu.udea.onomastico.model.Condicion;
@@ -28,12 +29,14 @@ import co.edu.udea.onomastico.service.AsociacionService;
 import co.edu.udea.onomastico.service.CorreoEnviadoService;
 import co.edu.udea.onomastico.service.EmailService;
 import co.edu.udea.onomastico.service.EventoService;
+import co.edu.udea.onomastico.service.ProgramaAcademicoService;
 import co.edu.udea.onomastico.service.UsuarioCorreoService;
 import co.edu.udea.onomastico.service.VinculacionService;
 import co.edu.udea.onomastico.util.DateUtil;
 import co.edu.udea.onomastico.util.StringUtil;
 import java.util.Base64;
 
+@Component
 public class EmailScheduling {
 	@Value("${app.images}")
 	private String IMAGE_SERVER;
@@ -62,10 +65,13 @@ public class EmailScheduling {
 	
 	@Autowired
 	VinculacionService vinculacionService;
-    
-    //cron everyday at 8:00 am
-    @Scheduled(cron = "0 0 8 * * ?")
-    public String scheduleDailyEmails() {
+	
+	@Autowired
+	ProgramaAcademicoService programaAcademicoService;
+	
+    //cron everyday at 10:30 am
+    @Scheduled(cron = "0 30 12 * * ?")
+    public void scheduleDailyEmails() {
     	StringBuilder emails = new StringBuilder();
     	List<Evento> eventos = eventoService.getAllEventos();
     	eventos.forEach(evento ->{
@@ -80,7 +86,7 @@ public class EmailScheduling {
     		 }
     		}
     	});
-		return emails.toString();
+		//return emails.toString();
     }
 
 	private String getTextoByReciper(Plantilla plantilla, EmailQueryResponse destino) {
@@ -88,11 +94,11 @@ public class EmailScheduling {
 		String encriptedEmail = Base64.getEncoder().encodeToString(destino.getEmail().getBytes());
 		String asociacion = getAsociacionName(destino.getAsociacionId());
 		String vinculacion = getVinculacionName(destino.getVinculacionId());
-		System.out.print("v"+vinculacion+"  id  "+destino.getVinculacionId());
+		String programa = getProgramaAcademicoName(destino.getProgramaAcademicoId());
 		StringBuilder text = new StringBuilder(textoPlantilla);
-		String[] targets = {"&lt;NOMBRE&gt;","&lt;FECHA&gt;","&lt;FALCUTAD/ESCUELA&gt;","&lt;ESTAMENTO&gt;"};
+		String[] targets = {"&lt;NOMBRE&gt;","&lt;FECHA&gt;","&lt;FALCUTAD/ESCUELA&gt;","&lt;ESTAMENTO&gt;","&lt;PROGRAMA&gt;"};
 		String nombre = StringUtil.capitalizeFirstLetter(StringUtil.getFirstWord(destino.getNombre()));
-		String[] replacements = {nombre, date.toString(), asociacion, vinculacion};
+		String[] replacements = {nombre, date.toString(), asociacion, vinculacion, programa};
 		for(int i=0; i<targets.length;i++) {
 			StringBuilder tempText = StringUtil.replaceText(targets[i],text,replacements[i]);
 			text = tempText;
@@ -110,6 +116,15 @@ public class EmailScheduling {
 		String name;
 		try{
 			name = asociacionService.getAsociacionById(id).getNombre();
+		}catch(Exception e) {
+			name = "";
+		};
+		return name;
+	}
+	private String getProgramaAcademicoName(int id) {
+		String name;
+		try{
+			name = programaAcademicoService.getProgramaAcademicoById(id).getNombre();
 		}catch(Exception e) {
 			name = "";
 		};

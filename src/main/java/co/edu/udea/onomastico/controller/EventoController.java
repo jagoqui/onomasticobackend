@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
-import co.edu.udea.onomastico.job.EmailScheduling;
 import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.payload.CondicionResponse;
@@ -37,9 +36,6 @@ public class EventoController {
 
 	@Autowired
 	EventoService eventoService; 
-	
-	@Autowired
-	EmailScheduling emailScheduling;
 	
 	@Autowired
 	PlantillaService plantillaService;
