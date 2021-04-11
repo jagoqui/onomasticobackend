@@ -122,7 +122,7 @@ public class EventoService {
 		evento.setPlantilla(eventoRequest.getPlantilla());
 		evento.setRecurrencia(eventoRequest.getRecurrencia());
 		evento.setCondicionesEvento(null);
-	    Evento newEvento = eventoRepository.save(evento);
+	    Evento newEvento = eventoRepository.saveAndFlush(evento);
 	    Integer newEventoId = newEvento.getId();
 	    Set<CondicionRequest> condicionRequest = eventoRequest.getCondicionesEvento();
 	    Set<Condicion> condiciones =  new HashSet<Condicion>();
