@@ -57,10 +57,6 @@ public class EventoController {
 	    return eventoService.findAllEventosResponse();
 	}
 	
-	@GetMapping("/evento")
-	public String getAllemails() {
-	    return emailScheduling.scheduleDailyEmails();
-	}
 	@JsonView(Views.Public.class)
 	@GetMapping("/evento/condiciones/{id}")
 	public List<CondicionResponse> getCondiciones(@PathVariable(value = "id") Integer userid) {
@@ -109,8 +105,9 @@ public class EventoController {
 	}
 	@JsonView(Views.Public.class)
 	@GetMapping("/evento/usuario/pag")
-	public List<EventoResponse> getAllPlantillasPorAsociacionPag(@RequestParam Integer id,@RequestParam Integer npage,@RequestParam Integer psize,@RequestParam String sort){
-		return eventoService.getAllEventosByUsuarioPag(id, npage, psize, sort);
+	public List<EventoResponse> getAllPlantillasPorAsociacionPag(@RequestParam Integer npage,@RequestParam Integer psize,@RequestParam String sort){
+		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
+		return eventoService.getAllEventosByUsuarioPag(userId, npage, psize, sort);
 	}
 	
 	@DeleteMapping("/evento/{id}/{usuarioId}")
