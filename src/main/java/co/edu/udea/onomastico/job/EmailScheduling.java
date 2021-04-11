@@ -70,7 +70,7 @@ public class EmailScheduling {
 	ProgramaAcademicoService programaAcademicoService;
 	
     //cron everyday at 10:30 am
-    @Scheduled(cron = "0 30 12 * * ?")
+    @Scheduled(cron = "0 0 6 * * ?")
     public void scheduleDailyEmails() {
     	StringBuilder emails = new StringBuilder();
     	List<Evento> eventos = eventoService.getAllEventos();

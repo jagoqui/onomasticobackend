@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,12 +43,14 @@ public class UsuarioController {
 	JwtTokenProvider tokenProvider;
 	
 	//obtener todos los usuarios
+	@PreAuthorize("hasRole('ADMIN')")
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios")
 	public List<Usuario> getAllUsuarios() {
 	    return usuarioService.getAllUsuarios();
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios/pag")
 	public List<Usuario> getAllUsuariosPorAsociacionPag(@RequestParam Integer npage,@RequestParam Integer psize,@RequestParam String sort){
@@ -55,6 +58,7 @@ public class UsuarioController {
 		return usuarioService.getAllUsuariosByUsuarioPag(usuarioId, npage, psize, sort);
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios/pag/{pageNo}/{pageSize}/{sortBy}")
 	public List<Usuario> getAllUsuarios(@PathVariable(value = "pageNo") Integer pageNo, 
@@ -63,23 +67,27 @@ public class UsuarioController {
     }
 	
 	//crear usuario
+	@PreAuthorize("hasRole('ADMIN')")
 	@JsonView(Views.Public.class)
 	@PostMapping("/usuarios")
 	public Usuario AddUsuario(@RequestBody Usuario usuario) {
 	    return usuarioService.AddUsuario(usuario);
 	}
+	@PreAuthorize("hasRole('ADMIN')")
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios/{id}")
 	public Usuario getUsuarioById(@PathVariable(value = "id") Integer usuarioId) {
 	    return usuarioService.getUsuarioById(usuarioId);
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios/asociacion/{id}")
 	public Set<Asociacion> getAsociacionUsuarioById(@PathVariable(value = "id") Integer usuarioId) {
 		return usuarioService.getAsociacionUsuarioById(usuarioId);
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@JsonView(Views.Public.class)
 	@PutMapping("/usuarios/{id}")
 	public  Usuario updateUsuario(@PathVariable(value = "id") Integer usuarioId,
@@ -87,6 +95,7 @@ public class UsuarioController {
 	    return usuarioService.updateUsuario(usuarioId, detallesUsuario);
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/usuarios/{id}")
 	public ResponseEntity<?> deleteUsuario(@PathVariable(value = "id") Integer usuarioId) {
 	    return usuarioService.deleteUsuario(usuarioId);
