@@ -122,12 +122,18 @@ public class EventoService {
 		evento.setPlantilla(eventoRequest.getPlantilla());
 		evento.setRecurrencia(eventoRequest.getRecurrencia());
 		evento.setCondicionesEvento(null);
-	    Evento newEvento = eventoRepository.save(evento);
+	    Evento newEvento = eventoRepository.saveAndFlush(evento);
 	    Integer newEventoId = newEvento.getId();
 	    Set<CondicionRequest> condicionRequest = eventoRequest.getCondicionesEvento();
 	    Set<Condicion> condiciones =  new HashSet<Condicion>();
 	    condicionRequest.forEach(condicion->{
+	    	if(condicion.getCondicion().contains("genero")) {
+	    		String parametro = "FEMENINO";
+	    		if(condicion.getParametro().equals('1')) parametro = "MASCULINO";
+	    		condiciones.add(new Condicion(new CondicionId(newEventoId,condicion.getCondicion(),parametro), newEvento));
+	    	}else {
 	    	condiciones.add(new Condicion(new CondicionId(newEventoId,condicion.getCondicion(),condicion.getParametro()), newEvento));
+	    	}
 	    });
 	    if(!condiciones.toString().contains("asociacion")) {
 	    	Set<Asociacion> as = usuarioService.getAsociacionUsuarioById(usuarioId);
@@ -156,8 +162,20 @@ public class EventoService {
 		 Set<CondicionRequest> condicionRequest = detallesEvento.getCondicionesEvento();
 		    Set<Condicion> condiciones =  new HashSet<Condicion>();
 		    condicionRequest.forEach(condicion->{
-		    	condiciones.add(new Condicion(new CondicionId(evento.getId(),condicion.getCondicion(),condicion.getParametro()), evento));
-		    });
+		    	if(condicion.getCondicion().contains("genero")) {
+		    	String parametro = "FEMENINO";
+	    		if(condicion.getParametro().equals('1')) parametro = "MASCULINO";
+	    		condiciones.add(new Condicion(new CondicionId(evento.getId(),condicion.getCondicion(),parametro), evento));
+	    		}else {
+	    	condiciones.add(new Condicion(new CondicionId(evento.getId(),condicion.getCondicion(),condicion.getParametro()), evento));
+	    	}
+	    });
+	    if(!condiciones.toString().contains("asociacion")) {
+	    	Set<Asociacion> as = usuarioService.getAsociacionUsuarioById(usuarioId);
+	    	as.forEach(asociacion ->{
+	    		condiciones.add(new Condicion(new CondicionId(evento.getId(),"asociacion",String.valueOf(asociacion.getId())), evento));
+	    	});
+	    }
 		evento.setCondicionesEvento(condiciones);
 		Evento updatedEvento = eventoRepository.save(evento);
 		LogTransacciones transaccion = new LogTransacciones("Editar evento:"+evento.getId()+" "+evento.getNombre());

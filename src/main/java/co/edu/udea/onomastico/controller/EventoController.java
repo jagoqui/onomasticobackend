@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
-import co.edu.udea.onomastico.job.EmailScheduling;
 import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.payload.CondicionResponse;
@@ -37,9 +36,6 @@ public class EventoController {
 
 	@Autowired
 	EventoService eventoService; 
-	
-	@Autowired
-	EmailScheduling emailScheduling;
 	
 	@Autowired
 	PlantillaService plantillaService;
@@ -57,10 +53,6 @@ public class EventoController {
 	    return eventoService.findAllEventosResponse();
 	}
 	
-	@GetMapping("/evento")
-	public String getAllemails() {
-	    return emailScheduling.scheduleDailyEmails();
-	}
 	@JsonView(Views.Public.class)
 	@GetMapping("/evento/condiciones/{id}")
 	public List<CondicionResponse> getCondiciones(@PathVariable(value = "id") Integer userid) {
@@ -109,8 +101,9 @@ public class EventoController {
 	}
 	@JsonView(Views.Public.class)
 	@GetMapping("/evento/usuario/pag")
-	public List<EventoResponse> getAllPlantillasPorAsociacionPag(@RequestParam Integer id,@RequestParam Integer npage,@RequestParam Integer psize,@RequestParam String sort){
-		return eventoService.getAllEventosByUsuarioPag(id, npage, psize, sort);
+	public List<EventoResponse> getAllPlantillasPorAsociacionPag(@RequestParam Integer npage,@RequestParam Integer psize,@RequestParam String sort){
+		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
+		return eventoService.getAllEventosByUsuarioPag(userId, npage, psize, sort);
 	}
 	
 	@DeleteMapping("/evento/{id}/{usuarioId}")

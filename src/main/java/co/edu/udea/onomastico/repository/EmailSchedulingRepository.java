@@ -41,7 +41,7 @@ public class EmailSchedulingRepository {
 				sql.append("AND DAY(fecha_nacimiento)= DAY(CURRENT_DATE) AND Month(fecha_nacimiento)=Month(CURRENT_DATE) ");
 			}
 			if (condicion.getId().getCondicion().contains("genero")) {
-				sql.append("AND genero = "+condicion.getId().getParametro()+" ");
+				sql.append("AND genero = "+"'"+condicion.getId().getParametro()+"' ");
 			}
 			if (condicion.getId().getCondicion().contains("asociacion")) {
 				if(!sql.toString().contains("asociacion")) {
@@ -76,6 +76,7 @@ public class EmailSchedulingRepository {
 		});
 		}
 		String query = sql.toString();
+		System.out.print(query);
 		return queryResponseWithUsersInfo(query);
 	}
 	
