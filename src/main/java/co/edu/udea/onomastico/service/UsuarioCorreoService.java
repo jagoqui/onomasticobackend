@@ -92,11 +92,9 @@ public class UsuarioCorreoService {
 	}
 	
 	public UsuarioCorreo createUsuario(UsuarioCorreo usuario) {
-		if(usuario.getEmail()!=null && usuarioCorreoRepository.findById(usuario.getId()).isEmpty()) {
-			if(usuarioCorreoRepository.findByEmail(usuario.getEmail())!=null) throw new ResourceAlreadyExitsException(usuario.getEmail()+" ya se encuentra en uso");
+			if(!usuarioCorreoRepository.findByEmail(usuario.getEmail()).isEmpty()) throw new ResourceAlreadyExitsException(usuario.getEmail()+" ya se encuentra en uso");
 			UsuarioCorreo newUser = usuarioCorreoRepository.save(usuario);
 			return newUser;
-		}else throw new ResourceAlreadyExitsException("usuario de correo existente");
 	}
 	
 	//unsuscribe with encripted email

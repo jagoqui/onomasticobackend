@@ -65,6 +65,7 @@ public class UsuarioCorreoController {
 	}
 	
 	//crear usuario
+	@JsonView(Views.Public.class)
 	@PostMapping("/usuariosemail")
 	public UsuarioCorreo createUsuario(@RequestBody UsuarioCorreo usuario) {
 		return usuarioService.createUsuario(usuario);

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import co.edu.udea.onomastico.exceptions.BadRequestException;
 import co.edu.udea.onomastico.security.JwtTokenProvider;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
@@ -14,7 +15,7 @@ public class FeignClientInterceptor implements RequestInterceptor {
 
   private static final String AUTHORIZATION_HEADER = "Authorization";
 
-  public static String getBearerTokenHeader() {
+  public static String getBearerTokenHeader() throws BadRequestException {
     return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization").substring(7);
   }
 

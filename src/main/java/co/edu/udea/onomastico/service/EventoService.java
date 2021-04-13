@@ -129,13 +129,16 @@ public class EventoService {
 	    condicionRequest.forEach(condicion->{
 	    	if(condicion.getCondicion().contains("genero")) {
 	    		String parametro = "FEMENINO";
-	    		if(condicion.getParametro().equals('1')) parametro = "MASCULINO";
+	    		if(condicion.getParametro().contains("1")) parametro = "MASCULINO";
 	    		condiciones.add(new Condicion(new CondicionId(newEventoId,condicion.getCondicion(),parametro), newEvento));
 	    	}else {
 	    	condiciones.add(new Condicion(new CondicionId(newEventoId,condicion.getCondicion(),condicion.getParametro()), newEvento));
 	    	}
 	    });
-	    if(!condiciones.toString().contains("asociacion")) {
+	    Set<CondicionRequest> result = condicionRequest.stream()
+	    		.filter(item -> item.getCondicion().equals("asociacion")).collect(Collectors.toSet());
+	    	     
+	    if(result.isEmpty()) {
 	    	Set<Asociacion> as = usuarioService.getAsociacionUsuarioById(usuarioId);
 	    	as.forEach(asociacion ->{
 	    		condiciones.add(new Condicion(new CondicionId(newEventoId,"asociacion",String.valueOf(asociacion.getId())), newEvento));
@@ -170,7 +173,9 @@ public class EventoService {
 	    	condiciones.add(new Condicion(new CondicionId(evento.getId(),condicion.getCondicion(),condicion.getParametro()), evento));
 	    	}
 	    });
-	    if(!condiciones.toString().contains("asociacion")) {
+		    Set<CondicionRequest> result = condicionRequest.stream()
+		    		.filter(item -> item.getCondicion().equals("asociacion")).collect(Collectors.toSet());
+		    if(result.isEmpty()) {
 	    	Set<Asociacion> as = usuarioService.getAsociacionUsuarioById(usuarioId);
 	    	as.forEach(asociacion ->{
 	    		condiciones.add(new Condicion(new CondicionId(evento.getId(),"asociacion",String.valueOf(asociacion.getId())), evento));
