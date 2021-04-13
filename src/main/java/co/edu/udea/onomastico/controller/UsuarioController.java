@@ -73,14 +73,14 @@ public class UsuarioController {
 	public Usuario AddUsuario(@RequestBody Usuario usuario) {
 	    return usuarioService.AddUsuario(usuario);
 	}
-	@PreAuthorize("hasRole('ADMIN')")
+	
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios/{id}")
 	public Usuario getUsuarioById(@PathVariable(value = "id") Integer usuarioId) {
 	    return usuarioService.getUsuarioById(usuarioId);
 	}
 	
-	@PreAuthorize("hasRole('ADMIN')")
+	
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios/asociacion/{id}")
 	public Set<Asociacion> getAsociacionUsuarioById(@PathVariable(value = "id") Integer usuarioId) {
