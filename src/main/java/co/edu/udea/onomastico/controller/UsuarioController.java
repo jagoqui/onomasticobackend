@@ -80,7 +80,6 @@ public class UsuarioController {
 	    return usuarioService.getUsuarioById(usuarioId);
 	}
 	
-	
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios/asociacion/{id}")
 	public Set<Asociacion> getAsociacionUsuarioById(@PathVariable(value = "id") Integer usuarioId) {
