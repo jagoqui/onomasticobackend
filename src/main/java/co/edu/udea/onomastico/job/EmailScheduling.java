@@ -69,8 +69,8 @@ public class EmailScheduling {
 	@Autowired
 	ProgramaAcademicoService programaAcademicoService;
 	
-    //cron everyday at 10:30 am
-    @Scheduled(cron = "0 0 13 * * ?")
+    //cron everyday at 6:00 am
+    @Scheduled(cron = "0 0 6 * * ?")
     public void scheduleDailyEmails() {
     	StringBuilder emails = new StringBuilder();
     	List<Evento> eventos = eventoService.getAllEventos();
