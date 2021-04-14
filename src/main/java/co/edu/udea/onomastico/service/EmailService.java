@@ -30,7 +30,9 @@ public class EmailService {
 				+ "<tr style=\"border-collapse:collapse;\"><td valign=\"top\" style=\"padding:0;Margin:0;\"><table cellpadding=\"0\" cellspacing=\"0\" class=\"es-content\" align=\"center\" style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%;\">\r\n"
 				+ "<tr style=\"border-collapse:collapse;\"><td align=\"center\" bgcolor=\"#EFF3F5\" style=\"padding:0;Margin:0;background-color:#EFF3F5;\"><table bgcolor=\"#ffffff\" class=\"es-content-body\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" width=\"600\"\r\n"
 				+ "style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#FFFFFF;\">\r\n"
-				+ "<tr style=\"border-collapse:collapse;\"><td align=\"left\" style=\"padding:20px;Margin:0\">" + text + "style=\"-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:14px;text-decoration:underline;color:#698391;\">aquí</a>.</p>\r\n"
+				+ "<tr style=\"border-collapse:collapse;\"> <td align=\"center\" style=\"padding:0;Margin:0\">\r\n"
+				+ "    <img src=\"http://www.udea.edu.co/wps/wcm/connect/udea/3ef4bbd1-4ae7-4c87-b843-685c6f017501/logo-udea.png?MOD=AJPERES&CACHEID=3ef4bbd1-4ae7-4c87-b843-685c6f017501\">\r\n"
+				+ "    </td><td align=\"center\" style=\"padding:0;Margin:0\">" + text + "style=\"-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:14px;text-decoration:underline;color:#698391;\">aquí</a>.</p>\r\n"
 						+ "</td></tr></table></td></tr></table></td></tr></table></td></tr></table>\r\n"
 						+ "</td></tr></table></div></body></html>";
 		MimeMessageHelper helper;
