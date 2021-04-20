@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
+import co.edu.udea.onomastico.job.EmailScheduling;
 import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.payload.CondicionResponse;
@@ -54,8 +55,8 @@ public class EventoController {
 	}
 	
 	@JsonView(Views.Public.class)
-	@GetMapping("/evento/condiciones/{id}")
-	public List<CondicionResponse> getCondiciones(@PathVariable(value = "id") Integer userid) {
+	@GetMapping("/evento/condiciones")
+	public List<CondicionResponse> getCondiciones() {
 		Integer usuarioId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return eventoService.getConditionsForUser(usuarioId);
 	}
@@ -68,8 +69,8 @@ public class EventoController {
     }
 	
 	@JsonView(Views.Public.class)
-	@PostMapping("/evento/{usuarioId}")
-	public EventoResponse AddEvento(@RequestBody EventoRequest evento,  @PathVariable(value = "usuarioId") Integer usuarioId) {
+	@PostMapping("/evento")
+	public EventoResponse AddEvento(@RequestBody EventoRequest evento) {
 		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return eventoService.AddEvento(evento, userId);
 	}
@@ -80,9 +81,9 @@ public class EventoController {
 	}
 	
 	@JsonView(Views.Public.class)
-	@PutMapping("/evento/{id}/{usuarioId}")
+	@PutMapping("/evento/{id}")
 	public  EventoResponse updateEvento(@PathVariable(value = "id") Integer eventoId,
-	                             @RequestBody EventoRequest  detallesEvento, @PathVariable(value = "usuarioId")  Integer userId) {
+	                             @RequestBody EventoRequest  detallesEvento) {
 		Integer usuarioId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return eventoService.updateEvento(eventoId, detallesEvento, usuarioId);
 	}
@@ -106,19 +107,23 @@ public class EventoController {
 		return eventoService.getAllEventosByUsuarioPag(userId, npage, psize, sort);
 	}
 	
-	@DeleteMapping("/evento/{id}/{usuarioId}")
-	public ResponseEntity<?> deleteEvento(@PathVariable(value = "id") Integer eventoId,@PathVariable(value = "usuarioId") Integer usuarioId) {
+	@JsonView(Views.Public.class)
+	@DeleteMapping("/evento/{id}")
+	public ResponseEntity<?> deleteEvento(@PathVariable(value = "id") Integer eventoId) {
 		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return eventoService.deleteEvento(eventoId, userId);
 	}
 	
-	@PutMapping("/evento/desactivar/{id}/{usuarioId}")
-	public EventoResponse deactivateEvento(@PathVariable(value = "id") Integer eventoId,@PathVariable(value = "usuarioId") Integer usuarioId) {
+	@JsonView(Views.Public.class)
+	@PutMapping("/evento/desactivar/{id}")
+	public EventoResponse deactivateEvento(@PathVariable(value = "id") Integer eventoId) {
 		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return eventoService.deactivateEvento(eventoId, userId);
 	}
-	@PutMapping("/evento/activar/{id}/{usuarioId}")
-	public EventoResponse activateEvento(@PathVariable(value = "id") Integer eventoId,@PathVariable(value = "usuarioId") Integer usuarioId) {
+	
+	@JsonView(Views.Public.class)
+	@PutMapping("/evento/activar/{id}")
+	public EventoResponse activateEvento(@PathVariable(value = "id") Integer eventoId) {
 		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return eventoService.activateEvento(eventoId, userId);
 	}

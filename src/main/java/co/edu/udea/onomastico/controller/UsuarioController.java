@@ -25,7 +25,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Usuario;
-import co.edu.udea.onomastico.model.UsuarioCorreo;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.security.JwtTokenProvider;
 import co.edu.udea.onomastico.service.UsuarioService;
@@ -43,14 +42,12 @@ public class UsuarioController {
 	JwtTokenProvider tokenProvider;
 	
 	//obtener todos los usuarios
-	@PreAuthorize("hasRole('ADMIN')")
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios")
 	public List<Usuario> getAllUsuarios() {
 	    return usuarioService.getAllUsuarios();
 	}
 	
-	@PreAuthorize("hasRole('ADMIN')")
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios/pag")
 	public List<Usuario> getAllUsuariosPorAsociacionPag(@RequestParam Integer npage,@RequestParam Integer psize,@RequestParam String sort){
@@ -58,7 +55,6 @@ public class UsuarioController {
 		return usuarioService.getAllUsuariosByUsuarioPag(usuarioId, npage, psize, sort);
 	}
 	
-	@PreAuthorize("hasRole('ADMIN')")
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios/pag/{pageNo}/{pageSize}/{sortBy}")
 	public List<Usuario> getAllUsuarios(@PathVariable(value = "pageNo") Integer pageNo, 
@@ -67,7 +63,6 @@ public class UsuarioController {
     }
 	
 	//crear usuario
-	@PreAuthorize("hasRole('ADMIN')")
 	@JsonView(Views.Public.class)
 	@PostMapping("/usuarios")
 	public Usuario AddUsuario(@RequestBody Usuario usuario) {
@@ -86,7 +81,6 @@ public class UsuarioController {
 		return usuarioService.getAsociacionUsuarioById(usuarioId);
 	}
 	
-	@PreAuthorize("hasRole('ADMIN')")
 	@JsonView(Views.Public.class)
 	@PutMapping("/usuarios/{id}")
 	public  Usuario updateUsuario(@PathVariable(value = "id") Integer usuarioId,
@@ -94,7 +88,6 @@ public class UsuarioController {
 	    return usuarioService.updateUsuario(usuarioId, detallesUsuario);
 	}
 	
-	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/usuarios/{id}")
 	public ResponseEntity<?> deleteUsuario(@PathVariable(value = "id") Integer usuarioId) {
 	    return usuarioService.deleteUsuario(usuarioId);
