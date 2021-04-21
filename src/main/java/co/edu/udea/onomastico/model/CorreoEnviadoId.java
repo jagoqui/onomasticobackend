@@ -10,14 +10,18 @@ import javax.persistence.TemporalType;
 
 import org.springframework.data.annotation.CreatedDate;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 @Embeddable
 public class CorreoEnviadoId implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "email")
 	private String email;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "fecha", nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreatedDate

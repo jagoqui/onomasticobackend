@@ -72,8 +72,8 @@ public class PlantillasController {
 //	}
 	
 	@JsonView(Views.Public.class)
-	@PostMapping("/plantillas")
-	public ResponseEntity<Plantilla> addPlantilla(@RequestPart("plantilla") Plantilla plantilla){
+	@PostMapping("/plantillas/{usuarioId}")
+	public ResponseEntity<Plantilla> addPlantilla(@RequestPart("plantilla") Plantilla plantilla, @PathVariable(value = "usuarioId") Integer usuarioId){
 		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return  plantillaService.addPlantilla(plantilla, userId);
 	}
@@ -91,14 +91,14 @@ public class PlantillasController {
 //	}
 	
 	@JsonView(Views.Public.class)
-	@PutMapping("/plantillas/{id}")
-	public ResponseEntity<Plantilla> updatePlantilla( @RequestPart("plantilla") Plantilla plantilla,  @PathVariable(value = "id") Integer plantillaId) {
+	@PutMapping("/plantillas/{id}/{usuarioId}")
+	public ResponseEntity<Plantilla> updatePlantilla( @RequestPart("plantilla") Plantilla plantilla,  @PathVariable(value = "id") Integer plantillaId, @PathVariable(value = "usuarioId") Integer usuarioId) {
 		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return plantillaService.updatePlantilla(plantilla, plantillaId, userId);
 	}
 	
-	@DeleteMapping("/plantillas/{id}")
-	public ResponseEntity<?> deletePlantilla(@PathVariable(value = "id") Integer plantillaId) {
+	@DeleteMapping("/plantillas/{id}/{usuarioId}")
+	public ResponseEntity<?> deletePlantilla(@PathVariable(value = "id") Integer plantillaId, @PathVariable(value = "usuarioId") Integer usuarioId) {
 		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return plantillaService.deletePlantilla(plantillaId, userId);
 	}

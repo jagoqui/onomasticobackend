@@ -69,7 +69,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/", "/favicon.ico", "/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg", "/**/*.html",
 						"/**/*.css", "/**/*.js")
 				.permitAll().antMatchers("/auth/**").permitAll()
-				.antMatchers("/unsuscribe/**","/condicion/**","/evento/**","/emails/**","/plantillas/**","/images/**").permitAll()
+				.antMatchers("/unsubscribe/**","/images/**").permitAll()
+				.antMatchers("/usuarios/asociacion").hasAnyAuthority("PUBLISHER","ADMIN")
+				.antMatchers("/usuarios/**").hasAnyAuthority("ADMIN")
 				.anyRequest().authenticated();
 
 		// Add our custom JWT security filter

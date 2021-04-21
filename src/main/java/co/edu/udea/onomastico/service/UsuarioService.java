@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import co.edu.udea.onomastico.exceptions.BadRequestException;
+import co.edu.udea.onomastico.exceptions.ResourceAlreadyExistsException;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Usuario;
@@ -70,7 +71,7 @@ public class UsuarioService {
 	
 
 	public Usuario AddUsuario(@RequestBody Usuario usuario) {
-		if(!usuarioRepository.findByEmail(usuario.getEmail()).isEmpty()) throw new BadRequestException("usuario existente");
+		if(!usuarioRepository.findByEmail(usuario.getEmail()).isEmpty()) throw new ResourceAlreadyExistsException("usuario existente",usuario.getEmail());
 		String password = usuario.getPassword();
 		String encriptedPassword = passwordEncoder.encode(password);
 		usuario.setPassword(encriptedPassword);

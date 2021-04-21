@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,12 +49,14 @@ public class PlantillaService {
 	
 	Logger logger = LoggerFactory.getLogger(PlantillaService.class);
 	
-	public UploadFileResponse uploadPlantillaImage(MultipartFile file, String name) {
+	public UploadFileResponse uploadPlantillaImage(HttpServletRequest request, MultipartFile file, String name) {
         String fileName = fileService.storeFile(file, name);
 
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+        String fileDownloadUri = ServletUriComponentsBuilder.fromRequestUri(request)
+                .replacePath(null)
                 .path("/images/")
                 .path(fileName)
+                .scheme(request.getScheme())
                 .toUriString();
 
         return new UploadFileResponse(fileName, fileDownloadUri,

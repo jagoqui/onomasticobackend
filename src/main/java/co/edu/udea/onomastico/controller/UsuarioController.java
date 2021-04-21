@@ -76,8 +76,9 @@ public class UsuarioController {
 	}
 	
 	@JsonView(Views.Public.class)
-	@GetMapping("/usuarios/asociacion/{id}")
-	public Set<Asociacion> getAsociacionUsuarioById(@PathVariable(value = "id") Integer usuarioId) {
+	@GetMapping("/usuarios/asociacion")
+	public Set<Asociacion> getAsociacionUsuarioById() {
+		Integer usuarioId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return usuarioService.getAsociacionUsuarioById(usuarioId);
 	}
 	

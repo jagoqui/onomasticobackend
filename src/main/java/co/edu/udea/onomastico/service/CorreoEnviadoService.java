@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import co.edu.udea.onomastico.model.CorreoEnviado;
+import co.edu.udea.onomastico.payload.CorreoEnviadoResponse;
 import co.edu.udea.onomastico.repository.CorreoEnviadoRepository;
 
 @Service
@@ -18,19 +19,28 @@ public class CorreoEnviadoService {
 	@Autowired
 	CorreoEnviadoRepository correoEnviadoRepository;
 	
-	public List<CorreoEnviado> getAllEmails() {
-		return correoEnviadoRepository.findAll();
+	public List<CorreoEnviadoResponse> getAllEmails() {
+		return getAllEmailsFormatted(correoEnviadoRepository.findAll());
 	}
 	
-	public List<CorreoEnviado> getAllUsuariosCorreo(Integer pageNo,  Integer pageSize,String sortBy){
+	public List<CorreoEnviadoResponse> getAllEmailsPag(Integer pageNo,  Integer pageSize,String sortBy){
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         Page<CorreoEnviado> pagedResult =  correoEnviadoRepository.findAll(paging);
-        if(pagedResult.hasContent()) return pagedResult.getContent();
-        else return new ArrayList<CorreoEnviado>();
+        if(pagedResult.hasContent()) return getAllEmailsFormatted(pagedResult.getContent());
+        else return new ArrayList<CorreoEnviadoResponse>();
     }
 	
 	public CorreoEnviado addCorreoEnviado(CorreoEnviado correoEnviado) {
 		return correoEnviadoRepository.save(correoEnviado);
 	}
+	
+	public List<CorreoEnviadoResponse> getAllEmailsFormatted(List<CorreoEnviado> emails) {
+		List<CorreoEnviadoResponse> emailFormatted = new ArrayList<CorreoEnviadoResponse>();
+		emails.forEach(email ->{
+			emailFormatted.add(new CorreoEnviadoResponse(email.getId().getEmail(),email.getId().getFecha(),email.getAsunto()));
+		});
+		return emailFormatted;
+	}
+	
 
 }
