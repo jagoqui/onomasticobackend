@@ -16,7 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import co.edu.udea.onomastico.exceptions.ResourceAlreadyExitsException;
+import co.edu.udea.onomastico.exceptions.ResourceAlreadyExistsException;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.ProgramaAcademico;
@@ -92,14 +92,14 @@ public class UsuarioCorreoService {
 	}
 	
 	public UsuarioCorreo createUsuario(UsuarioCorreo usuario) {
-			if(!usuarioCorreoRepository.findByEmail(usuario.getEmail()).isEmpty()) throw new ResourceAlreadyExitsException(usuario.getEmail()+" ya se encuentra en uso");
+			if(!usuarioCorreoRepository.findByEmail(usuario.getEmail()).isEmpty() && !usuarioCorreoRepository.findById(usuario.getId()).isEmpty()) throw new ResourceAlreadyExistsException(" ya se encuentra en uso", usuario.getEmail());
 			UsuarioCorreo newUser = usuarioCorreoRepository.save(usuario);
 			return newUser;
 	}
 	
 	//unsuscribe with encripted email
 	
-	public UsuarioCorreo unsuscribe(String encriptedEmail) {
+	public UsuarioCorreo unsubscribe(String encriptedEmail) {
 			String email = new String(Base64.getDecoder().decode(encriptedEmail));
 			UsuarioCorreo user = usuarioCorreoRepository.findByEmail(email)
 					.orElseThrow(() -> new ResourceNotFoundException("UsuarioCorreo"+"email"+email));
@@ -108,7 +108,7 @@ public class UsuarioCorreoService {
 			return user;
 		}
 	//suscribe with email not encripted
-	public UsuarioCorreo suscribe(String nonencriptedEmail) {
+	public UsuarioCorreo subscribe(String nonencriptedEmail) {
 		UsuarioCorreo user = usuarioCorreoRepository.findByEmail(nonencriptedEmail)
 				.orElseThrow(() -> new ResourceNotFoundException("UsuarioCorreo"+"email"+nonencriptedEmail));
 		user.setEstado("ACTIVO");
@@ -126,6 +126,7 @@ public class UsuarioCorreoService {
 		UsuarioCorreo  usuario =  usuarioCorreoRepository.findById(usuarioId)
 	            .orElseThrow(() -> new ResourceNotFoundException("UsuarioCorreo" + "id"+ usuarioId));
 
+		usuario.setId(detallesUsuario.getId());
 		usuario.setNombre(detallesUsuario.getNombre());;
 		usuario.setEmail(detallesUsuario.getEmail());
 		usuario.setApellido(detallesUsuario.getApellido());

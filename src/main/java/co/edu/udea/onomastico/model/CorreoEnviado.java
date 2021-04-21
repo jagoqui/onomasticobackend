@@ -20,6 +20,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvBindByPosition;
+
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "correo_enviado")

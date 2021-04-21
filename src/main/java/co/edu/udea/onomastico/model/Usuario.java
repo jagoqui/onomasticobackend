@@ -77,6 +77,10 @@ public class Usuario implements Serializable {
 	@JoinColumn(name = "rol_id", nullable = false)
 	private Rol rol;
 	
+	@JsonView(Views.Internal.class)
+	@Column(name = "reset_token", length = 36, nullable = true)
+	private String resetToken;
+	
 	@JsonView(Views.Public.class)
 	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -99,6 +103,20 @@ public class Usuario implements Serializable {
 		this.estado = estado;
 		this.createTime = createTime;
 		this.rol = rol;
+		this.asociacionPorUsuario = asociacionPorUsuario;
+	}
+
+	public Usuario(int id, String nombre, String email, String password, String estado, Date createTime, Rol rol,
+			String resetToken, Set<Asociacion> asociacionPorUsuario) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.email = email;
+		this.password = password;
+		this.estado = estado;
+		this.createTime = createTime;
+		this.rol = rol;
+		this.resetToken = resetToken;
 		this.asociacionPorUsuario = asociacionPorUsuario;
 	}
 
@@ -166,6 +184,14 @@ public class Usuario implements Serializable {
 		this.asociacionPorUsuario = asociacionPorUsuario;
 	}
 	
+	public String getResetToken() {
+		return resetToken;
+	}
+
+	public void setResetToken(String resetToken) {
+		this.resetToken = resetToken;
+	}
+
 	public static String hash(String password,int row) {
         return BCrypt.hashpw(password, BCrypt.gensalt(row));
     }

@@ -42,17 +42,20 @@ public class ImageResourceController {
 	
 	@RequestMapping(path = "/upload/{name}", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, @PathVariable(value = "name") String name) {
+    public UploadFileResponse uploadFile(HttpServletRequest request, @RequestParam("file") MultipartFile file, @PathVariable(value = "name") String name) {
         String fileName = fileService.storeFile(file, name);
-
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+        String uri = request.getServerName() + ":" + request.getServerPort();
+        String fileDownloadUri = ServletUriComponentsBuilder.fromRequestUri(request)
+                .replacePath(null)
                 .path("/images/")
                 .path(fileName)
+                .scheme(request.getScheme())
                 .toUriString();
 
         return new UploadFileResponse(fileName, fileDownloadUri,
                 file.getContentType(), file.getSize());
     }
+	
 	
 	@RequestMapping(path = "/images/{fileName:.+}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
 	@ResponseBody

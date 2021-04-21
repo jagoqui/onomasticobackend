@@ -2,6 +2,7 @@ package co.edu.udea.onomastico.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import co.edu.udea.onomastico.exceptions.BadRequestException;
+import co.edu.udea.onomastico.exceptions.ResourceAlreadyExistsException;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Usuario;
@@ -59,6 +61,18 @@ public class UsuarioService {
 		} throw new BadRequestException("To complite this action the user must be an Admin");
 	}
 	
+	public Optional findUserByEmail(String email) {
+		return usuarioRepository.findByEmail(email);
+	}
+
+	public Optional findUserByResetToken(String resetToken) {
+		return usuarioRepository.findByResetToken(resetToken);
+	}
+
+	public void save(Usuario user) {
+		usuarioRepository.save(user);
+	}
+	
 	public List<Usuario> getUsuariosByAsociacion(Set<Asociacion> asociaciones){
 		List<Usuario> merge = new ArrayList<Usuario>();
 		asociaciones.forEach(asociacion ->{
@@ -70,7 +84,7 @@ public class UsuarioService {
 	
 
 	public Usuario AddUsuario(@RequestBody Usuario usuario) {
-		if(!usuarioRepository.findByEmail(usuario.getEmail()).isEmpty()) throw new BadRequestException("usuario existente");
+		if(!usuarioRepository.findByEmail(usuario.getEmail()).isEmpty()) throw new ResourceAlreadyExistsException("usuario existente",usuario.getEmail());
 		String password = usuario.getPassword();
 		String encriptedPassword = passwordEncoder.encode(password);
 		usuario.setPassword(encriptedPassword);

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.UsuarioCorreo;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.payload.EventoResponse;
@@ -65,6 +67,7 @@ public class UsuarioCorreoController {
 	}
 	
 	//crear usuario
+	@ExceptionHandler(value={ResourceNotFoundException.class})
 	@JsonView(Views.Public.class)
 	@PostMapping("/usuariosemail")
 	public UsuarioCorreo createUsuario(@RequestBody UsuarioCorreo usuario) {
@@ -73,16 +76,16 @@ public class UsuarioCorreoController {
 	
 	//ususcribe with ecripted email
 	@JsonView(Views.Public.class)
-	@PutMapping("/unsuscribe/{email}")
+	@PutMapping("/unsubscribe/{email}")
 	public UsuarioCorreo unsuscribe(@PathVariable(value = "email") String encriptedEmail) {
-		return usuarioService.unsuscribe(encriptedEmail);
+		return usuarioService.unsubscribe(encriptedEmail);
 	}
 	
 	//ususcribe with ecripted email
 	@JsonView(Views.Public.class)
-	@PutMapping("/usuariosemail/suscribe/{email}")
+	@PutMapping("/usuariosemail/subscribe/{email}")
 	public UsuarioCorreo suscribe(@PathVariable(value = "email") String nonencriptedEmail) {
-		return usuarioService.suscribe(nonencriptedEmail);
+		return usuarioService.subscribe(nonencriptedEmail);
 	}
 	
 	@JsonView(Views.Public.class)
