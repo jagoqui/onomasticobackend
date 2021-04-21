@@ -2,6 +2,7 @@ package co.edu.udea.onomastico.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,18 @@ public class UsuarioService {
 		final Page<Usuario> page = new PageImpl<>(usuarios.subList(start, end), paging, usuarios.size());
 		return page.toList();
 		} throw new BadRequestException("To complite this action the user must be an Admin");
+	}
+	
+	public Optional findUserByEmail(String email) {
+		return usuarioRepository.findByEmail(email);
+	}
+
+	public Optional findUserByResetToken(String resetToken) {
+		return usuarioRepository.findByResetToken(resetToken);
+	}
+
+	public void save(Usuario user) {
+		usuarioRepository.save(user);
 	}
 	
 	public List<Usuario> getUsuariosByAsociacion(Set<Asociacion> asociaciones){
