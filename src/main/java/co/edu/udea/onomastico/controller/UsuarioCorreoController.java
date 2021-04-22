@@ -92,7 +92,9 @@ public class UsuarioCorreoController {
 	@GetMapping("/usuariosemail/{tipo}/{numero}")
 	public Optional<UsuarioCorreo> getUsuarioById(@PathVariable(value = "tipo") String tipo, 
 			@PathVariable(value = "numero")String numero) {
-		return usuarioService.getUsuarioById(tipo, numero);
+		Optional<UsuarioCorreo> usuario = usuarioService.getUsuarioById(tipo, numero);
+		if(!usuario.isPresent()) throw new ResourceNotFoundException();
+		else return usuario;
 	}
 	
 	@JsonView(Views.Public.class)
