@@ -53,15 +53,14 @@ public class PlantillasController {
 	}
 	@JsonView(Views.Public.class)
 	@GetMapping("/plantillas/usuario/pag")
-	public List<Plantilla> getAllPlantillasPorAsociacionPag(@RequestParam Integer id,@RequestParam Integer npage,@RequestParam Integer psize,@RequestParam String sort){
+	public List<Plantilla> getAllPlantillasPorAsociacionPag(@RequestParam Integer npage,@RequestParam Integer psize,@RequestParam String sort){
 		Integer usuarioId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return plantillaService.getAllPlantillasByUsuarioPag(usuarioId, npage, psize, sort);
 	}
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/plantillas/pag/{pageNo}/{pageSize}/{sortBy}")
-	public List<Plantilla> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, 
-			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
+	public List<Plantilla> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, @PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
         return plantillaService.getAllPlantillas(pageNo, pageSize, sortBy);
     }
 	
@@ -72,8 +71,8 @@ public class PlantillasController {
 //	}
 	
 	@JsonView(Views.Public.class)
-	@PostMapping("/plantillas/{usuarioId}")
-	public ResponseEntity<Plantilla> addPlantilla(@RequestPart("plantilla") Plantilla plantilla, @PathVariable(value = "usuarioId") Integer usuarioId){
+	@PostMapping("/plantillas")
+	public ResponseEntity<Plantilla> addPlantilla(@RequestPart("plantilla") Plantilla plantilla){
 		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return  plantillaService.addPlantilla(plantilla, userId);
 	}
@@ -91,14 +90,14 @@ public class PlantillasController {
 //	}
 	
 	@JsonView(Views.Public.class)
-	@PutMapping("/plantillas/{id}/{usuarioId}")
-	public ResponseEntity<Plantilla> updatePlantilla( @RequestPart("plantilla") Plantilla plantilla,  @PathVariable(value = "id") Integer plantillaId, @PathVariable(value = "usuarioId") Integer usuarioId) {
+	@PutMapping("/plantillas/{id}")
+	public ResponseEntity<Plantilla> updatePlantilla( @RequestPart("plantilla") Plantilla plantilla,  @PathVariable(value = "id") Integer plantillaId) {
 		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return plantillaService.updatePlantilla(plantilla, plantillaId, userId);
 	}
 	
-	@DeleteMapping("/plantillas/{id}/{usuarioId}")
-	public ResponseEntity<?> deletePlantilla(@PathVariable(value = "id") Integer plantillaId, @PathVariable(value = "usuarioId") Integer usuarioId) {
+	@DeleteMapping("/plantillas/{id}")
+	public ResponseEntity<?> deletePlantilla(@PathVariable(value = "id") Integer plantillaId) {
 		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return plantillaService.deletePlantilla(plantillaId, userId);
 	}
