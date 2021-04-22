@@ -49,7 +49,7 @@ public class EventoController {
 	
 	//obtener todos los usuarios
 	@JsonView(Views.Public.class)
-	@GetMapping("/")
+	@GetMapping("/eventos")
 	public List<EventoResponse> getAllEventos() {
 	    return eventoService.findAllEventosResponse();
 	}

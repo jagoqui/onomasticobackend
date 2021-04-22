@@ -12,14 +12,16 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Table(name = "rol")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Rol implements Serializable{
+	@JsonView(Views.Public.class)
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
-
+	@JsonView(Views.Public.class)
 	@Column(name = "nombre", length = 45, nullable = false)
 	private String nombre;
 	
