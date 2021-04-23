@@ -70,7 +70,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 						"/**/*.css", "/**/*.js")
 				.permitAll().antMatchers("/auth/**").permitAll()
 				.antMatchers("/unsubscribe/**","/images/**").permitAll()
-				.antMatchers("/usuarios/asociacion").hasAnyAuthority("PUBLISHER","ADMIN")
+				.antMatchers("/usuarios/asociacion","/usuarios/programasporasociacion").hasAnyAuthority("PUBLISHER","ADMIN")
 				.antMatchers("/usuarios/**").hasAnyAuthority("ADMIN")
 				.anyRequest().authenticated();
 

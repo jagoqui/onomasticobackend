@@ -1,6 +1,8 @@
 package co.edu.udea.onomastico.service;
 
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -16,11 +18,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import co.edu.udea.onomastico.exceptions.AuthException;
 import co.edu.udea.onomastico.exceptions.BadRequestException;
 import co.edu.udea.onomastico.exceptions.ResourceAlreadyExistsException;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Asociacion;
+import co.edu.udea.onomastico.model.ProgramaAcademico;
 import co.edu.udea.onomastico.model.Usuario;
+import co.edu.udea.onomastico.model.UsuarioCorreo;
+import co.edu.udea.onomastico.payload.ProgramasPorAsociacionResponse;
 import co.edu.udea.onomastico.repository.UsuarioRepository;
 
 @Service
@@ -31,6 +37,9 @@ public class UsuarioService {
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
+	
+	@Autowired
+	ProgramaAcademicoService  programaAcademicoService;
 	
 	public List<Usuario> getAllUsuarios() {
 	    return usuarioRepository.findAll();
@@ -53,12 +62,14 @@ public class UsuarioService {
 		if(isAdmin(usuarioId)) {
 		Set<Asociacion> asociaciones = getAsociacionUsuarioById(usuarioId);
 		List<Usuario> usuarios = getUsuariosByAsociacion(asociaciones);
-		Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+		Pageable paging;
+		if(sortBy!=null)paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        else paging = PageRequest.of(pageNo, pageSize);
 		final int start = (int)paging.getOffset();
 		final int end = Math.min((start + paging.getPageSize()), usuarios.size());
 		final Page<Usuario> page = new PageImpl<>(usuarios.subList(start, end), paging, usuarios.size());
 		return page.toList();
-		} throw new BadRequestException("To complite this action the user must be an Admin");
+		} throw new AuthException("To complite this action the user must be an Admin");
 	}
 	
 	public Optional findUserByEmail(String email) {
@@ -103,6 +114,21 @@ public class UsuarioService {
 		return usuario.getAsociacionPorUsuario();
 	}
 	
+	public List<ProgramasPorAsociacionResponse> getProgramasPorAsociacionResponseUsuarioById(Integer usuarioId) {
+		List<ProgramasPorAsociacionResponse> programasPorAsociacion = new ArrayList<ProgramasPorAsociacionResponse>();
+		Set<Asociacion> asociaciones = getAsociacionUsuarioById(usuarioId);
+		if(asociaciones != null) {
+			asociaciones.forEach(asociacion ->{
+				System.out.print(asociacion.getNombre());
+				List<ProgramaAcademico> programas = programaAcademicoService.findByProgramaAcademicoPorAsociacion(asociacion);
+				if(programas != null) {
+					programasPorAsociacion.add(new ProgramasPorAsociacionResponse(asociacion, programas));
+				}
+			});
+		}
+		return programasPorAsociacion;
+	}
+	
 	public boolean isAdmin(Integer usuarioId) {
 		Usuario usuario = usuarioRepository.findById(usuarioId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Usuario"+"id"+usuarioId));
@@ -130,5 +156,21 @@ public class UsuarioService {
 
 	    usuarioRepository.delete(usuario);
 	    return ResponseEntity.ok().build();
+	}
+	
+	public Usuario desactivar(String email) {
+		Usuario user = usuarioRepository.findByEmail(email)
+				.orElseThrow(() -> new ResourceNotFoundException("email"+email));
+		user.setEstado("INACTIVO");
+		usuarioRepository.save(user);
+		return user;
+	}
+	
+	public Usuario activar(String email) {
+		Usuario user = usuarioRepository.findByEmail(email)
+			.orElseThrow(() -> new ResourceNotFoundException("UsuarioCorreo"+"email"+email));
+		user.setEstado("ACTIVO");
+		usuarioRepository.save(user);
+		return user;
 	}
 }

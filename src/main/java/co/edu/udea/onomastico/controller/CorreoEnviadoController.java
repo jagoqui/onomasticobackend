@@ -35,8 +35,8 @@ public class CorreoEnviadoController {
 	}
 	
 	@GetMapping("/emails/pag")
-	public List<CorreoEnviadoResponse> getAllUsuariosCorreo(@RequestParam Integer npage, 
-			@RequestParam Integer psize,@RequestParam String sort){
+	public List<CorreoEnviadoResponse> getAllEmailsPag(@RequestParam Integer npage, 
+			@RequestParam Integer psize,@RequestParam(required = false) String sort){
         return correoEnviadoService.getAllEmailsPag(npage, psize, sort);
     }
 	

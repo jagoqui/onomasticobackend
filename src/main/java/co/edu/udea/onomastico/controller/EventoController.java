@@ -26,6 +26,7 @@ import co.edu.udea.onomastico.job.EmailScheduling;
 import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.payload.CondicionResponse;
+import co.edu.udea.onomastico.payload.CorreoEnviadoResponse;
 import co.edu.udea.onomastico.payload.EventoRequest;
 import co.edu.udea.onomastico.payload.EventoResponse;
 import co.edu.udea.onomastico.security.JwtTokenProvider;
@@ -61,11 +62,18 @@ public class EventoController {
 		return eventoService.getConditionsForUser(usuarioId);
 	}
 	
+//	@JsonView(Views.Public.class)
+//	@GetMapping("/evento/pag/{pageNo}/{pageSize}/{sortBy}")
+//	public List<EventoResponse> getAllEventos(@PathVariable(value = "pageNo") Integer pageNo, 
+//			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
+//        return eventoService.getAllEventos(pageNo, pageSize, sortBy);
+//    }
+	
 	@JsonView(Views.Public.class)
-	@GetMapping("/evento/pag/{pageNo}/{pageSize}/{sortBy}")
-	public List<EventoResponse> getAllEventos(@PathVariable(value = "pageNo") Integer pageNo, 
-			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
-        return eventoService.getAllEventos(pageNo, pageSize, sortBy);
+	@GetMapping("/evento/pag")
+	public List<EventoResponse> getAllEmailsPag(@RequestParam Integer npage, 
+			@RequestParam Integer psize,@RequestParam(required = false) String sort){
+        return eventoService.getAllEventos(npage, psize, sort);
     }
 	
 	@JsonView(Views.Public.class)

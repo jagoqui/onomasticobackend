@@ -21,24 +21,29 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "log_transacciones")
 public class LogTransacciones implements Serializable{
 	
+	@JsonView(Views.Public.class)
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "transaccion", length = 200)
 	private String transaccion;
 	
+	@JsonView(Views.Public.class)
 	@Column(name = "fecha")
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreatedDate
 	private java.util.Date fecha;
 	
-	
+	@JsonView(Views.Public.class)
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "usuario_id", nullable = false, updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

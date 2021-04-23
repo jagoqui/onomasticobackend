@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import co.edu.udea.onomastico.exceptions.ResourceAlreadyExistsException;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.UsuarioCorreo;
 import co.edu.udea.onomastico.model.Views;
@@ -53,12 +54,12 @@ public class UsuarioCorreoController {
 		return usuarioService.getAllUsuarioCorreoByUsuarioPag(usuarioId, npage, psize, sort);
 	}
 	
-	@JsonView(Views.Public.class)
-	@GetMapping("/usuariosemail/pag/{pageNo}/{pageSize}/{sortBy}")
-	public List<UsuarioCorreo> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, 
-			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
-        return usuarioService.getAllUsuariosCorreo(pageNo, pageSize, sortBy);
-    }
+//	@JsonView(Views.Public.class)
+//	@GetMapping("/usuariosemail/pag/{pageNo}/{pageSize}/{sortBy}")
+//	public List<UsuarioCorreo> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, 
+//			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
+//        return usuarioService.getAllUsuariosCorreo(pageNo, pageSize, sortBy);
+//    }
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuariosemail")
@@ -67,7 +68,7 @@ public class UsuarioCorreoController {
 	}
 	
 	//crear usuario
-	@ExceptionHandler(value={ResourceNotFoundException.class})
+	@ExceptionHandler(value={ResourceAlreadyExistsException.class})
 	@JsonView(Views.Public.class)
 	@PostMapping("/usuariosemail")
 	public UsuarioCorreo createUsuario(@RequestBody UsuarioCorreo usuario) {

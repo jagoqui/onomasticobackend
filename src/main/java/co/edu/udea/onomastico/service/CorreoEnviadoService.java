@@ -24,7 +24,9 @@ public class CorreoEnviadoService {
 	}
 	
 	public List<CorreoEnviadoResponse> getAllEmailsPag(Integer pageNo,  Integer pageSize,String sortBy){
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+		Pageable paging;
+		if(sortBy!=null)paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        else paging = PageRequest.of(pageNo, pageSize);
         Page<CorreoEnviado> pagedResult =  correoEnviadoRepository.findAll(paging);
         if(pagedResult.hasContent()) return getAllEmailsFormatted(pagedResult.getContent());
         else return new ArrayList<CorreoEnviadoResponse>();
