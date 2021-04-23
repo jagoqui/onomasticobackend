@@ -47,7 +47,7 @@ public class ImageResourceController {
         String uri = request.getServerName() + ":" + request.getServerPort();
         String fileDownloadUri = ServletUriComponentsBuilder.fromRequestUri(request)
                 .replacePath(null)
-                .path("/images/")
+                .path("/onomastico/images/")
                 .path(fileName)
                 .scheme(request.getScheme())
                 .toUriString();

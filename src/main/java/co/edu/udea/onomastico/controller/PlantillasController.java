@@ -58,11 +58,11 @@ public class PlantillasController {
 		return plantillaService.getAllPlantillasByUsuarioPag(usuarioId, npage, psize, sort);
 	}
 	
-	@JsonView(Views.Public.class)
-	@GetMapping("/plantillas/pag/{pageNo}/{pageSize}/{sortBy}")
-	public List<Plantilla> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, @PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
-        return plantillaService.getAllPlantillas(pageNo, pageSize, sortBy);
-    }
+//	@JsonView(Views.Public.class)
+//	@GetMapping("/plantillas/pag/{pageNo}/{pageSize}/{sortBy}")
+//	public List<Plantilla> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, @PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
+//        return plantillaService.getAllPlantillas(pageNo, pageSize, sortBy);
+//    }
 	
 //	@JsonView(Views.Public.class)
 //	@PostMapping("/plantillas/{usuarioId}")

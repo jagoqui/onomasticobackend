@@ -78,7 +78,9 @@ public class EventoService {
 		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
 		List<Evento> eventosAsociacion = getAllEventosByAsociacion(asociaciones);
 		List<EventoResponse> eventos = getEventoResponseFormat(eventosAsociacion);
-		Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+		Pageable paging;
+		if(sortBy!=null)paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        else paging = PageRequest.of(pageNo, pageSize);
 		final int start = (int)paging.getOffset();
 		final int end = Math.min((start + paging.getPageSize()), eventos.size());
 		final Page<EventoResponse> page = new PageImpl<>(eventos.subList(start, end), paging, eventos.size());
@@ -98,7 +100,9 @@ public class EventoService {
 	}
 	
 	public List<EventoResponse> getAllEventos(Integer pageNo, Integer pageSize, String sortBy){
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+		Pageable paging;
+		if(sortBy!=null)paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        else paging = PageRequest.of(pageNo, pageSize);
         Page<Evento> pagedResult =  eventoRepository.findAll(paging);
         List<Evento> eventos = pagedResult.getContent();
         if(!pagedResult.isEmpty()) return getEventoResponseFormat(eventos);

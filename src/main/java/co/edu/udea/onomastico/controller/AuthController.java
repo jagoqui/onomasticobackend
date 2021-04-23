@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -52,14 +53,14 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-
+    	Usuario user = (Usuario) usuarioService.findUserByEmail(loginRequest.getUserEmail()).orElse(null);
+    	if(user.getEstado().contains("INACTIVO"))return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUserEmail(),
                         loginRequest.getPassword()
                 )
         );
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.generateToken(authentication);
@@ -75,7 +76,7 @@ public class AuthController {
  			usuarioService.save(user);
  			String asunto = "Solicitud restablecimiento de contraseña en onomastico";
  			String message = "Para restablecer su contrasena, diríjase a :\n" + RESET_SERVER
- 					+ "reset?token=" + user.getResetToken();
+ 					+ "?token=" + user.getResetToken();
  			
  			emailService.sendEmail(user.getEmail(),asunto, message);
  			return ResponseEntity.ok().build();

@@ -26,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Usuario;
 import co.edu.udea.onomastico.model.Views;
+import co.edu.udea.onomastico.payload.ProgramasPorAsociacionResponse;
 import co.edu.udea.onomastico.security.JwtTokenProvider;
 import co.edu.udea.onomastico.service.UsuarioService;
 
@@ -55,13 +56,13 @@ public class UsuarioController {
 		return usuarioService.getAllUsuariosByUsuarioPag(usuarioId, npage, psize, sort);
 	}
 	
-	@JsonView(Views.Public.class)
-	@GetMapping("/usuarios/pag/{pageNo}/{pageSize}/{sortBy}")
-	public List<Usuario> getAllUsuarios(@PathVariable(value = "pageNo") Integer pageNo, 
-			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
-         return usuarioService.getAllUsuariosPag(pageNo, pageSize, sortBy);
-    }
-	
+//	@JsonView(Views.Public.class)
+//	@GetMapping("/usuarios/pag/{pageNo}/{pageSize}/{sortBy}")
+//	public List<Usuario> getAllUsuarios(@PathVariable(value = "pageNo") Integer pageNo, 
+//			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
+//         return usuarioService.getAllUsuariosPag(pageNo, pageSize, sortBy);
+//    }
+//	
 	//crear usuario
 	@JsonView(Views.Public.class)
 	@PostMapping("/usuarios")
@@ -83,10 +84,29 @@ public class UsuarioController {
 	}
 	
 	@JsonView(Views.Public.class)
+	@GetMapping("/usuarios/programasporasociacion")
+	public List<ProgramasPorAsociacionResponse> getProgramasPorAsociacionUsuarioById() {
+		Integer usuarioId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
+		return usuarioService.getProgramasPorAsociacionResponseUsuarioById(usuarioId);
+	}
+	
+	@JsonView(Views.Public.class)
 	@PutMapping("/usuarios/{id}")
 	public  Usuario updateUsuario(@PathVariable(value = "id") Integer usuarioId,
 	                                         @RequestBody Usuario detallesUsuario) {
 	    return usuarioService.updateUsuario(usuarioId, detallesUsuario);
+	}
+	
+	@JsonView(Views.Public.class)
+	@PutMapping("/usuarios/activar/{email}")
+	public  Usuario activarUsuario(@PathVariable(value = "email") String email) {
+	    return usuarioService.activar(email);
+	}
+	
+	@JsonView(Views.Public.class)
+	@PutMapping("/usuarios/desactivar/{email}")
+	public  Usuario desactivarUsuario(@PathVariable(value = "email") String email) {
+	    return usuarioService.desactivar(email);
 	}
 	
 	@DeleteMapping("/usuarios/{id}")
