@@ -6,8 +6,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -24,9 +26,10 @@ import co.edu.udea.onomastico.exceptions.ResourceAlreadyExistsException;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.ProgramaAcademico;
+import co.edu.udea.onomastico.model.Rol;
 import co.edu.udea.onomastico.model.Usuario;
 import co.edu.udea.onomastico.model.UsuarioCorreo;
-import co.edu.udea.onomastico.payload.ProgramasPorAsociacionResponse;
+import co.edu.udea.onomastico.payload.ProgramaConAsociacionResponse;
 import co.edu.udea.onomastico.repository.UsuarioRepository;
 
 @Service
@@ -40,6 +43,12 @@ public class UsuarioService {
 	
 	@Autowired
 	ProgramaAcademicoService  programaAcademicoService;
+	
+	@Autowired
+	private EmailService emailService;
+	
+	@Value("${app.resetpwd}")
+	private String RESET_SERVER;
 	
 	public List<Usuario> getAllUsuarios() {
 	    return usuarioRepository.findAll();
@@ -96,13 +105,25 @@ public class UsuarioService {
 
 	public Usuario AddUsuario(@RequestBody Usuario usuario) {
 		if(!usuarioRepository.findByEmail(usuario.getEmail()).isEmpty()) throw new ResourceAlreadyExistsException("usuario existente",usuario.getEmail());
-		String password = usuario.getPassword();
+		String password = UUID.randomUUID().toString();
 		String encriptedPassword = passwordEncoder.encode(password);
 		usuario.setPassword(encriptedPassword);
+		usuario.setResetToken(UUID.randomUUID().toString());
 	    Usuario newuser = usuarioRepository.save(usuario);
+	    sendEmailToNewUser(usuario);
 	    return newuser;
 	}
+	public void sendEmailToNewUser(Usuario user) {
+		String asunto = "Bienvenido a onomastico";
+		String message = "Onomastico es el sistema para enviar felicitaciones a todos los integrantes de la universidad de Antioquía. Para restablecer ingresar por primera vez, diríjase a :\n" + RESET_SERVER
+				+ "?token=" + user.getResetToken();
+		
+		emailService.sendEmail(user.getEmail(),asunto, message);
+	}
 
+	public List<Usuario> getUsuariosByRol(Rol rol){
+		return usuarioRepository.findByRol(rol);
+	}
 	public Usuario getUsuarioById(Integer usuarioId) {
 	    return usuarioRepository.findById(usuarioId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Usuario"+"id"+usuarioId));
@@ -114,15 +135,16 @@ public class UsuarioService {
 		return usuario.getAsociacionPorUsuario();
 	}
 	
-	public List<ProgramasPorAsociacionResponse> getProgramasPorAsociacionResponseUsuarioById(Integer usuarioId) {
-		List<ProgramasPorAsociacionResponse> programasPorAsociacion = new ArrayList<ProgramasPorAsociacionResponse>();
+	public List<ProgramaConAsociacionResponse> getProgramasPorAsociacionResponseUsuarioById(Integer usuarioId) {
+		List<ProgramaConAsociacionResponse> programasPorAsociacion = new ArrayList<ProgramaConAsociacionResponse>();
 		Set<Asociacion> asociaciones = getAsociacionUsuarioById(usuarioId);
 		if(asociaciones != null) {
 			asociaciones.forEach(asociacion ->{
-				System.out.print(asociacion.getNombre());
 				List<ProgramaAcademico> programas = programaAcademicoService.findByProgramaAcademicoPorAsociacion(asociacion);
 				if(programas != null) {
-					programasPorAsociacion.add(new ProgramasPorAsociacionResponse(asociacion, programas));
+					programas.forEach(programa ->{
+						programasPorAsociacion.add(new ProgramaConAsociacionResponse(asociacion.getId(), programa.getCodigo(), programa.getNombre()));
+					});
 				}
 			});
 		}
@@ -140,12 +162,15 @@ public class UsuarioService {
 
 		 Usuario  usuario =  usuarioRepository.findById(usuarioId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Usuario" + "id"+usuarioId));
-
-		usuario.setNombre(detallesUsuario.getNombre());;
-		usuario.setEmail(detallesUsuario.getEmail());
-		String encriptedPassword = passwordEncoder.encode(detallesUsuario.getPassword());
-		usuario.setPassword(encriptedPassword);
-
+		if(detallesUsuario.getNombre()!=null)usuario.setNombre(detallesUsuario.getNombre());
+		if(detallesUsuario.getEmail()!=null)usuario.setEmail(detallesUsuario.getEmail());
+		if(detallesUsuario.getPassword()!=null) {
+			String encriptedPassword = passwordEncoder.encode(detallesUsuario.getPassword());
+			usuario.setPassword(encriptedPassword);
+		}
+		if((detallesUsuario.getEstado()!=null && (detallesUsuario.getEstado().contains("ACTIVO"))))usuario.setEstado(detallesUsuario.getEstado());
+		if(detallesUsuario.getRol()!=null)usuario.setRol(detallesUsuario.getRol());
+		if(detallesUsuario.getAsociacionPorUsuario()!=null)usuario.setAsociacionPorUsuario(detallesUsuario.getAsociacionPorUsuario());
 		Usuario updatedUsuario = usuarioRepository.save(usuario);
 	    return updatedUsuario;
 	}

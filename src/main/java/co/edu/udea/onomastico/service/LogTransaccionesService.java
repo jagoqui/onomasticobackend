@@ -11,9 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
-import co.edu.udea.onomastico.model.Evento;
 import co.edu.udea.onomastico.model.LogTransacciones;
-import co.edu.udea.onomastico.payload.EventoResponse;
 import co.edu.udea.onomastico.repository.LogTransaccionesRepository;
 import co.edu.udea.onomastico.repository.UsuarioRepository;
 
