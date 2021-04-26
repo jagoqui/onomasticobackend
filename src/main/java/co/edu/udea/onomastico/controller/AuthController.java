@@ -16,15 +16,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import co.edu.udea.onomastico.exceptions.CredentialsException;
 import co.edu.udea.onomastico.model.Usuario;
 import co.edu.udea.onomastico.payload.JwtAuthenticationResponse;
 import co.edu.udea.onomastico.payload.LoginRequest;
-import co.edu.udea.onomastico.repository.RolRepository;
-import co.edu.udea.onomastico.repository.UsuarioRepository;
 import co.edu.udea.onomastico.security.JwtTokenProvider;
 import co.edu.udea.onomastico.service.EmailService;
 import co.edu.udea.onomastico.service.UsuarioService;
@@ -52,8 +50,8 @@ public class AuthController {
 	private EmailService emailService;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-    	Usuario user = (Usuario) usuarioService.findUserByEmail(loginRequest.getUserEmail()).orElse(null);
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) throws Throwable {
+    	Usuario user = (Usuario) usuarioService.findUserByEmail(loginRequest.getUserEmail()).orElseThrow(CredentialsException::new);
     	if(user.getEstado().contains("INACTIVO"))return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -82,7 +80,6 @@ public class AuthController {
  			return ResponseEntity.ok().build();
  		}
 		return ResponseEntity.notFound().build();
-
  	}
 
     @PostMapping("/resetpwd")

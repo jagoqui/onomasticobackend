@@ -26,7 +26,6 @@ import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.LogTransacciones;
 import co.edu.udea.onomastico.model.Plantilla;
-import co.edu.udea.onomastico.model.Usuario;
 import co.edu.udea.onomastico.payload.UploadFileResponse;
 import co.edu.udea.onomastico.repository.PlantillaRepository;
 @Service
@@ -52,11 +51,8 @@ public class PlantillaService {
 	public UploadFileResponse uploadPlantillaImage(HttpServletRequest request, MultipartFile file, String name) {
         String fileName = fileService.storeFile(file, name);
 
-        String fileDownloadUri = ServletUriComponentsBuilder.fromRequestUri(request)
-                .replacePath(null)
-                .path("/images/")
+        String fileDownloadUri = ServletUriComponentsBuilder.fromUriString(IMAGE_SERVER)
                 .path(fileName)
-                .scheme(request.getScheme())
                 .toUriString();
 
         return new UploadFileResponse(fileName, fileDownloadUri,

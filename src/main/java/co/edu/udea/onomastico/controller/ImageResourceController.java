@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -30,6 +31,8 @@ import co.edu.udea.onomastico.service.FileService;
 
 @RestController
 public class ImageResourceController {
+	@Value("${app.images}")
+	private String IMAGE_SERVER;
 
 	@Autowired
 	private FileService fileService;
@@ -44,12 +47,8 @@ public class ImageResourceController {
     @ResponseStatus(HttpStatus.CREATED)
     public UploadFileResponse uploadFile(HttpServletRequest request, @RequestParam("file") MultipartFile file, @PathVariable(value = "name") String name) {
         String fileName = fileService.storeFile(file, name);
-        String uri = request.getServerName() + ":" + request.getServerPort();
-        String fileDownloadUri = ServletUriComponentsBuilder.fromRequestUri(request)
-                .replacePath(null)
-                .path("/onomastico/images/")
+        String fileDownloadUri = ServletUriComponentsBuilder.fromUriString(IMAGE_SERVER)
                 .path(fileName)
-                .scheme(request.getScheme())
                 .toUriString();
 
         return new UploadFileResponse(fileName, fileDownloadUri,
