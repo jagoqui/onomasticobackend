@@ -36,6 +36,10 @@ public class CorreoEnviadoService {
 		return correoEnviadoRepository.save(correoEnviado);
 	}
 	
+	public Integer getTotalCorreosEnviados() {
+		return correoEnviadoRepository.findAll().size();
+	}
+	
 	public List<CorreoEnviadoResponse> getAllEmailsFormatted(List<CorreoEnviado> emails) {
 		List<CorreoEnviadoResponse> emailFormatted = new ArrayList<CorreoEnviadoResponse>();
 		emails.forEach(email ->{

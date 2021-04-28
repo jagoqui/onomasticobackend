@@ -83,7 +83,7 @@ public class Usuario implements Serializable {
 	
 	@JsonView(Views.Public.class)
 	@OnDelete(action=OnDeleteAction.CASCADE) 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(name = "asociacion_por_usuario", 
             joinColumns = { @JoinColumn(name = "usuario_id") }, 
             inverseJoinColumns = { @JoinColumn(name = "asociacion_id") })

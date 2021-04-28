@@ -31,7 +31,7 @@ public class Asociacion implements Serializable {
 	private int id;
 	
 	@JsonView(Views.Public.class)
-	@Column(name = "nombre", nullable = false, length=45)
+	@Column(name = "nombre", nullable = false, length=60)
 	private String nombre;
 	
 	@JsonView(Views.Internal.class)

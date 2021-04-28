@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import co.edu.udea.onomastico.exceptions.BadRequestException;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Condicion;
@@ -117,12 +118,14 @@ public class EventoService {
 		return getEventoResponseFormat(eventos);
 	}
 	
-	public EventoResponse AddEvento(EventoRequest eventoRequest, Integer usuarioId) {
+	public EventoResponse AddEvento(EventoRequest eventoRequest, Integer usuarioId) throws BadRequestException{
 		Evento evento = new Evento();
 		evento.setFecha(eventoRequest.getFecha());
+		//if(!(eventoRequest.getEstado().equals("ACTIVO")) || !(eventoRequest.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado incorrecto");
 		evento.setEstado(eventoRequest.getEstado());
 		evento.setNombre(eventoRequest.getNombre());
 		evento.setPlantilla(eventoRequest.getPlantilla());
+		//if(!(eventoRequest.getRecurrencia().equals("DIARIA")) || !(eventoRequest.getRecurrencia().equals("ANUAL")))throw new BadRequestException("Recurrencia incorrecta");
 		evento.setRecurrencia(eventoRequest.getRecurrencia());
 		evento.setCondicionesEvento(null);
 	    Evento newEvento = eventoRepository.saveAndFlush(evento);
@@ -153,8 +156,14 @@ public class EventoService {
 		transaccionesService.createTransaccion(usuarioId, transaccion);
 		List<Evento> eventos = new ArrayList<Evento>();
 		eventos.add(newEvento);
-		List<EventoResponse> eventoResponse = getEventoResponseFormat(eventos);
-	    return eventoResponse.get(0);
+		List<EventoResponse> eventoResponse =new ArrayList<EventoResponse>();
+		try {
+		eventoResponse = getEventoResponseFormat(eventos);
+		}catch(Exception e) {
+			eventoRepository.delete(newEvento);;
+		}
+		if(!eventoResponse.isEmpty())return eventoResponse.get(0);
+		else return null;
 	}
 	
 	public  EventoResponse updateEvento(Integer eventoId, EventoRequest detallesEvento, Integer usuarioId) {

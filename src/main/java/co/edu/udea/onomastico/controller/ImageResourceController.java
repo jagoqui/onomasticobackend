@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.payload.UploadFileResponse;
 import co.edu.udea.onomastico.service.FileService;
 
@@ -58,7 +59,7 @@ public class ImageResourceController {
 	
 	@RequestMapping(path = "/images/{fileName:.+}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
 	@ResponseBody
-    public ResponseEntity<InputStreamResource> getImage(@PathVariable String fileName, HttpServletRequest request) throws IOException{
+    public ResponseEntity<InputStreamResource> getImage(@PathVariable String fileName, HttpServletRequest request) throws ResourceNotFoundException, IOException{
         // Load file as Resource
         Resource resource = fileService.loadFileAsResource(fileName);
         

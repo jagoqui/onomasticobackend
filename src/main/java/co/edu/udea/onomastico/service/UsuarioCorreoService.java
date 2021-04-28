@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import co.edu.udea.onomastico.exceptions.BadRequestException;
 import co.edu.udea.onomastico.exceptions.ResourceAlreadyExistsException;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.model.Asociacion;
@@ -53,7 +54,9 @@ public class UsuarioCorreoService {
 	public List<UsuarioCorreo> findByVinculation(Vinculacion vinculacion){
 		return usuarioCorreoRepository.findByVinculacionPorUsuarioCorreo(vinculacion);
 	}
-	
+	public Integer getTotalUsuariosCorreoPorUsuarioPlataforma(Integer usuarioId) {
+		return getAllUsuarioCorreoByUsuario(usuarioId).size();
+	}
 	
 	public List<UsuarioCorreo> getAllUsuarioCorreoByUsuario(Integer usuarioId){
 		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
@@ -91,8 +94,9 @@ public class UsuarioCorreoService {
 	    return usuarioCorreoRepository.findAll();
 	}
 	
-	public UsuarioCorreo createUsuario(UsuarioCorreo usuario) {
+	public UsuarioCorreo createUsuario(UsuarioCorreo usuario) throws BadRequestException{
 			if(!usuarioCorreoRepository.findByEmail(usuario.getEmail()).isEmpty() && !usuarioCorreoRepository.findById(usuario.getId()).isEmpty()) throw new ResourceAlreadyExistsException(" ya se encuentra en uso", usuario.getEmail());
+			//if(!(usuario.getEstado().equals("ACTIVO")) || !(usuario.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado Incorrecto");
 			UsuarioCorreo newUser = usuarioCorreoRepository.save(usuario);
 			return newUser;
 	}
@@ -121,7 +125,7 @@ public class UsuarioCorreoService {
 	    return usuarioCorreoRepository.findById(id);
 	}
 	
-	public  UsuarioCorreo updateUsuario(String tipo, String numero, UsuarioCorreo detallesUsuario) {
+	public  UsuarioCorreo updateUsuario(String tipo, String numero, UsuarioCorreo detallesUsuario) throws BadRequestException{
 		UsuarioCorreoId usuarioId = new UsuarioCorreoId(tipo,numero);
 		UsuarioCorreo  usuario =  usuarioCorreoRepository.findById(usuarioId)
 	            .orElseThrow(() -> new ResourceNotFoundException("UsuarioCorreo" + "id"+ usuarioId));
@@ -131,6 +135,7 @@ public class UsuarioCorreoService {
 		usuario.setEmail(detallesUsuario.getEmail());
 		usuario.setApellido(detallesUsuario.getApellido());
 		usuario.setGenero(detallesUsuario.getGenero());
+		//if(!(detallesUsuario.getEstado().equals("ACTIVO")) || !(detallesUsuario.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado Incorrecto");
 		usuario.setEstado(detallesUsuario.getEstado());
 		usuario.setFechaNacimiento(detallesUsuario.getFechaNacimiento());
 		usuario.setPlataformaPorUsuarioCorreo(detallesUsuario.getPlataformaPorUsuarioCorreo());

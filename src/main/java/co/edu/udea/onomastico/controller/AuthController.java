@@ -74,7 +74,7 @@ public class AuthController {
  			usuarioService.save(user);
  			String asunto = "Solicitud restablecimiento de contraseña en onomastico";
  			String message = "Para restablecer su contrasena, diríjase a :\n" + RESET_SERVER
- 					+ "?token=" + user.getResetToken();
+ 					+ "/" + user.getResetToken();
  			
  			emailService.sendEmail(user.getEmail(),asunto, message);
  			return ResponseEntity.ok().build();

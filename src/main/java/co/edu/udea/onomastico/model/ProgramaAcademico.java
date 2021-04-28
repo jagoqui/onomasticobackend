@@ -26,7 +26,7 @@ public class ProgramaAcademico {
 	@Id 
 	private int codigo;
 	
-	@Column(name = "nombre", length = 45, nullable = false)
+	@Column(name = "nombre", length = 60, nullable = false)
 	@JsonView(Views.Public.class)
 	private String nombre;
 	

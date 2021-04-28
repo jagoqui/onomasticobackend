@@ -116,7 +116,7 @@ public class UsuarioService {
 	public void sendEmailToNewUser(Usuario user) {
 		String asunto = "Bienvenido a onomastico";
 		String message = "Onomastico es el sistema para enviar felicitaciones a todos los integrantes de la universidad de Antioquía. Para restablecer ingresar por primera vez, diríjase a :\n" + RESET_SERVER
-				+ "?token=" + user.getResetToken();
+				+ "/" + user.getResetToken();
 		
 		emailService.sendEmail(user.getEmail(),asunto, message);
 	}
@@ -168,7 +168,9 @@ public class UsuarioService {
 			String encriptedPassword = passwordEncoder.encode(detallesUsuario.getPassword());
 			usuario.setPassword(encriptedPassword);
 		}
-		if((detallesUsuario.getEstado()!=null && (detallesUsuario.getEstado().contains("ACTIVO"))))usuario.setEstado(detallesUsuario.getEstado());
+		//if(!(detallesUsuario.getEstado().equals("ACTIVO"))
+			//	|| !(detallesUsuario.getEstado().equals("INACTIVO")))throw new BadRequestException("Estado incorrecto");
+		usuario.setEstado(detallesUsuario.getEstado());
 		if(detallesUsuario.getRol()!=null)usuario.setRol(detallesUsuario.getRol());
 		if(detallesUsuario.getAsociacionPorUsuario()!=null)usuario.setAsociacionPorUsuario(detallesUsuario.getAsociacionPorUsuario());
 		Usuario updatedUsuario = usuarioRepository.save(usuario);
