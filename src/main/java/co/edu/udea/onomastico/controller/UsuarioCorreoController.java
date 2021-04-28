@@ -54,6 +54,13 @@ public class UsuarioCorreoController {
 		return usuarioService.getAllUsuarioCorreoByUsuarioPag(usuarioId, npage, psize, sort);
 	}
 	
+	@JsonView(Views.Public.class)
+	@GetMapping("/usuariosemail/total")
+	public Integer getTotalUsuariosCorreoPorUsuarioPlataforma(){
+		Integer usuarioId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
+		return usuarioService.getTotalUsuariosCorreoPorUsuarioPlataforma(usuarioId);
+	}
+	
 //	@JsonView(Views.Public.class)
 //	@GetMapping("/usuariosemail/pag/{pageNo}/{pageSize}/{sortBy}")
 //	public List<UsuarioCorreo> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, 

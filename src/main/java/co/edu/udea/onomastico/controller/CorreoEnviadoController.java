@@ -39,6 +39,10 @@ public class CorreoEnviadoController {
 			@RequestParam Integer psize,@RequestParam(required = false) String sort){
         return correoEnviadoService.getAllEmailsPag(npage, psize, sort);
     }
+	@GetMapping("/emails/total")
+	public Integer getTotalCorreosEnviados(){
+        return correoEnviadoService.getTotalCorreosEnviados();
+    }
 	
 	@JsonView(Views.Public.class)
 	@PostMapping("/emails")
