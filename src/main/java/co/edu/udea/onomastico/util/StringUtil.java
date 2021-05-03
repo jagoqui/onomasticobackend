@@ -20,6 +20,5 @@ public class StringUtil {
 			texto.replace(startIndex, stopIndex, replacement);
 		}
 		return texto;
-		
 	}
 }

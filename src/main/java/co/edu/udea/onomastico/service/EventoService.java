@@ -119,20 +119,64 @@ public class EventoService {
 	}
 	
 	public EventoResponse AddEvento(EventoRequest eventoRequest, Integer usuarioId) throws BadRequestException{
+		if(!(eventoRequest.getEstado().equals("ACTIVO") || eventoRequest.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado incorrecto");
+		if(!(eventoRequest.getRecurrencia().equals("DIARIA") || eventoRequest.getRecurrencia().equals("ANUAL")))throw new BadRequestException("Recurrencia incorrecta");
 		Evento evento = new Evento();
 		evento.setFecha(eventoRequest.getFecha());
-		//if(!(eventoRequest.getEstado().equals("ACTIVO")) || !(eventoRequest.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado incorrecto");
 		evento.setEstado(eventoRequest.getEstado());
 		evento.setNombre(eventoRequest.getNombre());
 		evento.setPlantilla(eventoRequest.getPlantilla());
-		//if(!(eventoRequest.getRecurrencia().equals("DIARIA")) || !(eventoRequest.getRecurrencia().equals("ANUAL")))throw new BadRequestException("Recurrencia incorrecta");
 		evento.setRecurrencia(eventoRequest.getRecurrencia());
 		evento.setCondicionesEvento(null);
 	    Evento newEvento = eventoRepository.saveAndFlush(evento);
 	    Integer newEventoId = newEvento.getId();
 	    Set<CondicionRequest> condicionRequest = eventoRequest.getCondicionesEvento();
-	    Set<Condicion> condiciones =  new HashSet<Condicion>();
-	    condicionRequest.forEach(condicion->{
+	    Set<Condicion> condiciones =  setCondiciones(condicionRequest,newEventoId, usuarioId, newEvento);
+	    newEvento.setCondicionesEvento(condiciones);
+	    eventoRepository.save(newEvento);
+		List<Evento> eventos = new ArrayList<Evento>();
+		eventos.add(newEvento);
+		List<EventoResponse> eventoResponse =new ArrayList<EventoResponse>();
+		try {
+			eventoResponse = getEventoResponseFormat(eventos);
+			LogTransacciones transaccion = new LogTransacciones("Añadir evento:"+newEvento.getId()+" "+newEvento.getNombre());
+			transaccionesService.createTransaccion(usuarioId, transaccion);
+		}catch(Exception e) {
+			eventoRepository.delete(newEvento);
+		}
+		if(!eventoResponse.isEmpty())return eventoResponse.get(0);
+		else throw new BadRequestException("Bad Conditions");
+	}
+	public  EventoResponse updateEvento(Integer eventoId, EventoRequest detallesEvento, Integer usuarioId) {
+		if(!(detallesEvento.getEstado().equals("ACTIVO") || detallesEvento.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado incorrecto");
+		if(!(detallesEvento.getRecurrencia().equals("DIARIA") || detallesEvento.getRecurrencia().equals("ANUAL")))throw new BadRequestException("Recurrencia incorrecta");
+		Evento  oldEvento =  eventoRepository.findById(eventoId).orElseThrow(() -> new ResourceNotFoundException("Evento" + "id"+eventoId));
+		Evento evento = oldEvento;
+		evento.setEstado(detallesEvento.getEstado());
+		evento.setFecha(detallesEvento.getFecha());
+		evento.setNombre(detallesEvento.getNombre());
+		evento.setRecurrencia(detallesEvento.getRecurrencia());
+		evento.setPlantilla(detallesEvento.getPlantilla());
+		Set<CondicionRequest> condicionRequest = detallesEvento.getCondicionesEvento();
+		Set<Condicion> condiciones =   setCondiciones(condicionRequest,evento.getId(), usuarioId, evento);
+		evento.setCondicionesEvento(condiciones);
+		Evento updatedEvento = eventoRepository.save(evento);
+		List<Evento> eventos = new ArrayList<Evento>();
+		eventos.add(updatedEvento);
+		List<EventoResponse> eventoResponse =new ArrayList<EventoResponse>();
+		try {
+		eventoResponse = getEventoResponseFormat(eventos);
+		LogTransacciones transaccion = new LogTransacciones("Editar evento:"+evento.getId()+" "+evento.getNombre());
+		transaccionesService.createTransaccion(usuarioId, transaccion);
+		}catch(Exception e) {
+			eventoRepository.save(oldEvento);
+		}if(!eventoResponse.isEmpty())return eventoResponse.get(0);
+		else throw new BadRequestException("Bad Conditions");
+	}
+	
+	public Set<Condicion> setCondiciones(Set<CondicionRequest> condicionRequest, Integer newEventoId, Integer usuarioId, Evento newEvento) {
+		Set<Condicion> condiciones =  new HashSet<Condicion>();
+		condicionRequest.forEach(condicion->{
 	    	if(condicion.getCondicion().contains("genero")) {
 	    		String parametro = "FEMENINO";
 	    		if(condicion.getParametro().contains("1")) parametro = "MASCULINO";
@@ -150,57 +194,7 @@ public class EventoService {
 	    		condiciones.add(new Condicion(new CondicionId(newEventoId,"asociacion",String.valueOf(asociacion.getId())), newEvento));
 	    	});
 	    }
-	    newEvento.setCondicionesEvento(condiciones);
-	    eventoRepository.save(newEvento);
-	    LogTransacciones transaccion = new LogTransacciones("Añadir evento:"+evento.getId()+" "+evento.getNombre());
-		transaccionesService.createTransaccion(usuarioId, transaccion);
-		List<Evento> eventos = new ArrayList<Evento>();
-		eventos.add(newEvento);
-		List<EventoResponse> eventoResponse =new ArrayList<EventoResponse>();
-		try {
-		eventoResponse = getEventoResponseFormat(eventos);
-		}catch(Exception e) {
-			eventoRepository.delete(newEvento);;
-		}
-		if(!eventoResponse.isEmpty())return eventoResponse.get(0);
-		else return null;
-	}
-	
-	public  EventoResponse updateEvento(Integer eventoId, EventoRequest detallesEvento, Integer usuarioId) {
-		Evento  evento =  eventoRepository.findById(eventoId).orElseThrow(() -> new ResourceNotFoundException("Evento" + "id"+eventoId));
-		//evento.setAsociacion(detallesEvento.getAsociacion());
-		evento.setEstado(detallesEvento.getEstado());
-		evento.setFecha(detallesEvento.getFecha());
-		evento.setNombre(detallesEvento.getNombre());
-		evento.setRecurrencia(detallesEvento.getRecurrencia());
-		evento.setPlantilla(detallesEvento.getPlantilla());
-		 Set<CondicionRequest> condicionRequest = detallesEvento.getCondicionesEvento();
-		    Set<Condicion> condiciones =  new HashSet<Condicion>();
-		    condicionRequest.forEach(condicion->{
-		    	if(condicion.getCondicion().contains("genero")) {
-		    	String parametro = "FEMENINO";
-	    		if(condicion.getParametro().equals('1')) parametro = "MASCULINO";
-	    		condiciones.add(new Condicion(new CondicionId(evento.getId(),condicion.getCondicion(),parametro), evento));
-	    		}else {
-	    	condiciones.add(new Condicion(new CondicionId(evento.getId(),condicion.getCondicion(),condicion.getParametro()), evento));
-	    	}
-	    });
-		    Set<CondicionRequest> result = condicionRequest.stream()
-		    		.filter(item -> item.getCondicion().equals("asociacion")).collect(Collectors.toSet());
-		    if(result.isEmpty()) {
-	    	Set<Asociacion> as = usuarioService.getAsociacionUsuarioById(usuarioId);
-	    	as.forEach(asociacion ->{
-	    		condiciones.add(new Condicion(new CondicionId(evento.getId(),"asociacion",String.valueOf(asociacion.getId())), evento));
-	    	});
-	    }
-		evento.setCondicionesEvento(condiciones);
-		Evento updatedEvento = eventoRepository.save(evento);
-		LogTransacciones transaccion = new LogTransacciones("Editar evento:"+evento.getId()+" "+evento.getNombre());
-		transaccionesService.createTransaccion(usuarioId, transaccion);
-		List<Evento> eventos = new ArrayList<Evento>();
-		eventos.add(updatedEvento);
-		List<EventoResponse> eventoResponse = getEventoResponseFormat(eventos);
-	    return eventoResponse.get(0);
+		return condiciones;
 	}
 	
 	public List<CondicionResponse> getConditionsForUser(Integer id){
@@ -326,8 +320,12 @@ public class EventoService {
 					valoresFecha.add(new ValorResponse(1, "cumpleaños"));
 				}
 				else if(condicion.getId().getCondicion().contains("genero")) {
-					if(condicion.getId().getParametro().contains("MASCULINO")) valoresGenero.add(new ValorResponse(1, "MASCULINO"));
-					else valoresGenero.add(new ValorResponse(2, "FEMENINO"));
+					if(condicion.getId().getParametro().contains("MASCULINO")) {
+						valoresGenero.add(new ValorResponse(1, "MASCULINO"));
+					}
+					else if(condicion.getId().getParametro().contains("FEMENINO")) {
+						valoresGenero.add(new ValorResponse(2, "FEMENINO"));
+					}
 				}
 			});
 			
@@ -342,18 +340,18 @@ public class EventoService {
 							}
 						});
 					});
-					parametrosPrograma.add(new ParametroResponse(asociacion.getId(),valoresPrograma));
+					if(!valoresPrograma.isEmpty())parametrosPrograma.add(new ParametroResponse(asociacion.getId(),valoresPrograma));
 				});
 			}
-			parametrosGenero.add(new ParametroResponse(1,valoresGenero));
-			parametrosFecha.add(new ParametroResponse(1,valoresFecha));
-			parametrosAsociacion.add(new ParametroResponse(1,valoresAsociacion));
-			parametrosVinculacion.add(new ParametroResponse(1,valoresVinculacion));
-			condicionesResponse.add(new CondicionResponse("genero", parametrosGenero));
-			condicionesResponse.add(new CondicionResponse("fecha_nacimiento", parametrosFecha));
-			condicionesResponse.add(new CondicionResponse("programa_academico", parametrosPrograma));
-			condicionesResponse.add(new CondicionResponse("vinculacion", parametrosVinculacion));
-			condicionesResponse.add(new CondicionResponse("asociacion", parametrosAsociacion));
+			if(!valoresGenero.isEmpty())parametrosGenero.add(new ParametroResponse(1,valoresGenero));
+			if(!valoresFecha.isEmpty())parametrosFecha.add(new ParametroResponse(1,valoresFecha));
+			if(!valoresAsociacion.isEmpty())parametrosAsociacion.add(new ParametroResponse(1,valoresAsociacion));
+			if(!valoresVinculacion.isEmpty())parametrosVinculacion.add(new ParametroResponse(1,valoresVinculacion));
+			if(!parametrosGenero.isEmpty())condicionesResponse.add(new CondicionResponse("genero", parametrosGenero));
+			if(!parametrosFecha.isEmpty())condicionesResponse.add(new CondicionResponse("fecha_nacimiento", parametrosFecha));
+			if(!parametrosPrograma.isEmpty())condicionesResponse.add(new CondicionResponse("programa_academico", parametrosPrograma));
+			if(!parametrosVinculacion.isEmpty())condicionesResponse.add(new CondicionResponse("vinculacion", parametrosVinculacion));
+			if(!parametrosAsociacion.isEmpty())condicionesResponse.add(new CondicionResponse("asociacion", parametrosAsociacion));
 			eventoResponse.add(new EventoResponse(evento.getId(), evento.getNombre(), evento.getFecha(), evento.getEstado(), evento.getRecurrencia(), evento.getPlantilla(), 
 					condicionesResponse));
 		});
