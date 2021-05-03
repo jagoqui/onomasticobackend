@@ -104,6 +104,7 @@ public class UsuarioService {
 	
 
 	public Usuario AddUsuario(@RequestBody Usuario usuario) {
+		if(!(usuario.getEstado().equals("ACTIVO") || usuario.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado Incorrecto");
 		if(!usuarioRepository.findByEmail(usuario.getEmail()).isEmpty()) throw new ResourceAlreadyExistsException("usuario existente",usuario.getEmail());
 		String password = UUID.randomUUID().toString();
 		String encriptedPassword = passwordEncoder.encode(password);
@@ -168,8 +169,7 @@ public class UsuarioService {
 			String encriptedPassword = passwordEncoder.encode(detallesUsuario.getPassword());
 			usuario.setPassword(encriptedPassword);
 		}
-		//if(!(detallesUsuario.getEstado().equals("ACTIVO"))
-			//	|| !(detallesUsuario.getEstado().equals("INACTIVO")))throw new BadRequestException("Estado incorrecto");
+		if(!(detallesUsuario.getEstado().equals("ACTIVO")|| detallesUsuario.getEstado().equals("INACTIVO")))throw new BadRequestException("Estado incorrecto");
 		usuario.setEstado(detallesUsuario.getEstado());
 		if(detallesUsuario.getRol()!=null)usuario.setRol(detallesUsuario.getRol());
 		if(detallesUsuario.getAsociacionPorUsuario()!=null)usuario.setAsociacionPorUsuario(detallesUsuario.getAsociacionPorUsuario());

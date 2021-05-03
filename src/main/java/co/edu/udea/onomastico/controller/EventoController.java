@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.job.EmailScheduling;
@@ -77,6 +78,7 @@ public class EventoController {
 		return eventoService.AddEvento(evento, userId);
 	}
 	@JsonView(Views.Public.class)
+	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 	@GetMapping("/evento/{id}")
 	public EventoResponse getEventoById(@PathVariable(value = "id") Integer eventoId) {
 	    return eventoService.getEventoById(eventoId);
