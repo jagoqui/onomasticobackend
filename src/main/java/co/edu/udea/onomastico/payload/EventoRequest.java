@@ -23,6 +23,13 @@ public class EventoRequest {
 	private Plantilla plantilla;
 	@JsonView(Views.Public.class)
 	private Set<CondicionRequest> condicionesEvento;
+	
+	
+	public EventoRequest() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public EventoRequest(int id, String nombre, Date fecha, String estado, String recurrencia, Plantilla plantilla,
 			Set<CondicionRequest> condicionesEvento) {
 		super();
