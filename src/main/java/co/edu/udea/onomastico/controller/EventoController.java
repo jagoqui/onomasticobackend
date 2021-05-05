@@ -46,7 +46,7 @@ public class EventoController {
 	//obtener todos los usuarios
 	@JsonView(Views.Public.class)
 	@GetMapping("/eventos")
-	public List<EventoResponse> getAllEventos() {
+	public List<EventoRequest> getAllEventos() {
 	    return eventoService.findAllEventosResponse();
 	}
 	
@@ -66,47 +66,46 @@ public class EventoController {
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/evento/pag")
-	public List<EventoResponse> getAllEmailsPag(@RequestParam Integer npage, 
+	public List<EventoRequest> getAllEmailsPag(@RequestParam Integer npage, 
 			@RequestParam Integer psize,@RequestParam(required = false) String sort){
         return eventoService.getAllEventos(npage, psize, sort);
     }
 	
 	@JsonView(Views.Public.class)
 	@PostMapping("/evento")
-	public EventoResponse AddEvento(@RequestBody EventoRequest evento) {
+	public EventoRequest AddEvento(@RequestBody EventoRequest evento) {
 		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return eventoService.AddEvento(evento, userId);
 	}
 	@JsonView(Views.Public.class)
-	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 	@GetMapping("/evento/{id}")
-	public EventoResponse getEventoById(@PathVariable(value = "id") Integer eventoId) {
+	public EventoRequest getEventoById(@PathVariable(value = "id") Integer eventoId) {
 	    return eventoService.getEventoById(eventoId);
 	}
 	
 	@JsonView(Views.Public.class)
 	@PutMapping("/evento/{id}")
-	public  EventoResponse updateEvento(@PathVariable(value = "id") Integer eventoId,
+	public  EventoRequest updateEvento(@PathVariable(value = "id") Integer eventoId,
 	                             @RequestBody EventoRequest  detallesEvento) {
-		Integer usuarioId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
+		Integer usuarioId = tokenProvider.getUserIdFromJWT(FeignClientInterceptor.getBearerTokenHeader());
 		return eventoService.updateEvento(eventoId, detallesEvento, usuarioId);
 	}
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/evento/plantilla/{plantillaId}")
-	public  List<EventoResponse> getEventosByPlantilla(@PathVariable(value = "plantillaId") Integer plantillaId) throws ResourceNotFoundException {
+	public  List<EventoRequest> getEventosByPlantilla(@PathVariable(value = "plantillaId") Integer plantillaId) throws ResourceNotFoundException {
 		Plantilla plantilla = plantillaService.getPlantillaById(plantillaId);
 	    return eventoService.getEventosByPlantilla(plantilla);
 	}
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/evento/usuario")
-	public List<EventoResponse> getAllPlantillasPorAsociacion(@RequestParam Integer id){
+	public List<EventoRequest> getAllPlantillasPorAsociacion(@RequestParam Integer id){
 		return eventoService.getAllEventosByUsuario(id);
 	}
 	@JsonView(Views.Public.class)
 	@GetMapping("/evento/usuario/pag")
-	public List<EventoResponse> getAllPlantillasPorAsociacionPag(@RequestParam Integer npage,@RequestParam Integer psize,@RequestParam String sort){
+	public List<EventoRequest> getAllPlantillasPorAsociacionPag(@RequestParam Integer npage,@RequestParam Integer psize,@RequestParam String sort){
 		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return eventoService.getAllEventosByUsuarioPag(userId, npage, psize, sort);
 	}
@@ -120,14 +119,14 @@ public class EventoController {
 	
 	@JsonView(Views.Public.class)
 	@PutMapping("/evento/desactivar/{id}")
-	public EventoResponse deactivateEvento(@PathVariable(value = "id") Integer eventoId) {
+	public EventoRequest deactivateEvento(@PathVariable(value = "id") Integer eventoId) {
 		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return eventoService.deactivateEvento(eventoId, userId);
 	}
 	
 	@JsonView(Views.Public.class)
 	@PutMapping("/evento/activar/{id}")
-	public EventoResponse activateEvento(@PathVariable(value = "id") Integer eventoId) {
+	public EventoRequest activateEvento(@PathVariable(value = "id") Integer eventoId) {
 		Integer userId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return eventoService.activateEvento(eventoId, userId);
 	}

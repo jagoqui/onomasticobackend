@@ -1,8 +1,15 @@
 package co.edu.udea.onomastico.payload;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
+import co.edu.udea.onomastico.model.Views;
+
 public class CondicionRequest {
+	@JsonView(Views.Public.class)
 	private String id;
+	@JsonView(Views.Public.class)
 	private String condicion;
+	@JsonView(Views.Public.class)
 	private String value;
 	
 	public CondicionRequest(String id, String condicion, String value) {
