@@ -1,12 +1,21 @@
 package co.edu.udea.onomastico.payload;
 
 public class CondicionRequest {
+	private String id;
 	private String condicion;
-	private String parametro;
-	public CondicionRequest(String condicion, String parametro) {
+	private String value;
+	
+	public CondicionRequest(String id, String condicion, String value) {
 		super();
+		this.id = id;
 		this.condicion = condicion;
-		this.parametro = parametro;
+		this.value = value;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 	public String getCondicion() {
 		return condicion;
@@ -14,10 +23,10 @@ public class CondicionRequest {
 	public void setCondicion(String condicion) {
 		this.condicion = condicion;
 	}
-	public String getParametro() {
-		return parametro;
+	public String getValue() {
+		return value;
 	}
-	public void setParametro(String parametro) {
-		this.parametro = parametro;
-	}
+	public void setValue(String value) {
+		this.value = value;
+	}	
 }

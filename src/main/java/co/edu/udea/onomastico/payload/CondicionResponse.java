@@ -8,19 +8,19 @@ import co.edu.udea.onomastico.model.Views;
 
 public class CondicionResponse {
 	@JsonView(Views.Public.class)
-	private String condicion;
+	private String name;
 	@JsonView(Views.Public.class)
 	private List<ParametroResponse> parametros;
 	public CondicionResponse(String condicion, List<ParametroResponse> parametros) {
 		super();
-		this.condicion = condicion;
+		this.name = condicion;
 		this.parametros = parametros;
 	}
 	public String getCondicion() {
-		return condicion;
+		return name;
 	}
 	public void setCondicion(String condicion) {
-		this.condicion = condicion;
+		this.name = condicion;
 	}
 	public List<ParametroResponse> getParametros() {
 		return parametros;

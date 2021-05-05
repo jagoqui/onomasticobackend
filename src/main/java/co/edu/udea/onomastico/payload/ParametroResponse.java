@@ -10,11 +10,18 @@ public class ParametroResponse {
 	@JsonView(Views.Public.class)
 	private int id;
 	@JsonView(Views.Public.class)
-	private List<ValorResponse> valores;
-	public ParametroResponse(int id, List<ValorResponse> valores) {
+	private String condicion;
+	@JsonView(Views.Public.class)
+	private String value;
+	public ParametroResponse() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public ParametroResponse(int id, String condicion, String value) {
 		super();
 		this.id = id;
-		this.valores = valores;
+		this.condicion = condicion;
+		this.value = value;
 	}
 	public int getId() {
 		return id;
@@ -22,11 +29,16 @@ public class ParametroResponse {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public List<ValorResponse> getValores() {
-		return valores;
+	public String getCondicion() {
+		return condicion;
 	}
-	public void setValor(List<ValorResponse> valores) {
-		this.valores = valores;
+	public void setCondicion(String condicion) {
+		this.condicion = condicion;
 	}
-	
+	public String getValue() {
+		return value;
+	}
+	public void setValue(String value) {
+		this.value = value;
+	}
 }
