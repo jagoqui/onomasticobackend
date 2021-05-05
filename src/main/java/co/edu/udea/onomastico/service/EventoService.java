@@ -67,22 +67,22 @@ public class EventoService {
 	public List<Evento> getAllEventos() {
 	    return eventoRepository.findAll();
 	}
-	public List<EventoResponse> getAllEventosByUsuario(Integer usuarioId){
+	public List<EventoRequest> getAllEventosByUsuario(Integer usuarioId){
 		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
 		List<Evento> eventos = getAllEventosByAsociacion(asociaciones);
 		return getEventoResponseFormat(eventos);
 	}
 	
-	public List<EventoResponse> getAllEventosByUsuarioPag(Integer usuarioId, Integer pageNo, Integer pageSize, String sortBy){
+	public List<EventoRequest> getAllEventosByUsuarioPag(Integer usuarioId, Integer pageNo, Integer pageSize, String sortBy){
 		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
 		List<Evento> eventosAsociacion = getAllEventosByAsociacion(asociaciones);
-		List<EventoResponse> eventos = getEventoResponseFormat(eventosAsociacion);
+		List<EventoRequest> eventos = getEventoResponseFormat(eventosAsociacion);
 		Pageable paging;
 		if(sortBy!=null)paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         else paging = PageRequest.of(pageNo, pageSize);
 		final int start = (int)paging.getOffset();
 		final int end = Math.min((start + paging.getPageSize()), eventos.size());
-		final Page<EventoResponse> page = new PageImpl<>(eventos.subList(start, end), paging, eventos.size());
+		final Page<EventoRequest> page = new PageImpl<>(eventos.subList(start, end), paging, eventos.size());
 		return page.toList();
 	}
 	
@@ -98,26 +98,26 @@ public class EventoService {
 	    return merge;
 	}
 	
-	public List<EventoResponse> getAllEventos(Integer pageNo, Integer pageSize, String sortBy){
+	public List<EventoRequest> getAllEventos(Integer pageNo, Integer pageSize, String sortBy){
 		Pageable paging;
 		if(sortBy!=null)paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         else paging = PageRequest.of(pageNo, pageSize);
         Page<Evento> pagedResult =  eventoRepository.findAll(paging);
         List<Evento> eventos = pagedResult.getContent();
         if(!pagedResult.isEmpty()) return getEventoResponseFormat(eventos);
-        else return new ArrayList<EventoResponse>();
+        else return new ArrayList<EventoRequest>();
     }
 	
-	public List<EventoResponse> findAllEventosResponse(){
+	public List<EventoRequest> findAllEventosResponse(){
 		List<Evento> eventos = eventoRepository.findAll();
 		return getEventoResponseFormat(eventos);
 	}
-	public  List<EventoResponse> getEventosByPlantilla(Plantilla plantilla) {
+	public  List<EventoRequest> getEventosByPlantilla(Plantilla plantilla) {
 		List<Evento> eventos = eventoRepository.findEventoByPlantilla(plantilla);
 		return getEventoResponseFormat(eventos);
 	}
 	
-	public EventoResponse AddEvento(EventoRequest eventoRequest, Integer usuarioId) throws BadRequestException{
+	public EventoRequest AddEvento(EventoRequest eventoRequest, Integer usuarioId) throws BadRequestException{
 		if(!(eventoRequest.getEstado().equals("ACTIVO") || eventoRequest.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado incorrecto");
 		if(!(eventoRequest.getRecurrencia().equals("DIARIA") || eventoRequest.getRecurrencia().equals("ANUAL")))throw new BadRequestException("Recurrencia incorrecta");
 		Evento evento = new Evento();
@@ -135,7 +135,7 @@ public class EventoService {
 	    eventoRepository.save(newEvento);
 		List<Evento> eventos = new ArrayList<Evento>();
 		eventos.add(newEvento);
-		List<EventoResponse> eventoResponse =new ArrayList<EventoResponse>();
+		List<EventoRequest> eventoResponse =new ArrayList<EventoRequest>();
 		try {
 			eventoResponse = getEventoResponseFormat(eventos);
 			LogTransacciones transaccion = new LogTransacciones("Añadir evento:"+newEvento.getId()+" "+newEvento.getNombre());
@@ -146,7 +146,7 @@ public class EventoService {
 		if(!eventoResponse.isEmpty())return eventoResponse.get(0);
 		else throw new BadRequestException("Bad Conditions");
 	}
-	public  EventoResponse updateEvento(Integer eventoId, EventoRequest detallesEvento, Integer usuarioId) {
+	public  EventoRequest updateEvento(Integer eventoId, EventoRequest detallesEvento, Integer usuarioId) {
 		if(!(detallesEvento.getEstado().equals("ACTIVO") || detallesEvento.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado incorrecto");
 		if(!(detallesEvento.getRecurrencia().equals("DIARIA") || detallesEvento.getRecurrencia().equals("ANUAL")))throw new BadRequestException("Recurrencia incorrecta");
 		Evento  oldEvento =  eventoRepository.findById(eventoId).orElseThrow(() -> new ResourceNotFoundException("Evento" + "id"+eventoId));
@@ -162,7 +162,7 @@ public class EventoService {
 		Evento updatedEvento = eventoRepository.save(evento);
 		List<Evento> eventos = new ArrayList<Evento>();
 		eventos.add(updatedEvento);
-		List<EventoResponse> eventoResponse =new ArrayList<EventoResponse>();
+		List<EventoRequest> eventoResponse =new ArrayList<EventoRequest>();
 		try {
 		eventoResponse = getEventoResponseFormat(eventos);
 		LogTransacciones transaccion = new LogTransacciones("Editar evento:"+evento.getId()+" "+evento.getNombre());
@@ -233,19 +233,19 @@ public class EventoService {
 		return condiciones;
 	}
 	
-	public EventoResponse getEventoById(Integer eventoId) {
+	public EventoRequest getEventoById(Integer eventoId) {
 		Evento evento = eventoRepository.findById(eventoId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
 	    return getEventoResponseFormate(evento);
 	}
-	public EventoResponse getEventoResponseFormate(Evento evento) {
+	public EventoRequest getEventoResponseFormate(Evento evento) {
 		List<Evento> eventos = new ArrayList<Evento>();
 		eventos.add(evento);
-		List<EventoResponse> eventoResponse = getEventoResponseFormat(eventos);
+		List<EventoRequest> eventoResponse = getEventoResponseFormat(eventos);
 		return eventoResponse.get(0);
 	}
 	
-	public EventoResponse deactivateEvento(Integer eventoId, Integer usuarioId) {
+	public EventoRequest deactivateEvento(Integer eventoId, Integer usuarioId) {
 		Evento evento = eventoRepository.findById(eventoId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
 		evento.setEstado("INACTIVO");
@@ -255,7 +255,7 @@ public class EventoService {
 		return getEventoResponseFormate(nuevo);
 	}
 	
-	public EventoResponse activateEvento(Integer eventoId, Integer usuarioId) {
+	public EventoRequest activateEvento(Integer eventoId, Integer usuarioId) {
 		Evento evento = eventoRepository.findById(eventoId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
 		evento.setEstado("ACTIVO");
@@ -274,44 +274,37 @@ public class EventoService {
 	}
 	
 	
-	public List<EventoResponse> getEventoResponseFormat(List<Evento> eventos){
-		List<EventoResponse> eventoResponse = new ArrayList<EventoResponse>();
-		List<CondicionResponse> condicionesResponse = new ArrayList<CondicionResponse>();
+	public List<EventoRequest> getEventoResponseFormat(List<Evento> eventos){
+		List<EventoRequest> eventoResponse = new ArrayList<EventoRequest>();
+		Set<CondicionRequest> condicionesResponse = new HashSet<CondicionRequest>();
 		eventos.forEach(evento ->{
-			List<ParametroResponse> parametrosGenero = new ArrayList<ParametroResponse>();
-			List<ParametroResponse> parametrosFecha = new ArrayList<ParametroResponse>();
-			List<ParametroResponse> parametrosAsociacion = new ArrayList<ParametroResponse>();
-			List<ParametroResponse> parametrosVinculacion = new ArrayList<ParametroResponse>();
-			List<ParametroResponse> parametrosPrograma = new ArrayList<ParametroResponse>();
 			List<Asociacion> asociaciones = new ArrayList<Asociacion>();
 			List<ProgramaAcademico> programas = new ArrayList<ProgramaAcademico>();
 
 			Set<Condicion> condicionesEvento = evento.getCondicionesEvento();
-			if(condicionesEvento.isEmpty()) eventoResponse.add(new EventoResponse(evento.getId(), evento.getNombre(), evento.getFecha(), evento.getEstado(), evento.getRecurrencia(), evento.getPlantilla()));
 			condicionesEvento.forEach(condicion ->{
 				if(condicion.getId().getCondicion().contains("asociacion")) {
 					Asociacion tempAsociacion = asociacionService.getAsociacionById(Integer.parseInt(condicion.getId().getParametro()));
 					asociaciones.add(tempAsociacion);
-					parametrosAsociacion.add(new ParametroResponse
-							(tempAsociacion.getId(), "asociacion",tempAsociacion.getNombre()));
+					condicionesResponse.add(new  CondicionRequest(String.valueOf(tempAsociacion.getId()), "asociacion",tempAsociacion.getNombre()));
 				}
 				else if(condicion.getId().getCondicion().contains("vinculacion")) {
 					Vinculacion tempVinculacion = vinculacionService.getVinculacionById(Integer.parseInt(condicion.getId().getParametro()));
-					parametrosVinculacion.add(new ParametroResponse(tempVinculacion.getId(), "vinculacion", tempVinculacion.getNombre()));
+					condicionesResponse.add(new  CondicionRequest(String.valueOf(tempVinculacion.getId()), "vinculacion", tempVinculacion.getNombre()));
 				}
 				else if(condicion.getId().getCondicion().contains("programa_academico")) {
 					ProgramaAcademico tempProgramaAcademico = programaAcademicoService.getProgramaAcademicoById(Integer.parseInt(condicion.getId().getParametro()));
 					programas.add(tempProgramaAcademico);
 				}
 				else if(condicion.getId().getCondicion().contains("fecha_nacimiento")) {
-					parametrosFecha.add(new ParametroResponse(1,"fecha_nacimiento","cumpleaños"));
+					condicionesResponse.add(new  CondicionRequest(String.valueOf(1),"fecha_nacimiento","cumpleaños"));
 				}
 				else if(condicion.getId().getCondicion().contains("genero")) {
 					if(condicion.getId().getParametro().contains("MASCULINO")) {
-						parametrosGenero.add(new ParametroResponse(1,"genero","MASCULINO"));
+						condicionesResponse.add(new  CondicionRequest(String.valueOf(1),"genero","MASCULINO"));
 					}
 					else if(condicion.getId().getParametro().contains("FEMENINO")) {
-						parametrosGenero.add(new ParametroResponse(2,"genero","FEMENINO"));
+						condicionesResponse.add(new  CondicionRequest(String.valueOf(2),"genero","FEMENINO"));
 					}
 				}
 			});
@@ -321,19 +314,15 @@ public class EventoService {
 						List<Asociacion> tempAsociaciones = asociacionService.getAsociacionByProgramaAcademico(programa);
 						tempAsociaciones.forEach(tempAsociacion ->{
 							if(tempAsociacion.getId()==asociacion.getId()) {
-								parametrosPrograma.add(new ParametroResponse(programa.getCodigo(),"programa_academico",
+								condicionesResponse.add(new  CondicionRequest(String.valueOf(programa.getCodigo()),"programa_academico",
 								        programa.getNombre().concat(" / ").concat(asociacion.getNombre())));
 							}
 						});
 					});
 				});
 			}
-			if(!parametrosGenero.isEmpty())condicionesResponse.add(new CondicionResponse("Género", parametrosGenero));
-			if(!parametrosFecha.isEmpty())condicionesResponse.add(new CondicionResponse("Fecha de nacimiento", parametrosFecha));
-			if(!parametrosPrograma.isEmpty())condicionesResponse.add(new CondicionResponse("Programa acádemico", parametrosPrograma));
-			if(!parametrosVinculacion.isEmpty())condicionesResponse.add(new CondicionResponse("Vinculación", parametrosVinculacion));
-			if(!parametrosAsociacion.isEmpty())condicionesResponse.add(new CondicionResponse("Asociación", parametrosAsociacion));
-			eventoResponse.add(new EventoResponse(evento.getId(), evento.getNombre(), evento.getFecha(), evento.getEstado(), evento.getRecurrencia(), evento.getPlantilla(), 
+
+			eventoResponse.add(new EventoRequest(evento.getId(), evento.getNombre(), evento.getFecha(), evento.getEstado(), evento.getRecurrencia(), evento.getPlantilla(), 
 					condicionesResponse));
 		});
 		return eventoResponse;

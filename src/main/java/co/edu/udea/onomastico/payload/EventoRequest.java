@@ -3,15 +3,25 @@ package co.edu.udea.onomastico.payload;
 import java.util.Date;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import co.edu.udea.onomastico.model.Plantilla;
+import co.edu.udea.onomastico.model.Views;
 
 public class EventoRequest {
+	@JsonView(Views.Public.class)
 	private int id;
+	@JsonView(Views.Public.class)
 	private String nombre;
+	@JsonView(Views.Public.class)
 	private java.util.Date fecha;
+	@JsonView(Views.Public.class)
 	private String estado;
+	@JsonView(Views.Public.class)
 	private String recurrencia;
+	@JsonView(Views.Public.class)
 	private Plantilla plantilla;
+	@JsonView(Views.Public.class)
 	private Set<CondicionRequest> condicionesEvento;
 	public EventoRequest(int id, String nombre, Date fecha, String estado, String recurrencia, Plantilla plantilla,
 			Set<CondicionRequest> condicionesEvento) {
@@ -24,6 +34,17 @@ public class EventoRequest {
 		this.plantilla = plantilla;
 		this.condicionesEvento = condicionesEvento;
 	}
+	
+	public EventoRequest(int id, String nombre, Date fecha, String estado, String recurrencia, Plantilla plantilla) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.fecha = fecha;
+		this.estado = estado;
+		this.recurrencia = recurrencia;
+		this.plantilla = plantilla;
+	}
+
 	public int getId() {
 		return id;
 	}
