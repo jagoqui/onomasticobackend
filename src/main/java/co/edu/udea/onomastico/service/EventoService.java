@@ -31,7 +31,6 @@ import co.edu.udea.onomastico.payload.CondicionResponse;
 import co.edu.udea.onomastico.payload.EventoRequest;
 import co.edu.udea.onomastico.payload.EventoResponse;
 import co.edu.udea.onomastico.payload.ParametroResponse;
-import co.edu.udea.onomastico.payload.ValorResponse;
 import co.edu.udea.onomastico.repository.CondicionRepository;
 import co.edu.udea.onomastico.repository.EventoRepository;
 import co.edu.udea.onomastico.repository.ProgramaAcademicoRepository;
@@ -179,10 +178,10 @@ public class EventoService {
 		condicionRequest.forEach(condicion->{
 	    	if(condicion.getCondicion().contains("genero")) {
 	    		String parametro = "FEMENINO";
-	    		if(condicion.getParametro().contains("1")) parametro = "MASCULINO";
+	    		if(condicion.getId().contains("1")) parametro = "MASCULINO";
 	    		condiciones.add(new Condicion(new CondicionId(newEventoId,condicion.getCondicion(),parametro), newEvento));
 	    	}else {
-	    	condiciones.add(new Condicion(new CondicionId(newEventoId,condicion.getCondicion(),condicion.getParametro()), newEvento));
+	    	condiciones.add(new Condicion(new CondicionId(newEventoId,condicion.getCondicion(),condicion.getId()), newEvento));
 	    	}
 	    });
 	    Set<CondicionRequest> result = condicionRequest.stream()
@@ -201,44 +200,35 @@ public class EventoService {
 		List<CondicionResponse> condiciones = new ArrayList<CondicionResponse>();
 		Usuario usuario = usuarioRepository.findById(id).orElse(null);
 		Set<Asociacion> asociaciones = usuario.getAsociacionPorUsuario();
-		List<ValorResponse> valoresFecha = new ArrayList<ValorResponse>();
-		valoresFecha.add(new ValorResponse(1,"cumpleaños"));
 		List<ParametroResponse> parametrosFecha = new ArrayList<ParametroResponse>();
-		parametrosFecha.add(new ParametroResponse(1,valoresFecha));
-		condiciones.add(new CondicionResponse("fecha_nacimiento", parametrosFecha));
-		List<ValorResponse> valoresGenero = new ArrayList<ValorResponse>();
-		valoresGenero.add(new ValorResponse(1,"MASCULINO"));
-		valoresGenero.add(new ValorResponse(2,"FEMENINO"));
+		parametrosFecha.add(new ParametroResponse(1,"fecha_nacimiento","cumpleaños"));
+		condiciones.add(new CondicionResponse("Fecha de nacimiento", parametrosFecha));
 		List<ParametroResponse> parametrosGenero = new ArrayList<ParametroResponse>();
-		parametrosGenero.add(new ParametroResponse(1,valoresGenero));
-		condiciones.add(new CondicionResponse("genero", parametrosGenero));
+		parametrosGenero.add(new ParametroResponse(1,"genero","MASCULINO"));
+		parametrosGenero.add(new ParametroResponse(2,"genero","FEMENINO"));
+		condiciones.add(new CondicionResponse("Género", parametrosGenero));
+		List<ParametroResponse> parametrosPrograma = new ArrayList<ParametroResponse>();
 		if(asociaciones != null) {
-			List<ValorResponse> valoresAsociacion = new ArrayList<ValorResponse>();
-			List<ParametroResponse> parametrosPrograma = new ArrayList<ParametroResponse>();
 			List<ParametroResponse> parametrosAsociacion = new ArrayList<ParametroResponse>();
 			asociaciones.forEach(asociacion ->{
+				parametrosAsociacion.add(new ParametroResponse(asociacion.getId(),"asociacion",asociacion.getNombre()));
 				List<ProgramaAcademico> programas = new ArrayList<ProgramaAcademico>();
-				valoresAsociacion.add(new ValorResponse(asociacion.getId(),asociacion.getNombre()));
 				programas = programaAcademicoService.findByProgramaAcademicoPorAsociacion(asociacion);
-				List<ValorResponse> valoresPrograma = new ArrayList<ValorResponse>();
 				programas.forEach(programa ->{
-					valoresPrograma.add(new ValorResponse(programa.getCodigo(),programa.getNombre()));
+					parametrosPrograma.add(new ParametroResponse(programa.getCodigo(),"programa_academico",
+					        programa.getNombre().concat(" / ").concat(asociacion.getNombre())));
 				});
-				parametrosPrograma.add(new ParametroResponse(asociacion.getId(),valoresPrograma));
 			});
-			condiciones.add(new CondicionResponse("programa_academico", parametrosPrograma));
-			parametrosAsociacion.add(new ParametroResponse(1,valoresAsociacion));
-			condiciones.add(new CondicionResponse("asociacion", parametrosAsociacion));
+			condiciones.add(new CondicionResponse("Programa acádemico", parametrosPrograma));
+			condiciones.add(new CondicionResponse("Asociación", parametrosAsociacion));
 		}
 		List<Vinculacion> vinculaciones= vinculacionService.getAllVinculaciones();
 		List<ParametroResponse> parametrosVincuacion = new ArrayList<ParametroResponse>();
 		if(vinculaciones != null) {
-			List<ValorResponse> valoresVinculacion = new ArrayList<ValorResponse>();
 			vinculaciones.forEach(vinculacion ->{
-				valoresVinculacion.add(new ValorResponse(vinculacion.getId(),vinculacion.getNombre()));
+				parametrosVincuacion.add(new ParametroResponse(vinculacion.getId(),"vinculacion",vinculacion.getNombre()));
 			});
-			parametrosVincuacion.add(new ParametroResponse(1,valoresVinculacion));
-			condiciones.add(new CondicionResponse("vinculacion", parametrosVincuacion));
+			condiciones.add(new CondicionResponse("Vinculación", parametrosVincuacion));
 		}
 		return condiciones;
 	}
@@ -288,10 +278,6 @@ public class EventoService {
 		List<EventoResponse> eventoResponse = new ArrayList<EventoResponse>();
 		List<CondicionResponse> condicionesResponse = new ArrayList<CondicionResponse>();
 		eventos.forEach(evento ->{
-			List<ValorResponse> valoresGenero = new ArrayList<ValorResponse>();
-			List<ValorResponse> valoresFecha = new ArrayList<ValorResponse>();
-			List<ValorResponse> valoresAsociacion = new ArrayList<ValorResponse>();
-			List<ValorResponse> valoresVinculacion = new ArrayList<ValorResponse>();
 			List<ParametroResponse> parametrosGenero = new ArrayList<ParametroResponse>();
 			List<ParametroResponse> parametrosFecha = new ArrayList<ParametroResponse>();
 			List<ParametroResponse> parametrosAsociacion = new ArrayList<ParametroResponse>();
@@ -306,52 +292,47 @@ public class EventoService {
 				if(condicion.getId().getCondicion().contains("asociacion")) {
 					Asociacion tempAsociacion = asociacionService.getAsociacionById(Integer.parseInt(condicion.getId().getParametro()));
 					asociaciones.add(tempAsociacion);
-					valoresAsociacion.add(new ValorResponse(tempAsociacion.getId(), tempAsociacion.getNombre()));
+					parametrosAsociacion.add(new ParametroResponse
+							(tempAsociacion.getId(), "asociacion",tempAsociacion.getNombre()));
 				}
 				else if(condicion.getId().getCondicion().contains("vinculacion")) {
 					Vinculacion tempVinculacion = vinculacionService.getVinculacionById(Integer.parseInt(condicion.getId().getParametro()));
-					valoresVinculacion.add(new ValorResponse(tempVinculacion.getId(), tempVinculacion.getNombre()));
+					parametrosVinculacion.add(new ParametroResponse(tempVinculacion.getId(), "vinculacion", tempVinculacion.getNombre()));
 				}
 				else if(condicion.getId().getCondicion().contains("programa_academico")) {
 					ProgramaAcademico tempProgramaAcademico = programaAcademicoService.getProgramaAcademicoById(Integer.parseInt(condicion.getId().getParametro()));
 					programas.add(tempProgramaAcademico);
 				}
 				else if(condicion.getId().getCondicion().contains("fecha_nacimiento")) {
-					valoresFecha.add(new ValorResponse(1, "cumpleaños"));
+					parametrosFecha.add(new ParametroResponse(1,"fecha_nacimiento","cumpleaños"));
 				}
 				else if(condicion.getId().getCondicion().contains("genero")) {
 					if(condicion.getId().getParametro().contains("MASCULINO")) {
-						valoresGenero.add(new ValorResponse(1, "MASCULINO"));
+						parametrosGenero.add(new ParametroResponse(1,"genero","MASCULINO"));
 					}
 					else if(condicion.getId().getParametro().contains("FEMENINO")) {
-						valoresGenero.add(new ValorResponse(2, "FEMENINO"));
+						parametrosGenero.add(new ParametroResponse(2,"genero","FEMENINO"));
 					}
 				}
 			});
-			
 			if(!asociaciones.isEmpty()) {
 				asociaciones.forEach(asociacion ->{
-					List<ValorResponse> valoresPrograma = new ArrayList<ValorResponse>();
 					programas.forEach(programa ->{
 						List<Asociacion> tempAsociaciones = asociacionService.getAsociacionByProgramaAcademico(programa);
 						tempAsociaciones.forEach(tempAsociacion ->{
 							if(tempAsociacion.getId()==asociacion.getId()) {
-								valoresPrograma.add(new ValorResponse(programa.getCodigo(),programa.getNombre()));
+								parametrosPrograma.add(new ParametroResponse(programa.getCodigo(),"programa_academico",
+								        programa.getNombre().concat(" / ").concat(asociacion.getNombre())));
 							}
 						});
 					});
-					if(!valoresPrograma.isEmpty())parametrosPrograma.add(new ParametroResponse(asociacion.getId(),valoresPrograma));
 				});
 			}
-			if(!valoresGenero.isEmpty())parametrosGenero.add(new ParametroResponse(1,valoresGenero));
-			if(!valoresFecha.isEmpty())parametrosFecha.add(new ParametroResponse(1,valoresFecha));
-			if(!valoresAsociacion.isEmpty())parametrosAsociacion.add(new ParametroResponse(1,valoresAsociacion));
-			if(!valoresVinculacion.isEmpty())parametrosVinculacion.add(new ParametroResponse(1,valoresVinculacion));
-			if(!parametrosGenero.isEmpty())condicionesResponse.add(new CondicionResponse("genero", parametrosGenero));
-			if(!parametrosFecha.isEmpty())condicionesResponse.add(new CondicionResponse("fecha_nacimiento", parametrosFecha));
-			if(!parametrosPrograma.isEmpty())condicionesResponse.add(new CondicionResponse("programa_academico", parametrosPrograma));
-			if(!parametrosVinculacion.isEmpty())condicionesResponse.add(new CondicionResponse("vinculacion", parametrosVinculacion));
-			if(!parametrosAsociacion.isEmpty())condicionesResponse.add(new CondicionResponse("asociacion", parametrosAsociacion));
+			if(!parametrosGenero.isEmpty())condicionesResponse.add(new CondicionResponse("Género", parametrosGenero));
+			if(!parametrosFecha.isEmpty())condicionesResponse.add(new CondicionResponse("Fecha de nacimiento", parametrosFecha));
+			if(!parametrosPrograma.isEmpty())condicionesResponse.add(new CondicionResponse("Programa acádemico", parametrosPrograma));
+			if(!parametrosVinculacion.isEmpty())condicionesResponse.add(new CondicionResponse("Vinculación", parametrosVinculacion));
+			if(!parametrosAsociacion.isEmpty())condicionesResponse.add(new CondicionResponse("Asociación", parametrosAsociacion));
 			eventoResponse.add(new EventoResponse(evento.getId(), evento.getNombre(), evento.getFecha(), evento.getEstado(), evento.getRecurrencia(), evento.getPlantilla(), 
 					condicionesResponse));
 		});
