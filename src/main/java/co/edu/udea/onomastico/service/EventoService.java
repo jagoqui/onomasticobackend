@@ -276,8 +276,8 @@ public class EventoService {
 	
 	public List<EventoRequest> getEventoResponseFormat(List<Evento> eventos){
 		List<EventoRequest> eventoResponse = new ArrayList<EventoRequest>();
-		Set<CondicionRequest> condicionesResponse = new HashSet<CondicionRequest>();
 		eventos.forEach(evento ->{
+			Set<CondicionRequest> condicionesResponse = new HashSet<CondicionRequest>();
 			List<Asociacion> asociaciones = new ArrayList<Asociacion>();
 			List<ProgramaAcademico> programas = new ArrayList<ProgramaAcademico>();
 
@@ -321,7 +321,6 @@ public class EventoService {
 					});
 				});
 			}
-
 			eventoResponse.add(new EventoRequest(evento.getId(), evento.getNombre(), evento.getFecha(), evento.getEstado(), evento.getRecurrencia(), evento.getPlantilla(), 
 					condicionesResponse));
 		});
