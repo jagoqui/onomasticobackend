@@ -36,4 +36,8 @@ public class VinculacionService {
 		vinculacionRepository.delete(vinculacion);
 	    return ResponseEntity.ok().build();
 	}
+	
+	public boolean existsVinculacion(Integer id) {
+		return vinculacionRepository.existsById(id);
+	}
 }

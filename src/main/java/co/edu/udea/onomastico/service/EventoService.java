@@ -63,6 +63,9 @@ public class EventoService {
 	
 	@Autowired
 	UsuarioService usuarioService;
+	
+	@Autowired
+	PlantillaService plantillaService;
 
 	public List<Evento> getAllEventos() {
 	    return eventoRepository.findAll();
@@ -117,9 +120,32 @@ public class EventoService {
 		return getEventoResponseFormat(eventos);
 	}
 	
+	public boolean isValidCondicionesEvento(Set<CondicionRequest> condicionRequest){
+		for(CondicionRequest condicion: condicionRequest){
+			if(condicion.getCondicion().contains("asociacion")) {
+				if(!asociacionService.existsAsociacion(Integer.parseInt(condicion.getId()))) return false;
+			}
+			else if(condicion.getCondicion().contains("programa_academico")) {
+				if(!programaAcademicoService.existsProgramaAcademico(Integer.parseInt(condicion.getId()))) return false;
+			}else if(condicion.getCondicion().contains("vinculacion")) {
+				if(!vinculacionService.existsVinculacion(Integer.parseInt(condicion.getId()))) return false;
+			}
+			else if(!condicion.getCondicion().contains("vinculacion") || 
+					condicion.getCondicion().contains("programa_academico") ||
+					condicion.getCondicion().contains("asociacion") ||
+					condicion.getCondicion().contains("genero") ||
+					condicion.getCondicion().contains("fecha_nacimiento")) {
+				return false;
+			}
+		}
+		return true;
+	}
 	public EventoRequest AddEvento(EventoRequest eventoRequest, Integer usuarioId) throws BadRequestException{
 		if(!(eventoRequest.getEstado().equals("ACTIVO") || eventoRequest.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado incorrecto");
 		if(!(eventoRequest.getRecurrencia().equals("DIARIA") || eventoRequest.getRecurrencia().equals("ANUAL")))throw new BadRequestException("Recurrencia incorrecta");
+		if(!plantillaService.existsPlantilla(eventoRequest.getPlantilla().getId()))throw new BadRequestException("plantilla no existe");
+		Set<CondicionRequest> condicionRequest = eventoRequest.getCondicionesEvento();
+	    if(isValidCondicionesEvento(condicionRequest)==false)throw new BadRequestException("Condiciones incorrectas");
 		Evento evento = new Evento();
 		evento.setFecha(eventoRequest.getFecha());
 		evento.setEstado(eventoRequest.getEstado());
@@ -129,7 +155,6 @@ public class EventoService {
 		evento.setCondicionesEvento(null);
 	    Evento newEvento = eventoRepository.saveAndFlush(evento);
 	    Integer newEventoId = newEvento.getId();
-	    Set<CondicionRequest> condicionRequest = eventoRequest.getCondicionesEvento();
 	    Set<Condicion> condiciones =  setCondiciones(condicionRequest,newEventoId, usuarioId, newEvento);
 	    newEvento.setCondicionesEvento(condiciones);
 	    eventoRepository.save(newEvento);
@@ -151,12 +176,13 @@ public class EventoService {
 		if(!(detallesEvento.getRecurrencia().equals("DIARIA") || detallesEvento.getRecurrencia().equals("ANUAL")))throw new BadRequestException("Recurrencia incorrecta");
 		Evento  oldEvento =  eventoRepository.findById(eventoId).orElseThrow(() -> new ResourceNotFoundException("Evento" + "id"+eventoId));
 		Evento evento = oldEvento;
+		Set<CondicionRequest> condicionRequest = detallesEvento.getCondicionesEvento();
+		if(isValidCondicionesEvento(condicionRequest)==false)throw new BadRequestException("Condiciones incorrectas");
 		evento.setEstado(detallesEvento.getEstado());
 		evento.setFecha(detallesEvento.getFecha());
 		evento.setNombre(detallesEvento.getNombre());
 		evento.setRecurrencia(detallesEvento.getRecurrencia());
 		evento.setPlantilla(detallesEvento.getPlantilla());
-		Set<CondicionRequest> condicionRequest = detallesEvento.getCondicionesEvento();
 		Set<Condicion> condiciones =   setCondiciones(condicionRequest,evento.getId(), usuarioId, evento);
 		evento.setCondicionesEvento(condiciones);
 		Evento updatedEvento = eventoRepository.save(evento);

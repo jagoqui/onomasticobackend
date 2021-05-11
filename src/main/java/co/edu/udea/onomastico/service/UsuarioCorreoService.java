@@ -96,7 +96,7 @@ public class UsuarioCorreoService {
 	
 	public UsuarioCorreo createUsuario(UsuarioCorreo usuario) throws BadRequestException{
 			if(!usuarioCorreoRepository.findByEmail(usuario.getEmail()).isEmpty() && !usuarioCorreoRepository.findById(usuario.getId()).isEmpty()) throw new ResourceAlreadyExistsException(" ya se encuentra en uso", usuario.getEmail());
-			if(!(usuario.getEstado().equals("ACTIVO") || usuario.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado Incorrecto");
+			if(!(usuario.getEstado().equals("ACTIVO") || usuario.getEstado().equals("INACTIVO") || !usuario.getEmail().contains("@"))) throw new BadRequestException("Estado Incorrecto");
 			UsuarioCorreo newUser = usuarioCorreoRepository.save(usuario);
 			return newUser;
 	}
@@ -133,6 +133,7 @@ public class UsuarioCorreoService {
 		usuario.setId(detallesUsuario.getId());
 		usuario.setNombre(detallesUsuario.getNombre());;
 		usuario.setEmail(detallesUsuario.getEmail());
+		if(!usuario.getEmail().contains("@")) throw new BadRequestException("correo Incorrecto");
 		usuario.setApellido(detallesUsuario.getApellido());
 		usuario.setGenero(detallesUsuario.getGenero());
 		if(!(usuario.getEstado().equals("ACTIVO") || usuario.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado Incorrecto");

@@ -137,7 +137,7 @@ public class PlantillaService {
 //		PlantillaResponse pr = new PlantillaResponse(up, updatedPlantilla);
 //	    return new ResponseEntity<>(pr, HttpStatus.OK);
 //	}
-public ResponseEntity<Plantilla> updatePlantilla(Plantilla plantilla, Integer plantillaId, Integer usuarioId) {
+	public ResponseEntity<Plantilla> updatePlantilla(Plantilla plantilla, Integer plantillaId, Integer usuarioId) {
 		
 		Plantilla  plantillaToUpdate =  plantillaRepository.findById(plantillaId)
 	            .orElseThrow(() -> new ResourceNotFoundException("plantilla" + "id"+plantillaId));
@@ -156,5 +156,9 @@ public ResponseEntity<Plantilla> updatePlantilla(Plantilla plantilla, Integer pl
 
 		plantillaRepository.delete(plantilla);
 		return ResponseEntity.ok().build();
+	}
+	
+	public boolean existsPlantilla(Integer id) {
+		return plantillaRepository.existsById(id);
 	}
 }
