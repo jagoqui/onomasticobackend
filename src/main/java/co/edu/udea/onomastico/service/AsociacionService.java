@@ -40,4 +40,8 @@ public class AsociacionService {
 	public List<Asociacion> getAsociacionByProgramaAcademico(ProgramaAcademico programaAcademico){
 		return  asociacionRepository.findByProgramasAsociacion(programaAcademico);
 	}
+	
+	public boolean existsAsociacion(Integer id) {
+		return asociacionRepository.existsById(id);
+	}
 }

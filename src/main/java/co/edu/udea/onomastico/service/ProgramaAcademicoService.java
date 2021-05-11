@@ -41,4 +41,8 @@ public class ProgramaAcademicoService {
 		programaAcademicoRepository.delete(programaAcademico);
 	    return ResponseEntity.ok().build();
 	}
+	
+	public boolean existsProgramaAcademico(Integer id) {
+		return programaAcademicoRepository.existsById(id);
+	}
 }
