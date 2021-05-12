@@ -130,11 +130,11 @@ public class EventoService {
 			}else if(condicion.getCondicion().contains("vinculacion")) {
 				if(!vinculacionService.existsVinculacion(Integer.parseInt(condicion.getId()))) return false;
 			}
-			else if(!condicion.getCondicion().contains("vinculacion") || 
-					condicion.getCondicion().contains("programa_academico") ||
-					condicion.getCondicion().contains("asociacion") ||
-					condicion.getCondicion().contains("genero") ||
-					condicion.getCondicion().contains("fecha_nacimiento")) {
+			else if(!(condicion.getCondicion().contains("vinculacion") || 
+					 condicion.getCondicion().contains("programa_academico") ||
+					 condicion.getCondicion().contains("asociacion") ||
+					 condicion.getCondicion().contains("genero") ||
+					 condicion.getCondicion().contains("fecha_nacimiento"))) {
 				return false;
 			}
 		}

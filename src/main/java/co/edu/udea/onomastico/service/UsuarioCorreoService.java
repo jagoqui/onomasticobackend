@@ -35,6 +35,15 @@ public class UsuarioCorreoService {
 	@Autowired
 	UsuarioService usuarioService;
 	
+	@Autowired
+	VinculacionService vinculacionService;
+	
+	@Autowired
+	AsociacionService asociacionService;
+	
+	@Autowired
+	ProgramaAcademicoService programaAcademicoService;
+	
 	public List<UsuarioCorreo> findByBirhday(){
 		return usuarioCorreoRepository.findByBirthday();
 	}
@@ -95,22 +104,21 @@ public class UsuarioCorreoService {
 	}
 	
 	public UsuarioCorreo createUsuario(UsuarioCorreo usuario) throws BadRequestException{
-			if(!usuarioCorreoRepository.findByEmail(usuario.getEmail()).isEmpty() && !usuarioCorreoRepository.findById(usuario.getId()).isEmpty()) throw new ResourceAlreadyExistsException(" ya se encuentra en uso", usuario.getEmail());
-			if(!(usuario.getEstado().equals("ACTIVO") || usuario.getEstado().equals("INACTIVO") || !usuario.getEmail().contains("@"))) throw new BadRequestException("Estado Incorrecto");
-			UsuarioCorreo newUser = usuarioCorreoRepository.save(usuario);
-			return newUser;
+		if(!isUserDetailsValid(usuario)) throw new BadRequestException("argumentos invalidos");
+		if(!usuarioCorreoRepository.findByEmail(usuario.getEmail()).isEmpty() || !usuarioCorreoRepository.findById(usuario.getId()).isEmpty()) throw new ResourceAlreadyExistsException(" ya se encuentra en uso", usuario.getEmail());
+		UsuarioCorreo newUser = usuarioCorreoRepository.save(usuario);
+		return newUser;
 	}
 	
 	//unsuscribe with encripted email
-	
 	public UsuarioCorreo unsubscribe(String encriptedEmail) {
-			String email = new String(Base64.getDecoder().decode(encriptedEmail));
-			UsuarioCorreo user = usuarioCorreoRepository.findByEmail(email)
+		String email = new String(Base64.getDecoder().decode(encriptedEmail));
+		UsuarioCorreo user = usuarioCorreoRepository.findByEmail(email)
 					.orElseThrow(() -> new ResourceNotFoundException("UsuarioCorreo"+"email"+email));
-			user.setEstado("INACTIVO");
-			usuarioCorreoRepository.save(user);
-			return user;
-		}
+		user.setEstado("INACTIVO");
+		usuarioCorreoRepository.save(user);
+		return user;
+	}
 	//suscribe with email not encripted
 	public UsuarioCorreo subscribe(String nonencriptedEmail) {
 		UsuarioCorreo user = usuarioCorreoRepository.findByEmail(nonencriptedEmail)
@@ -124,19 +132,23 @@ public class UsuarioCorreoService {
 		UsuarioCorreoId id = new UsuarioCorreoId(tipo,numero);
 	    return usuarioCorreoRepository.findById(id);
 	}
+	public boolean isUserDetailsValid(UsuarioCorreo usuario) {
+		if(!(usuario.getEmail().contains("@"))) return false;
+		if(!(usuario.getEstado().equals("ACTIVO") || usuario.getEstado().equals("INACTIVO")))return false;
+		if(!(usuario.getGenero().equals("FEMENINO")|| usuario.getGenero().equals("MASCULINO")))return false;
+		return true;
+	}
 	
 	public  UsuarioCorreo updateUsuario(String tipo, String numero, UsuarioCorreo detallesUsuario) throws BadRequestException{
+		if(!isUserDetailsValid(detallesUsuario)) throw new BadRequestException("argumentos invalidos");
 		UsuarioCorreoId usuarioId = new UsuarioCorreoId(tipo,numero);
 		UsuarioCorreo  usuario =  usuarioCorreoRepository.findById(usuarioId)
 	            .orElseThrow(() -> new ResourceNotFoundException("UsuarioCorreo" + "id"+ usuarioId));
-
 		usuario.setId(detallesUsuario.getId());
 		usuario.setNombre(detallesUsuario.getNombre());;
 		usuario.setEmail(detallesUsuario.getEmail());
-		if(!usuario.getEmail().contains("@")) throw new BadRequestException("correo Incorrecto");
 		usuario.setApellido(detallesUsuario.getApellido());
 		usuario.setGenero(detallesUsuario.getGenero());
-		if(!(usuario.getEstado().equals("ACTIVO") || usuario.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado Incorrecto");
 		usuario.setEstado(detallesUsuario.getEstado());
 		usuario.setFechaNacimiento(detallesUsuario.getFechaNacimiento());
 		usuario.setPlataformaPorUsuarioCorreo(detallesUsuario.getPlataformaPorUsuarioCorreo());
