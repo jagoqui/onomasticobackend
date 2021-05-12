@@ -102,9 +102,9 @@ public class EmailScheduling {
 			StringBuilder tempText = StringUtil.replaceText(targets[i],text,replacements[i]);
 			text = tempText;
 		}
-		String body = emailGenericContent(text.toString(), UNSUBSCRIBE_URL+encriptedEmail);
-		if(asociacion.contains("Ingeniería")||asociacion.contains("ingenieria")||asociacion.contains("Ingenieria")||asociacion.contains("ingeniería")) {
-			body = emailContent(text.toString(), UNSUBSCRIBE_URL+encriptedEmail);
+		String body = emailContent(text.toString(), UNSUBSCRIBE_URL+encriptedEmail);
+		if(!asociacion.equalsIgnoreCase("Facultad De ingeniería")) {
+			body = emailGenericContent(text.toString(), UNSUBSCRIBE_URL+encriptedEmail);
 		}
 		return body;
 	}
