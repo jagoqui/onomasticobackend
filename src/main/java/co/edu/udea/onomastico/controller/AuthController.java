@@ -27,6 +27,8 @@ import co.edu.udea.onomastico.security.JwtTokenProvider;
 import co.edu.udea.onomastico.service.EmailService;
 import co.edu.udea.onomastico.service.UsuarioService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -50,7 +52,7 @@ public class AuthController {
 	private EmailService emailService;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) throws Throwable {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws Throwable {
     	Usuario user = (Usuario) usuarioService.findUserByEmail(loginRequest.getUserEmail()).orElseThrow(CredentialsException::new);
     	if(user.getEstado().contains("INACTIVO"))return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         Authentication authentication = authenticationManager.authenticate(
@@ -66,7 +68,7 @@ public class AuthController {
     }
     
  	@GetMapping("/forgotpwd")
- 	public ResponseEntity<?> sendEmailforgotPasswordForm(@RequestParam("email") String userEmail) {
+ 	public ResponseEntity<?> sendEmailforgotPasswordForm(@Valid @RequestParam("email") String userEmail) {
  		Optional<Usuario> optional = usuarioService.findUserByEmail(userEmail);
  		if (optional.isPresent()) {
  			Usuario user = optional.get();
@@ -83,7 +85,7 @@ public class AuthController {
  	}
 
     @PostMapping("/resetpwd")
- 	public ResponseEntity<?>displayResetPasswordPage(@RequestParam("token") String token, @RequestParam("password") String password) {
+ 	public ResponseEntity<?>displayResetPasswordPage(@Valid @RequestParam("token") String token, @RequestParam("password") String password) {
  		Optional<Usuario> user = usuarioService.findUserByResetToken(token);
  		if (user.isPresent()) {
  			Usuario resetUser = user.get(); 

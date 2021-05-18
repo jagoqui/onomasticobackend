@@ -109,7 +109,7 @@ public class PlantillaService {
 	public ResponseEntity<Plantilla> addPlantilla(Plantilla plantilla, Integer usuarioId){
 		Plantilla newPlantilla = plantillaRepository.save(plantilla);
 		newPlantilla = plantillaRepository.save(plantilla);
-		LogTransacciones transaccion = new LogTransacciones("Añadir plantilla:"+newPlantilla.getId());
+		String transaccion = "Añadir plantilla:"+newPlantilla.getId();
 		transaccionesService.createTransaccion(usuarioId, transaccion);
 		return  new ResponseEntity<>(newPlantilla, HttpStatus.OK);
 	}
@@ -145,7 +145,7 @@ public class PlantillaService {
 		plantillaToUpdate.setTexto(plantilla.getTexto());
 		plantillaToUpdate.setAsociacionesPorPlantilla(plantilla.getAsociacionesPorPlantilla());;
 		Plantilla updatedPlantilla = plantillaRepository.save(plantillaToUpdate);
-		LogTransacciones transaccion = new LogTransacciones("Editar plantilla:"+updatedPlantilla.getId());
+		String transaccion = "Editar plantilla:"+updatedPlantilla.getId();
 		transaccionesService.createTransaccion(usuarioId, transaccion);
 	    return new ResponseEntity<>(updatedPlantilla, HttpStatus.OK);
 	}

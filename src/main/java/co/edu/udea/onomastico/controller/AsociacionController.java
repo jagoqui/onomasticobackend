@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Views;
 import co.edu.udea.onomastico.service.AsociacionService;
@@ -34,20 +38,20 @@ public class AsociacionController {
 	
 	@JsonView(Views.Public.class)
 	@PostMapping("/asociaciones")
-	public @ResponseBody ResponseEntity<Asociacion> addAsociacion(@RequestBody Asociacion asociacion) {
+	public @ResponseBody ResponseEntity<Asociacion> addAsociacion(@Valid @NotBlank @RequestBody Asociacion asociacion) {
 		Asociacion newAsociacion = asociacionService.addAsociacion(asociacion);
 		return new ResponseEntity<Asociacion>(newAsociacion, HttpStatus.OK);
 	}
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/asociaciones/{id}")
-	public @ResponseBody ResponseEntity<Asociacion> getAsociacionById(@PathVariable(value = "id") Integer asociacionId) {
+	public @ResponseBody ResponseEntity<Asociacion> getAsociacionById(@Valid @NotNull @PathVariable(value = "id") Integer asociacionId) {
 		Asociacion asociacion = asociacionService.getAsociacionById(asociacionId);
 		return new ResponseEntity<Asociacion>(asociacion, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/asociaciones/{id}")
-	public ResponseEntity<?> deleteAsociacion(@PathVariable(value = "id") Integer asociacionId) {
+	public ResponseEntity<?> deleteAsociacion(@Valid @NotNull @PathVariable(value = "id") Integer asociacionId) {
 		return asociacionService.deleteAsociacion(asociacionId);
 	}
 

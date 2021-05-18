@@ -1,6 +1,8 @@
 package co.edu.udea.onomastico.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -15,6 +17,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -22,7 +25,12 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Table(name = "plantilla")
-public class Plantilla {
+@Data
+@Generated
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+public class Plantilla implements Serializable {
 
 	@JsonView(Views.Public.class)
 	@Id 
@@ -40,41 +48,18 @@ public class Plantilla {
     @JoinTable(name = "asociacion_por_plantilla", 
             joinColumns = { @JoinColumn(name = "plantilla_idplantilla") }, 
             inverseJoinColumns = { @JoinColumn(name = "asociacion_id") })
-    private Set<Asociacion> asociacionesPorPlantilla = new HashSet<Asociacion>();
-	
-	public Plantilla() {
-		super();
-	}
-	
-	public Plantilla(int id, String texto, Set<Asociacion> asociacionesPorPlantilla) {
-		super();
-		this.id = id;
-		this.texto = texto;
-		this.asociacionesPorPlantilla = asociacionesPorPlantilla;
+    private Set<Asociacion> asociacionesPorPlantilla = new HashSet<>();
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Plantilla plantilla = (Plantilla) o;
+		return id == plantilla.id;
 	}
 
-	public Set<Asociacion> getAsociacionesPorPlantilla() {
-		return asociacionesPorPlantilla;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
-
-	public void setAsociacionesPorPlantilla(Set<Asociacion> asociacionesPorPlantilla) {
-		this.asociacionesPorPlantilla = asociacionesPorPlantilla;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getTexto() {
-		return texto;
-	}
-
-	public void setTexto(String cuerpoTexto) {
-		this.texto = cuerpoTexto;
-	}
-
 }

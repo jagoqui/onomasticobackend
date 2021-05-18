@@ -81,13 +81,12 @@ public class EmailScheduling {
     		 destinatarios.forEach(destino ->{
     			 emails.append(getTextoByReciper(evento.getPlantilla(), destino)); 
     			 emailService.sendEmail(destino.getEmail(),evento.getNombre(), getTextoByReciper(evento.getPlantilla(), destino));
-    			 correoEnviadoService.addCorreoEnviado(new CorreoEnviado(new CorreoEnviadoId(destino.getEmail()),evento.getNombre()));
+    			 correoEnviadoService.addCorreoEnviado(destino.getEmail(),evento.getNombre());
     		 });
     		 }
     		}
     	});
     }
-
 	private String getTextoByReciper(Plantilla plantilla, EmailQueryResponse destino) {
 		String textoPlantilla = plantilla.getTexto();
 		String encriptedEmail = Base64.getEncoder().encodeToString(destino.getEmail().getBytes());

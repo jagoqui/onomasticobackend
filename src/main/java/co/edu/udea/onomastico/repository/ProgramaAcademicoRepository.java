@@ -11,5 +11,5 @@ import co.edu.udea.onomastico.model.ProgramaAcademico;
 @Repository
 public interface ProgramaAcademicoRepository extends JpaRepository<ProgramaAcademico, Integer>{
 
-	List<ProgramaAcademico> findByProgramaAcademicoPorAsociacion(Asociacion asociacion);
+	List<ProgramaAcademico> findByAsociacion(Asociacion asociacion);
 }

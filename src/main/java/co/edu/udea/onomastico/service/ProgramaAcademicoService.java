@@ -22,7 +22,7 @@ public class ProgramaAcademicoService {
 	}
 	
 	public List<ProgramaAcademico> findByProgramaAcademicoPorAsociacion(Asociacion asociacion){
-		return programaAcademicoRepository.findByProgramaAcademicoPorAsociacion(asociacion);
+		return programaAcademicoRepository.findByAsociacion(asociacion);
 	}
 	
 	public ProgramaAcademico getProgramaAcademicoById(Integer programaId) {

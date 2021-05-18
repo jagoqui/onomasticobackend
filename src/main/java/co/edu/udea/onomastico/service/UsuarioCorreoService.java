@@ -26,6 +26,8 @@ import co.edu.udea.onomastico.model.UsuarioCorreoId;
 import co.edu.udea.onomastico.model.Vinculacion;
 import co.edu.udea.onomastico.repository.UsuarioCorreoRepository;
 
+import javax.validation.constraints.NotNull;
+
 @Service
 public class UsuarioCorreoService {
 
@@ -63,11 +65,11 @@ public class UsuarioCorreoService {
 	public List<UsuarioCorreo> findByVinculation(Vinculacion vinculacion){
 		return usuarioCorreoRepository.findByVinculacionPorUsuarioCorreo(vinculacion);
 	}
-	public Integer getTotalUsuariosCorreoPorUsuarioPlataforma(Integer usuarioId) {
+	public Integer getTotalUsuariosCorreoPorUsuarioPlataforma(@NotNull Integer usuarioId) {
 		return getAllUsuarioCorreoByUsuario(usuarioId).size();
 	}
 	
-	public List<UsuarioCorreo> getAllUsuarioCorreoByUsuario(Integer usuarioId){
+	public List<UsuarioCorreo> getAllUsuarioCorreoByUsuario(@NotNull Integer usuarioId){
 		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
 		List<UsuarioCorreo> usuarioCorreo =  getUsuariosCorreosByAsociacion(asociaciones);
 		return usuarioCorreo;
@@ -106,6 +108,7 @@ public class UsuarioCorreoService {
 	public UsuarioCorreo createUsuario(UsuarioCorreo usuario) throws BadRequestException{
 		if(!isUserDetailsValid(usuario)) throw new BadRequestException("argumentos invalidos");
 		if(!usuarioCorreoRepository.findByEmail(usuario.getEmail()).isEmpty() || !usuarioCorreoRepository.findById(usuario.getId()).isEmpty()) throw new ResourceAlreadyExistsException(" ya se encuentra en uso", usuario.getEmail());
+		usuario.setProgramaAcademicoPorUsuarioCorreo(asociacionService.setAsociacionesInProgramasAcademicos(usuario.getProgramaAcademicoPorUsuarioCorreo()));
 		UsuarioCorreo newUser = usuarioCorreoRepository.save(usuario);
 		return newUser;
 	}
@@ -133,7 +136,6 @@ public class UsuarioCorreoService {
 	    return usuarioCorreoRepository.findById(id);
 	}
 	public boolean isUserDetailsValid(UsuarioCorreo usuario) {
-		if(!(usuario.getEmail().contains("@"))) return false;
 		if(!(usuario.getEstado().equals("ACTIVO") || usuario.getEstado().equals("INACTIVO")))return false;
 		if(!(usuario.getGenero().equals("FEMENINO")|| usuario.getGenero().equals("MASCULINO")))return false;
 		return true;
@@ -153,7 +155,7 @@ public class UsuarioCorreoService {
 		usuario.setFechaNacimiento(detallesUsuario.getFechaNacimiento());
 		usuario.setPlataformaPorUsuarioCorreo(detallesUsuario.getPlataformaPorUsuarioCorreo());
 		usuario.setAsociacionPorUsuarioCorreo(detallesUsuario.getAsociacionPorUsuarioCorreo());
-		usuario.setProgramaAcademicoPorUsuarioCorreo(detallesUsuario.getProgramaAcademicoPorUsuarioCorreo());
+		usuario.setProgramaAcademicoPorUsuarioCorreo(asociacionService.setAsociacionesInProgramasAcademicos(detallesUsuario.getProgramaAcademicoPorUsuarioCorreo()));
 		usuario.setVinculacionPorUsuarioCorreo(detallesUsuario.getVinculacionPorUsuarioCorreo());
 		UsuarioCorreo updatedUsuario = usuarioCorreoRepository.save(usuario);
 	    return updatedUsuario;

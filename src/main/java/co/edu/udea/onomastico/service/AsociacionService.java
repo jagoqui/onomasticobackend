@@ -1,6 +1,7 @@
 package co.edu.udea.onomastico.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,11 +38,18 @@ public class AsociacionService {
 	    return ResponseEntity.ok().build();
 	}
 	
-	public List<Asociacion> getAsociacionByProgramaAcademico(ProgramaAcademico programaAcademico){
-		return  asociacionRepository.findByProgramasAsociacion(programaAcademico);
+	public Asociacion getAsociacionByProgramaAcademico(ProgramaAcademico programaAcademico){
+		return  asociacionRepository.findByprogramasAcademicos(programaAcademico);
 	}
 	
 	public boolean existsAsociacion(Integer id) {
 		return asociacionRepository.existsById(id);
+	}
+
+	public Set<ProgramaAcademico> setAsociacionesInProgramasAcademicos(Set<ProgramaAcademico> programas){
+		programas.forEach(programa ->{
+			programa.setAsociacion(getAsociacionByProgramaAcademico(programa));
+		});
+		return programas;
 	}
 }

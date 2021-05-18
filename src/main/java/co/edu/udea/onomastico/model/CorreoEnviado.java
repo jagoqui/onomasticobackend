@@ -1,6 +1,8 @@
 package co.edu.udea.onomastico.model;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -15,6 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -26,7 +29,12 @@ import com.opencsv.bean.CsvBindByPosition;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "correo_enviado")
-public class CorreoEnviado {
+@Data
+@Generated
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+public class CorreoEnviado implements Serializable {
 	
 	@EmbeddedId
 	private CorreoEnviadoId id = new CorreoEnviadoId(); 
@@ -35,31 +43,17 @@ public class CorreoEnviado {
 	@Column(name = "asunto",nullable = false, length = 250)
 	private String asunto;
 
-	public CorreoEnviado() {
-		super();
-	}
-	
-	public CorreoEnviado(CorreoEnviadoId id, String asunto) {
-		super();
-		this.id = id;
-		this.asunto = asunto;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		CorreoEnviado that = (CorreoEnviado) o;
+		return id.equals(that.id);
 	}
 
-	public CorreoEnviadoId getId() {
-		return id;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
-
-	public void setId(CorreoEnviadoId id) {
-		this.id = id;
-	}
-
-	public String getAsunto() {
-		return asunto;
-	}
-
-	public void setAsunto(String asunto) {
-		this.asunto = asunto;
-	}
-	
 }
 

@@ -3,6 +3,7 @@ package co.edu.udea.onomastico.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.edu.udea.onomastico.model.CorreoEnviadoId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +32,7 @@ public class CorreoEnviadoService {
         if(pagedResult.hasContent()) return getAllEmailsFormatted(pagedResult.getContent());
         else return new ArrayList<CorreoEnviadoResponse>();
     }
-	
+
 	public CorreoEnviado addCorreoEnviado(CorreoEnviado correoEnviado) {
 		return correoEnviadoRepository.save(correoEnviado);
 	}
@@ -47,6 +48,14 @@ public class CorreoEnviadoService {
 		});
 		return emailFormatted;
 	}
-	
 
+
+    public void addCorreoEnviado(String email, String nombre) {
+		CorreoEnviadoId emailId = new CorreoEnviadoId();
+		emailId.setEmail(email);
+		CorreoEnviado sendedEmail = new CorreoEnviado();
+		sendedEmail.setId(emailId);
+		sendedEmail.setAsunto(nombre);
+		addCorreoEnviado(sendedEmail);
+    }
 }

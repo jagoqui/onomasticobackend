@@ -3,6 +3,7 @@ package co.edu.udea.onomastico.controller;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -35,7 +36,7 @@ public class CorreoEnviadoController {
 	}
 	
 	@GetMapping("/emails/pag")
-	public List<CorreoEnviadoResponse> getAllEmailsPag(@RequestParam Integer npage, 
+	public List<CorreoEnviadoResponse> getAllEmailsPag(@Valid @RequestParam Integer npage,
 			@RequestParam Integer psize,@RequestParam(required = false) String sort){
         return correoEnviadoService.getAllEmailsPag(npage, psize, sort);
     }
@@ -46,7 +47,7 @@ public class CorreoEnviadoController {
 	
 	@JsonView(Views.Public.class)
 	@PostMapping("/emails")
-	public CorreoEnviado addCorreoEnviado(@RequestBody CorreoEnviado correoEnviado) {
+	public CorreoEnviado addCorreoEnviado(@Valid @RequestBody CorreoEnviado correoEnviado) {
 		return correoEnviadoService.addCorreoEnviado(correoEnviado);
 	}
 	

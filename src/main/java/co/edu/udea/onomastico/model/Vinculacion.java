@@ -1,6 +1,8 @@
 package co.edu.udea.onomastico.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -11,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -18,7 +21,12 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Table(name = "vinculacion")
-public class Vinculacion {
+@Data
+@Generated
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+public class Vinculacion implements Serializable {
 	
 	@JsonView(Views.Public.class)
 	@Id 
@@ -34,40 +42,17 @@ public class Vinculacion {
 	@ManyToMany(mappedBy = "vinculacionPorUsuarioCorreo")
 	@JsonView(Views.Internal.class)
     private Set<UsuarioCorreo> usuariosCorreoVinculacion = new HashSet<>();
-	
-	public Vinculacion() {
-		super();
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Vinculacion that = (Vinculacion) o;
+		return id == that.id;
 	}
 
-	public Vinculacion(int id, String nombre, Set<UsuarioCorreo> usuariosCorreo) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
-		this.usuariosCorreoVinculacion = usuariosCorreo;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public Set<UsuarioCorreo> getUsuariosCorreoVinculacion() {
-		return usuariosCorreoVinculacion;
-	}
-
-	public void setUsuariosCorreoVinculacion(Set<UsuarioCorreo> usuariosCorreo) {
-		this.usuariosCorreoVinculacion = usuariosCorreo;
-	}
-
 }

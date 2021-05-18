@@ -33,7 +33,7 @@ public class EmailSchedulingRepository {
 	private static String JOIN_VINCULACION ="JOIN vinculacion_por_usuario_correo vu ON vu.usuario_correo_tipo_identificacion = uc.tipo_identificacion AND  vu.usuario_correo_numero_identificacion = uc.numero_identificacion JOIN vinculacion v ON v.idvinculacion = vu.vinculacion_idvinculacion ";
 	private static String JOIN_PROGRAMA ="JOIN programa_academico_por_usuario_correo pa ON pa.usuario_correo_tipo_identificacion = uc.tipo_identificacion AND pa.usuario_correo_numero_identificacion = uc.numero_identificacion JOIN programa_academico p ON p.codigo = pa.programa_academico_codigo ";
 
-	public List<EmailQueryResponse> selectUsuariosCorreo(Set<Condicion> condiciones) {
+	public List<EmailQueryResponse> selectUsuariosCorreo(List<Condicion> condiciones) {
 		StringBuilder sql = new StringBuilder(BASIC_QUERY);
 		if(condiciones!=null) {
 		condiciones.forEach(condicion -> {
