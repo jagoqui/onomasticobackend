@@ -84,14 +84,13 @@ public class EmailSchedulingRepository {
 		return jdbcTemplate.query(query, (rs, rowNum) -> mapRow(rs,rowNum, query));
 	}
 	
-	 public EmailQueryResponse mapRow(ResultSet rs, int rowNum, String query) throws SQLException {
-		    EmailQueryResponse em = new EmailQueryResponse();
-		    em.setEmail(rs.getString("email"));
-	        em.setNombre(rs.getString("nombre"));
-	        if(query.contains("asociacion_por_correo_usuario")) em.setAsociacionId(rs.getInt("asociacion_id"));
-	        if(query.contains("idvinculacion")) em.setVinculacionId(rs.getInt("idvinculacion"));
-	        if(query.contains("programa_academico_codigo")) em.setProgramaAcademicoId(rs.getInt("codigo"));
-	        return em;
-	    }
-	
+	public EmailQueryResponse mapRow(ResultSet rs, int rowNum, String query) throws SQLException {
+		EmailQueryResponse em = new EmailQueryResponse();
+		em.setEmail(rs.getString("email"));
+		em.setNombre(rs.getString("nombre"));
+		if(query.contains("asociacion_por_correo_usuario")) em.setAsociacionId(rs.getInt("asociacion_id"));
+		if(query.contains("idvinculacion")) em.setVinculacionId(rs.getInt("idvinculacion"));
+		if(query.contains("programa_academico_codigo")) em.setProgramaAcademicoId(rs.getInt("codigo"));
+		return em;
+	}
 }

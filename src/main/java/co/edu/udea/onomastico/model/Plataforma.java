@@ -5,13 +5,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -38,9 +32,13 @@ public class Plataforma implements Serializable {
 	@JsonView(Views.Public.class)
 	private String nombre;
 	
-	@ManyToMany(mappedBy = "plataformaPorUsuarioCorreo")
-	@OnDelete(action=OnDeleteAction.CASCADE) 
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "plataforma_por_usuario_correo", joinColumns = {
+			@JoinColumn(name = "plataforma_idplataforma")}, inverseJoinColumns = {
+			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
+			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion")})
 	@JsonView(Views.Internal.class)
+	@OnDelete(action = OnDeleteAction.CASCADE)
     private Set<UsuarioCorreo> usuariosCorreoPlataforma = new HashSet<>();
 
 	@Override

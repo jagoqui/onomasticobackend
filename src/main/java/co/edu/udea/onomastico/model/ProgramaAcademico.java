@@ -33,13 +33,18 @@ public class ProgramaAcademico implements Serializable {
 	@JsonView(Views.Public.class)
 	private String nombre;
 	
-	@ManyToMany(mappedBy = "programaAcademicoPorUsuarioCorreo")
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "programa_academico_por_usuario_correo", joinColumns = {
+			@JoinColumn(name = "programa_academico_codigo") }, inverseJoinColumns = {
+			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
+			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"),
+	})
 	@JsonView(Views.Internal.class)
     private Set<UsuarioCorreo> usuariosCorreoProgramaAcademico = new HashSet<>();
 
 
 	@JsonView(Views.Internal.class)
-	@OnDelete(action=OnDeleteAction.CASCADE)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "asociacion")
 	private Asociacion asociacion;

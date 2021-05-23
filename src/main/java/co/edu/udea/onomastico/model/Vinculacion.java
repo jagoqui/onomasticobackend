@@ -38,9 +38,9 @@ public class Vinculacion implements Serializable {
 	@Column(name = "nombre", nullable = false)
 	private String nombre;
 
-	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToMany(mappedBy = "vinculacionPorUsuarioCorreo")
 	@JsonView(Views.Internal.class)
+	@OnDelete(action = OnDeleteAction.CASCADE)
     private Set<UsuarioCorreo> usuariosCorreoVinculacion = new HashSet<>();
 
 	@Override

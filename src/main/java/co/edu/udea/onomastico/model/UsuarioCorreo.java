@@ -43,68 +43,43 @@ public class UsuarioCorreo implements Serializable {
 	private UsuarioCorreoId id;
 
 	@JsonView(Views.Public.class)
-	@NotNull
-	@NotBlank
-	@Column(name = "nombre", length = 150, nullable = false)
+	@Column(name = "nombre")
 	private String nombre;
 
 	@JsonView(Views.Public.class)
-	@NotNull
-	@NotBlank
-	@Column(name = "apellido", length = 150, nullable = false)
+	@Column(name = "apellido")
 	private String apellido;
 
 	@JsonView(Views.Public.class)
-	@Email
-	@Column(name = "email", length = 250, nullable = false)
+	@Column(name = "email")
 	private String email;
 
 	@JsonView(Views.Public.class)
-	@NotNull
-	@Column(name = "fecha_nacimiento", nullable = false)
+	@Column(name = "fecha_nacimiento")
 	@Temporal(TemporalType.DATE)
 	private java.util.Date fechaNacimiento;
 
 	@JsonView(Views.Public.class)
-	@NotBlank
-	@NotNull
-	@Column(name = "estado", length = 10, nullable = false)
+	@Column(name = "estado")
 	private String estado;
 
 	@JsonView(Views.Public.class)
-	@NotBlank
-	@NotNull
-	@Column(name = "genero", length = 10)
+	@Column(name = "genero")
 	private String genero;
 
 	@JsonView(Views.Public.class)
-	@NotBlank
-	@NotNull
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "asociacion_por_correo_usuario", joinColumns = {
-			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
-			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"), }, inverseJoinColumns = {
-					@JoinColumn(name = "asociacion_id") })
-	@JsonIgnoreProperties({"usuariosAsociacion","usuariosCorreoAsociacion"})
+	@ManyToMany(mappedBy = "usuariosCorreoAsociacion")
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<Asociacion> asociacionPorUsuarioCorreo = new HashSet<>();
 	
 	@JsonView(Views.Public.class)
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "programa_academico_por_usuario_correo", joinColumns = {
-			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
-			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"), }, inverseJoinColumns = {
-					@JoinColumn(name = "programa_academico_codigo") })
+	@ManyToMany(mappedBy = "usuariosCorreoProgramaAcademico")
 	@JsonIgnoreProperties("usuariosCorreoProgramaAcademico")
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<ProgramaAcademico> programaAcademicoPorUsuarioCorreo = new HashSet<>();
 
 	@JsonView(Views.Public.class)
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "plataforma_por_usuario_correo", joinColumns = {
-			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
-			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"), }, inverseJoinColumns = {
-					@JoinColumn(name = "plataforma_idplataforma") })
+	@ManyToMany(mappedBy = "usuariosCorreoPlataforma")
 	@JsonIgnoreProperties("usuariosCorreoPlataforma")
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<Plataforma> plataformaPorUsuarioCorreo = new HashSet<>();

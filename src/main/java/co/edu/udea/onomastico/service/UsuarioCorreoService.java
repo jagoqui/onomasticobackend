@@ -166,7 +166,7 @@ public class UsuarioCorreoService {
 		UsuarioCorreo usuario = usuarioCorreoRepository.findById(usuarioId)
 	            .orElseThrow(() -> new ResourceNotFoundException("UsuarioCorreo"+"id"+usuarioId));
 	    
-		usuarioCorreoRepository.delete(usuario);
+		usuarioCorreoRepository.deleteById(usuarioId);
 	    return ResponseEntity.ok().build();
 	}
 }
