@@ -62,4 +62,12 @@ public class ProgramaAcademico implements Serializable {
 	public int hashCode() {
 		return Objects.hash(codigo);
 	}
+
+	@Override
+	public String toString() {
+		return "ProgramaAcademico{" +
+				"codigo=" + codigo +
+				", nombre='" + nombre + '\'' +
+				'}';
+	}
 }

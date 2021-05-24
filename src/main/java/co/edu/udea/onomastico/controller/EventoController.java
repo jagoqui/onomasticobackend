@@ -60,13 +60,6 @@ public class EventoController {
 		return eventoService.getConditionsForUser(usuarioId);
 	}
 	
-//	@JsonView(Views.Public.class)
-//	@GetMapping("/evento/pag/{pageNo}/{pageSize}/{sortBy}")
-//	public List<EventoResponse> getAllEventos(@PathVariable(value = "pageNo") Integer pageNo, 
-//			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
-//        return eventoService.getAllEventos(pageNo, pageSize, sortBy);
-//    }
-	
 	@JsonView(Views.Public.class)
 	@GetMapping("/evento/pag")
 	public List<EventoRequest> getAllEmailsPag(@Valid @RequestParam Integer npage,

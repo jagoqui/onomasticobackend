@@ -72,4 +72,16 @@ public class Asociacion implements Serializable {
 	public int hashCode() {
 		return Objects.hash(id);
 	}
+
+	public static Asociacion toModel(Integer id, String nombre){
+		return Asociacion.builder().id(id).nombre(nombre).build();
+	}
+
+	@Override
+	public String toString() {
+		return "Asociacion{" +
+				"id=" + id +
+				", nombre='" + nombre + '\'' +
+				'}';
+	}
 }

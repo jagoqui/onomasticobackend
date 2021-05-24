@@ -10,6 +10,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,7 +43,7 @@ public class UsuarioCorreoResquest {
     @NotBlank
     private String genero;
 
-    @NotBlank
+    @NotEmpty
     private Set<Asociacion> asociacionPorUsuarioCorreo = new HashSet<>();
 
     private Set<ProgramaAcademico> programaAcademicoPorUsuarioCorreo = new HashSet<>();

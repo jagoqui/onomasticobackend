@@ -29,17 +29,21 @@ public class CorreoEnviadoController {
 
 	@Autowired
 	CorreoEnviadoService correoEnviadoService;
-	
+
+	@JsonView(Views.Public.class)
 	@GetMapping("/emails")
 	public List<CorreoEnviadoResponse> getAllEmails() {
 		return correoEnviadoService.getAllEmails();
 	}
-	
+
+	@JsonView(Views.Public.class)
 	@GetMapping("/emails/pag")
 	public List<CorreoEnviadoResponse> getAllEmailsPag(@Valid @RequestParam Integer npage,
 			@RequestParam Integer psize,@RequestParam(required = false) String sort){
         return correoEnviadoService.getAllEmailsPag(npage, psize, sort);
     }
+
+	@JsonView(Views.Public.class)
 	@GetMapping("/emails/total")
 	public Integer getTotalCorreosEnviados(){
         return correoEnviadoService.getTotalCorreosEnviados();

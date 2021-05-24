@@ -116,7 +116,8 @@ public class UsuarioService {
 	}
 	public void sendEmailToNewUser(Usuario user) {
 		String asunto = "Bienvenido a onomastico";
-		String message = "Onomastico es el sistema para enviar felicitaciones a todos los integrantes de la universidad de Antioquía. Para restablecer ingresar por primera vez, diríjase a :\n" + RESET_SERVER
+		String message = "Onomastico es el sistema para enviar felicitaciones a todos los integrantes de " +
+				"la universidad de Antioquía. Para ingresar por primera vez, diríjase a:\n" + RESET_SERVER
 				+ "/" + user.getResetToken();
 		
 		emailService.sendEmail(user.getEmail(),asunto, message);

@@ -53,4 +53,12 @@ public class Plataforma implements Serializable {
 	public int hashCode() {
 		return Objects.hash(id);
 	}
+
+	@Override
+	public String toString() {
+		return "Plataforma{" +
+				"id=" + id +
+				", nombre='" + nombre + '\'' +
+				'}';
+	}
 }

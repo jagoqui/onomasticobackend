@@ -68,19 +68,28 @@ public class UsuarioCorreo implements Serializable {
 	private String genero;
 
 	@JsonView(Views.Public.class)
-	@ManyToMany(mappedBy = "usuariosCorreoAsociacion")
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "asociacion_por_correo_usuario", joinColumns = {
+			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
+			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"),
+			}, inverseJoinColumns = {@JoinColumn(name = "asociacion_id")})
+	@JsonIgnoreProperties({"usuariosAsociacion","usuariosCorreoAsociacion"})
 	private Set<Asociacion> asociacionPorUsuarioCorreo = new HashSet<>();
 	
 	@JsonView(Views.Public.class)
-	@ManyToMany(mappedBy = "usuariosCorreoProgramaAcademico")
-	@JsonIgnoreProperties("usuariosCorreoProgramaAcademico")
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "programa_academico_por_usuario_correo", joinColumns = {
+			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
+			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"),
+			}, inverseJoinColumns = {@JoinColumn(name = "programa_academico_codigo")})
 	private Set<ProgramaAcademico> programaAcademicoPorUsuarioCorreo = new HashSet<>();
 
 	@JsonView(Views.Public.class)
-	@ManyToMany(mappedBy = "usuariosCorreoPlataforma")
-	@JsonIgnoreProperties("usuariosCorreoPlataforma")
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "plataforma_por_usuario_correo", joinColumns = {
+			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
+			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion")}, inverseJoinColumns = {
+			@JoinColumn(name = "plataforma_idplataforma")})
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Set<Plataforma> plataformaPorUsuarioCorreo = new HashSet<>();
 

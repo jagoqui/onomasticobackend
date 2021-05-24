@@ -48,7 +48,8 @@ public class AsociacionService {
 
 	public Set<ProgramaAcademico> setAsociacionesInProgramasAcademicos(Set<ProgramaAcademico> programas){
 		programas.forEach(programa ->{
-			programa.setAsociacion(getAsociacionByProgramaAcademico(programa));
+			Asociacion asociacion = getAsociacionByProgramaAcademico(programa);
+			programa.setAsociacion(Asociacion.toModel(asociacion.getId(),asociacion.getNombre()));
 		});
 		return programas;
 	}
