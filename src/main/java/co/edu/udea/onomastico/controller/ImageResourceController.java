@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +41,7 @@ public class ImageResourceController {
 	private FileService fileService;
 	
 	@RequestMapping(path = "/delete/{name}", method = RequestMethod.DELETE)
-    public  ResponseEntity<?> deleteFile(@PathVariable(value = "name") String name) {
+    public  ResponseEntity<?> deleteFile(@Valid @NotNull @PathVariable(value = "name") String name) {
         fileService.deleteFile(name);
 		return ResponseEntity.ok().build();
     }

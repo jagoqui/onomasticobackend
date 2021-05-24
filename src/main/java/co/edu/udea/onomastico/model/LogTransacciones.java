@@ -2,6 +2,7 @@ package co.edu.udea.onomastico.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
@@ -27,6 +29,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "log_transacciones")
+@Data
+@Generated
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class LogTransacciones implements Serializable{
 	
 	@JsonView(Views.Public.class)
@@ -49,54 +56,16 @@ public class LogTransacciones implements Serializable{
     @OnDelete(action = OnDeleteAction.CASCADE)
 	private Usuario usuario;
 
-	public LogTransacciones() {
-		super();
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		LogTransacciones that = (LogTransacciones) o;
+		return id == that.id;
 	}
 
-	public LogTransacciones(int id, String transaccion, Date fecha, Usuario usuario) {
-		super();
-		this.id = id;
-		this.transaccion = transaccion;
-		this.fecha = fecha;
-		this.usuario = usuario;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
-	
-	public LogTransacciones(String transaccion) {
-		super();
-		this.transaccion = transaccion;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getTransaccion() {
-		return transaccion;
-	}
-
-	public void setTransaccion(String transaccion) {
-		this.transaccion = transaccion;
-	}
-
-	public java.util.Date getFecha() {
-		return fecha;
-	}
-
-	public void setFecha(java.util.Date fecha) {
-		this.fecha = fecha;
-	}
-
-	public Usuario getUsuario() {
-		return usuario;
-	}
-
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-	}
-	
-	
 }

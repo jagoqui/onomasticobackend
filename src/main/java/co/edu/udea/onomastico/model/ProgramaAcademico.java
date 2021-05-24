@@ -1,26 +1,29 @@
 package co.edu.udea.onomastico.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import lombok.*;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import static org.hibernate.annotations.CascadeType.SAVE_UPDATE;
+
 @Entity
 @Table(name = "programa_academico")
-public class ProgramaAcademico {
+@Data
+@Generated
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+public class ProgramaAcademico implements Serializable {
 	
 	@JsonView(Views.Public.class)
 	@Id 
@@ -30,63 +33,41 @@ public class ProgramaAcademico {
 	@JsonView(Views.Public.class)
 	private String nombre;
 	
-	@OnDelete(action=OnDeleteAction.CASCADE) 
-	@ManyToMany(mappedBy = "programaAcademicoPorUsuarioCorreo")
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "programa_academico_por_usuario_correo", joinColumns = {
+			@JoinColumn(name = "programa_academico_codigo") }, inverseJoinColumns = {
+			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
+			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"),
+	})
 	@JsonView(Views.Internal.class)
     private Set<UsuarioCorreo> usuariosCorreoProgramaAcademico = new HashSet<>();
-	
+
+
 	@JsonView(Views.Internal.class)
-	@OnDelete(action=OnDeleteAction.CASCADE) 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "programa_academico_por_asociacion", joinColumns = {
-			@JoinColumn(name = "programa_academico_codigo")
-			}, inverseJoinColumns = {
-					@JoinColumn(name = "asociacion_id") })
-	private Set<Asociacion> programaAcademicoPorAsociacion = new HashSet<Asociacion>();
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "asociacion")
+	private Asociacion asociacion;
 
-	public ProgramaAcademico() {
-		super();
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ProgramaAcademico that = (ProgramaAcademico) o;
+		return codigo == that.codigo;
 	}
 
-	public ProgramaAcademico(int codigo, String nombre, Set<UsuarioCorreo> usuariosCorreoProgramaAcademico,
-			Set<Asociacion> programaAcademicoPorAsociacion) {
-		super();
-		this.codigo = codigo;
-		this.nombre = nombre;
-		this.usuariosCorreoProgramaAcademico = usuariosCorreoProgramaAcademico;
-		this.programaAcademicoPorAsociacion = programaAcademicoPorAsociacion;
+	@Override
+	public int hashCode() {
+		return Objects.hash(codigo);
 	}
 
-	public int getCodigo() {
-		return codigo;
+	@Override
+	public String toString() {
+		return "ProgramaAcademico{" +
+				"codigo=" + codigo +
+				", nombre='" + nombre + '\'' +
+				'}';
 	}
-
-	public void setCodigo(int codigo) {
-		this.codigo = codigo;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public Set<UsuarioCorreo> getUsuariosCorreoProgramaAcademico() {
-		return usuariosCorreoProgramaAcademico;
-	}
-
-	public void setUsuariosCorreoProgramaAcademico(Set<UsuarioCorreo> usuariosCorreoProgramaAcademico) {
-		this.usuariosCorreoProgramaAcademico = usuariosCorreoProgramaAcademico;
-	}
-
-	public Set<Asociacion> getProgramaAcademicoPorAsociacion() {
-		return programaAcademicoPorAsociacion;
-	}
-
-	public void setProgramaAcademicoPorAsociacion(Set<Asociacion> programaAcademicoPorAsociacion) {
-		this.programaAcademicoPorAsociacion = programaAcademicoPorAsociacion;
-	}
-	
 }

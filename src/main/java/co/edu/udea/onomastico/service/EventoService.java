@@ -1,9 +1,6 @@
 package co.edu.udea.onomastico.service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +18,6 @@ import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Condicion;
 import co.edu.udea.onomastico.model.CondicionId;
 import co.edu.udea.onomastico.model.Evento;
-import co.edu.udea.onomastico.model.LogTransacciones;
 import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.model.ProgramaAcademico;
 import co.edu.udea.onomastico.model.Usuario;
@@ -29,13 +25,10 @@ import co.edu.udea.onomastico.model.Vinculacion;
 import co.edu.udea.onomastico.payload.CondicionRequest;
 import co.edu.udea.onomastico.payload.CondicionResponse;
 import co.edu.udea.onomastico.payload.EventoRequest;
-import co.edu.udea.onomastico.payload.EventoResponse;
 import co.edu.udea.onomastico.payload.ParametroResponse;
 import co.edu.udea.onomastico.repository.CondicionRepository;
 import co.edu.udea.onomastico.repository.EventoRepository;
-import co.edu.udea.onomastico.repository.ProgramaAcademicoRepository;
 import co.edu.udea.onomastico.repository.UsuarioRepository;
-import co.edu.udea.onomastico.repository.VinculacionRepository;
 
 @Service
 public class EventoService {
@@ -120,10 +113,16 @@ public class EventoService {
 		return getEventoResponseFormat(eventos);
 	}
 	
-	public boolean isValidCondicionesEvento(Set<CondicionRequest> condicionRequest){
+	public boolean isValidCondicionesEvento(EventoRequest eventoRequest, Integer userId){
+		Set<Asociacion> as = usuarioService.getAsociacionUsuarioById(userId);
+		if(!(eventoRequest.getEstado().equals("ACTIVO") || eventoRequest.getEstado().equals("INACTIVO"))) return false;
+		if(!(eventoRequest.getRecurrencia().equals("DIARIA") || eventoRequest.getRecurrencia().equals("ANUAL")))return false;
+		if(!plantillaService.existsPlantilla(eventoRequest.getPlantilla().getId()))return false;
+		List<CondicionRequest> condicionRequest = eventoRequest.getCondicionesEvento();
 		for(CondicionRequest condicion: condicionRequest){
 			if(condicion.getCondicion().contains("asociacion")) {
-				if(!asociacionService.existsAsociacion(Integer.parseInt(condicion.getId()))) return false;
+				if(!asociacionService.existsAsociacion(Integer.parseInt(condicion.getId()))
+						||  as.stream().filter(item -> String.valueOf(item.getId()).contains(condicion.getId())).collect(Collectors.toSet()).isEmpty() ) return false;
 			}
 			else if(condicion.getCondicion().contains("programa_academico")) {
 				if(!programaAcademicoService.existsProgramaAcademico(Integer.parseInt(condicion.getId()))) return false;
@@ -141,89 +140,67 @@ public class EventoService {
 		return true;
 	}
 	public EventoRequest AddEvento(EventoRequest eventoRequest, Integer usuarioId) throws BadRequestException{
-		if(!(eventoRequest.getEstado().equals("ACTIVO") || eventoRequest.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado incorrecto");
-		if(!(eventoRequest.getRecurrencia().equals("DIARIA") || eventoRequest.getRecurrencia().equals("ANUAL")))throw new BadRequestException("Recurrencia incorrecta");
-		if(!plantillaService.existsPlantilla(eventoRequest.getPlantilla().getId()))throw new BadRequestException("plantilla no existe");
-		Set<CondicionRequest> condicionRequest = eventoRequest.getCondicionesEvento();
-	    if(isValidCondicionesEvento(condicionRequest)==false)throw new BadRequestException("Condiciones incorrectas");
-		Evento evento = new Evento();
-		evento.setFecha(eventoRequest.getFecha());
-		evento.setEstado(eventoRequest.getEstado());
-		evento.setNombre(eventoRequest.getNombre());
-		evento.setPlantilla(eventoRequest.getPlantilla());
-		evento.setRecurrencia(eventoRequest.getRecurrencia());
-		evento.setCondicionesEvento(null);
-	    Evento newEvento = eventoRepository.saveAndFlush(evento);
-	    Integer newEventoId = newEvento.getId();
-	    Set<Condicion> condiciones =  setCondiciones(condicionRequest,newEventoId, usuarioId, newEvento);
-	    newEvento.setCondicionesEvento(condiciones);
-	    eventoRepository.save(newEvento);
-		List<Evento> eventos = new ArrayList<Evento>();
-		eventos.add(newEvento);
-		List<EventoRequest> eventoResponse =new ArrayList<EventoRequest>();
-		try {
-			eventoResponse = getEventoResponseFormat(eventos);
-			LogTransacciones transaccion = new LogTransacciones("Añadir evento:"+newEvento.getId()+" "+newEvento.getNombre());
+	    if(isValidCondicionesEvento(eventoRequest, usuarioId)==false)throw new BadRequestException("Condiciones incorrectas");
+		Evento evento = EventoRequest.toModelCreate(eventoRequest);
+	    evento = eventoRepository.save(evento);
+	    Integer newEventoId = evento.getId();
+	    evento.setCondicionesEvento(setCondiciones(eventoRequest.getCondicionesEvento(),newEventoId, usuarioId, evento));
+	    Evento newEvento= eventoRepository.save(evento);
+		EventoRequest eventoResponse = getEventoResponseFormate(newEvento);
+		if(eventoResponse!=null){
+			String transaccion = "Añadir evento:"+newEvento.getId()+" "+newEvento.getNombre();
 			transaccionesService.createTransaccion(usuarioId, transaccion);
-		}catch(Exception e) {
-			eventoRepository.delete(newEvento);
+			return eventoResponse;
 		}
-		if(!eventoResponse.isEmpty())return eventoResponse.get(0);
-		else throw new BadRequestException("Bad Conditions");
+		else{
+			eventoRepository.delete(newEvento);
+			throw new BadRequestException("Bad Conditions");
+		}
 	}
+
 	public  EventoRequest updateEvento(Integer eventoId, EventoRequest detallesEvento, Integer usuarioId) {
-		if(!(detallesEvento.getEstado().equals("ACTIVO") || detallesEvento.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado incorrecto");
-		if(!(detallesEvento.getRecurrencia().equals("DIARIA") || detallesEvento.getRecurrencia().equals("ANUAL")))throw new BadRequestException("Recurrencia incorrecta");
+		if(isValidCondicionesEvento(detallesEvento, usuarioId)==false)throw new BadRequestException("Condiciones incorrectas");
 		Evento  oldEvento =  eventoRepository.findById(eventoId).orElseThrow(() -> new ResourceNotFoundException("Evento" + "id"+eventoId));
-		Evento evento = oldEvento;
-		Set<CondicionRequest> condicionRequest = detallesEvento.getCondicionesEvento();
-		if(isValidCondicionesEvento(condicionRequest)==false)throw new BadRequestException("Condiciones incorrectas");
-		evento.setEstado(detallesEvento.getEstado());
-		evento.setFecha(detallesEvento.getFecha());
-		evento.setNombre(detallesEvento.getNombre());
-		evento.setRecurrencia(detallesEvento.getRecurrencia());
-		evento.setPlantilla(detallesEvento.getPlantilla());
-		Set<Condicion> condiciones =   setCondiciones(condicionRequest,evento.getId(), usuarioId, evento);
-		evento.setCondicionesEvento(condiciones);
+		Evento evento = EventoRequest.toModelCreate(detallesEvento);
+		evento.setId(oldEvento.getId());
+		evento.setCondicionesEvento(setCondiciones(detallesEvento.getCondicionesEvento(),evento.getId(), usuarioId, evento));
 		Evento updatedEvento = eventoRepository.save(evento);
-		List<Evento> eventos = new ArrayList<Evento>();
-		eventos.add(updatedEvento);
-		List<EventoRequest> eventoResponse =new ArrayList<EventoRequest>();
-		try {
-		eventoResponse = getEventoResponseFormat(eventos);
-		LogTransacciones transaccion = new LogTransacciones("Editar evento:"+evento.getId()+" "+evento.getNombre());
-		transaccionesService.createTransaccion(usuarioId, transaccion);
-		}catch(Exception e) {
-			eventoRepository.save(oldEvento);
-		}if(!eventoResponse.isEmpty())return eventoResponse.get(0);
-		else throw new BadRequestException("Bad Conditions");
+		EventoRequest eventoResponse = getEventoResponseFormate(evento);
+		if(eventoResponse!=null){
+			String transaccion = "Editar evento:"+evento.getId()+" "+evento.getNombre();
+			transaccionesService.createTransaccion(usuarioId, transaccion);
+			return eventoResponse;
+		}
+		else{
+			eventoRepository.delete(evento);
+			throw new BadRequestException("Bad Conditions");
+		}
 	}
-	
-	public Set<Condicion> setCondiciones(Set<CondicionRequest> condicionRequest, Integer newEventoId, Integer usuarioId, Evento newEvento) {
-		Set<Condicion> condiciones =  new HashSet<Condicion>();
-		condicionRequest.forEach(condicion->{
+
+	public List<Condicion> setCondiciones(List<CondicionRequest> condicionRequest, Integer newEventoId, Integer usuarioId, Evento newEvento) {
+		List<Condicion> condiciones = new ArrayList<>();
+		for(CondicionRequest condicion: condicionRequest){
 	    	if(condicion.getCondicion().contains("genero")) {
 	    		String parametro = "FEMENINO";
 	    		if(condicion.getId().contains("1")) parametro = "MASCULINO";
-	    		condiciones.add(new Condicion(new CondicionId(newEventoId,condicion.getCondicion(),parametro), newEvento));
+	    		condiciones.add(new Condicion(new CondicionId(newEventoId,condicion.getCondicion(),parametro)));
 	    	}else {
-	    	condiciones.add(new Condicion(new CondicionId(newEventoId,condicion.getCondicion(),condicion.getId()), newEvento));
+	    		condiciones.add(new Condicion(new CondicionId(newEventoId,condicion.getCondicion(),condicion.getId())));
 	    	}
-	    });
-	    Set<CondicionRequest> result = condicionRequest.stream()
-	    		.filter(item -> item.getCondicion().equals("asociacion")).collect(Collectors.toSet());
-	    	     
-	    if(result.isEmpty()) {
-	    	Set<Asociacion> as = usuarioService.getAsociacionUsuarioById(usuarioId);
-	    	as.forEach(asociacion ->{
-	    		condiciones.add(new Condicion(new CondicionId(newEventoId,"asociacion",String.valueOf(asociacion.getId())), newEvento));
-	    	});
 	    }
+	    Set<Condicion> results = condiciones.stream().filter(item -> item.getId().getCondicion().equals("asociacion")).collect(Collectors.toSet());
+	    	     
+	    if(results.isEmpty()) {
+			Set<Asociacion> as = usuarioService.getAsociacionUsuarioById(usuarioId);
+	    	as.forEach(asociacion ->{
+	    		condiciones.add(new Condicion(new CondicionId(newEventoId,"asociacion",String.valueOf(asociacion.getId()))));
+	    	});
+		}
 		return condiciones;
 	}
 	
 	public List<CondicionResponse> getConditionsForUser(Integer id){
-		List<CondicionResponse> condiciones = new ArrayList<CondicionResponse>();
+		List<CondicionResponse> condiciones = new ArrayList<>();
 		Usuario usuario = usuarioRepository.findById(id).orElse(null);
 		Set<Asociacion> asociaciones = usuario.getAsociacionPorUsuario();
 		List<ParametroResponse> parametrosFecha = new ArrayList<ParametroResponse>();
@@ -276,7 +253,7 @@ public class EventoService {
 	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
 		evento.setEstado("INACTIVO");
 		Evento nuevo = eventoRepository.save(evento);
-		LogTransacciones transaccion = new LogTransacciones("Editar evento:"+nuevo.getId()+"desactivar");
+		String transaccion = "Editar evento:"+nuevo.getId()+"desactivar";
 		transaccionesService.createTransaccion(usuarioId, transaccion);
 		return getEventoResponseFormate(nuevo);
 	}
@@ -286,7 +263,7 @@ public class EventoService {
 	            .orElseThrow(() -> new ResourceNotFoundException("Evento"+"id"+eventoId));
 		evento.setEstado("ACTIVO");
 		Evento nuevo = eventoRepository.save(evento);
-		LogTransacciones transaccion = new LogTransacciones("Editar evento:"+nuevo.getId()+"activar");
+		String transaccion = "Editar evento:"+nuevo.getId()+"activar";
 		transaccionesService.createTransaccion(usuarioId, transaccion);
 		return getEventoResponseFormate(nuevo);
 	}
@@ -303,11 +280,11 @@ public class EventoService {
 	public List<EventoRequest> getEventoResponseFormat(List<Evento> eventos){
 		List<EventoRequest> eventoResponse = new ArrayList<EventoRequest>();
 		eventos.forEach(evento ->{
-			Set<CondicionRequest> condicionesResponse = new HashSet<CondicionRequest>();
+			List<CondicionRequest> condicionesResponse = new ArrayList<>();
 			List<Asociacion> asociaciones = new ArrayList<Asociacion>();
 			List<ProgramaAcademico> programas = new ArrayList<ProgramaAcademico>();
 
-			Set<Condicion> condicionesEvento = evento.getCondicionesEvento();
+			List<Condicion> condicionesEvento = evento.getCondicionesEvento();
 			condicionesEvento.forEach(condicion ->{
 				if(condicion.getId().getCondicion().contains("asociacion")) {
 					Asociacion tempAsociacion = asociacionService.getAsociacionById(Integer.parseInt(condicion.getId().getParametro()));
@@ -337,13 +314,11 @@ public class EventoService {
 			if(!asociaciones.isEmpty()) {
 				asociaciones.forEach(asociacion ->{
 					programas.forEach(programa ->{
-						List<Asociacion> tempAsociaciones = asociacionService.getAsociacionByProgramaAcademico(programa);
-						tempAsociaciones.forEach(tempAsociacion ->{
-							if(tempAsociacion.getId()==asociacion.getId()) {
-								condicionesResponse.add(new  CondicionRequest(String.valueOf(programa.getCodigo()),"programa_academico",
-								        programa.getNombre().concat(" / ").concat(asociacion.getNombre())));
-							}
-						});
+						Asociacion asociacionFound = asociacionService.getAsociacionByProgramaAcademico(programa);
+						if(asociacion.getId() == asociacionFound.getId()){
+							condicionesResponse.add(new  CondicionRequest(String.valueOf(programa.getCodigo()),"programa_academico",
+									programa.getNombre().concat(" / ").concat(asociacion.getNombre())));
+						}
 					});
 				});
 			}

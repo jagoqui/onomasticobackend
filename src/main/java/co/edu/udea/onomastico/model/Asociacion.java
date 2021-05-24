@@ -2,28 +2,30 @@ package co.edu.udea.onomastico.model;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import lombok.*;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import static org.hibernate.annotations.CascadeType.SAVE_UPDATE;
+
 
 @Entity
 @Table(name = "asociacion")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Data
+@Generated
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class Asociacion implements Serializable {
 	
 	@JsonView(Views.Public.class)
@@ -35,94 +37,51 @@ public class Asociacion implements Serializable {
 	private String nombre;
 	
 	@JsonView(Views.Internal.class)
-	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToMany(mappedBy = "asociacionPorUsuario")
-	@JsonIgnoreProperties("asociacionPorUsuario")
+	@OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Usuario> usuariosAsociacion = new HashSet<>();
 	
 	@JsonView(Views.Internal.class)
-	@OnDelete(action=OnDeleteAction.CASCADE) 
-	@ManyToMany(mappedBy = "asociacionPorUsuarioCorreo")
-	@JsonIgnoreProperties("asociacionPorUsuarioCorreo")
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "asociacion_por_correo_usuario", joinColumns = {
+			@JoinColumn(name = "asociacion_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
+			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"),})
+	@JsonIgnoreProperties({"usuariosAsociacion","usuariosCorreoAsociacion"})
     private Set<UsuarioCorreo> usuariosCorreoAsociacion = new HashSet<>();
 	
 	@JsonView(Views.Internal.class)
-	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToMany(mappedBy = "asociacionesPorPlantilla")
+	@OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Plantilla> plantillasAsociacion = new HashSet<>();
 	
 	@JsonView(Views.Internal.class)
-	@OnDelete(action=OnDeleteAction.CASCADE) 
-	@ManyToMany(mappedBy = "programaAcademicoPorAsociacion")
-    private Set<ProgramaAcademico> programasAsociacion = new HashSet<>();
+	@OneToMany(mappedBy = "asociacion")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<ProgramaAcademico> programasAcademicos = new HashSet<>();
 
-	public Asociacion() {
-		super();
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Asociacion that = (Asociacion) o;
+		return id == that.id;
 	}
 
-	public Asociacion(int id, String nombre) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 
-	public Asociacion(int id, String nombre, Set<Usuario> usuariosAsociacion,
-			Set<UsuarioCorreo> usuariosCorreoAsociacion, Set<Plantilla> plantillasAsociacion,
-			Set<ProgramaAcademico> programasAsociacion) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
-		this.usuariosAsociacion = usuariosAsociacion;
-		this.usuariosCorreoAsociacion = usuariosCorreoAsociacion;
-		this.plantillasAsociacion = plantillasAsociacion;
-		this.programasAsociacion = programasAsociacion;
+	public static Asociacion toModel(Integer id, String nombre){
+		return Asociacion.builder().id(id).nombre(nombre).build();
 	}
 
-	public int getId() {
-		return id;
+	@Override
+	public String toString() {
+		return "Asociacion{" +
+				"id=" + id +
+				", nombre='" + nombre + '\'' +
+				'}';
 	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public Set<Usuario> getUsuariosAsociacion() {
-		return usuariosAsociacion;
-	}
-
-	public void setUsuariosAsociacion(Set<Usuario> usuariosAsociacion) {
-		this.usuariosAsociacion = usuariosAsociacion;
-	}
-
-	public Set<UsuarioCorreo> getUsuariosCorreoAsociacion() {
-		return usuariosCorreoAsociacion;
-	}
-
-	public void setUsuariosCorreoAsociacion(Set<UsuarioCorreo> usuariosCorreoAsociacion) {
-		this.usuariosCorreoAsociacion = usuariosCorreoAsociacion;
-	}
-
-	public Set<Plantilla> getPlantillasAsociacion() {
-		return plantillasAsociacion;
-	}
-
-	public void setPlantillasAsociacion(Set<Plantilla> plantillasAsociacion) {
-		this.plantillasAsociacion = plantillasAsociacion;
-	}
-
-	public Set<ProgramaAcademico> getProgramasAsociacion() {
-		return programasAsociacion;
-	}
-
-	public void setProgramasAsociacion(Set<ProgramaAcademico> programasAsociacion) {
-		this.programasAsociacion = programasAsociacion;
-	}
-}	
+}

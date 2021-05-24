@@ -1,15 +1,20 @@
 package co.edu.udea.onomastico.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.*;
 
 @Embeddable
+@Data
+@Generated
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class UsuarioCorreoId implements Serializable{
-	
-	private static final long serialVersionUID = 1L;
 
 	@JsonView(Views.Public.class)
 	@Column(name = "tipo_identificacion", length = 10)
@@ -19,60 +24,16 @@ public class UsuarioCorreoId implements Serializable{
 	@Column(name = "numero_identificacion", length = 12)
 	private String numeroIdentificacion;
 
-	public String getTipoIdentificacion() {
-		return tipoIdentificacion;
-	}
-
-	public void setTipoIdentificacion(String tipoIdentificacion) {
-		this.tipoIdentificacion = tipoIdentificacion;
-	}
-
-	public String getNumeroIdentificacion() {
-		return numeroIdentificacion;
-	}
-
-	public void setNumeroIdentificacion(String numeroIdentificacion) {
-		this.numeroIdentificacion = numeroIdentificacion;
-	}
-
-	public UsuarioCorreoId() {
-		super();
-	}
-
-	public UsuarioCorreoId(String tipoIdentificacion, String numeroIdentificacion) {
-		super();
-		this.tipoIdentificacion = tipoIdentificacion;
-		this.numeroIdentificacion = numeroIdentificacion;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		UsuarioCorreoId that = (UsuarioCorreoId) o;
+		return Objects.equals(tipoIdentificacion, that.tipoIdentificacion) && Objects.equals(numeroIdentificacion, that.numeroIdentificacion);
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((numeroIdentificacion == null) ? 0 : numeroIdentificacion.hashCode());
-		result = prime * result + ((tipoIdentificacion == null) ? 0 : tipoIdentificacion.hashCode());
-		return result;
+		return Objects.hash(tipoIdentificacion, numeroIdentificacion);
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		UsuarioCorreoId other = (UsuarioCorreoId) obj;
-		if (numeroIdentificacion == null) {
-			if (other.numeroIdentificacion != null)
-				return false;
-		} else if (!numeroIdentificacion.equals(other.numeroIdentificacion))
-			return false;
-		if (tipoIdentificacion == null) {
-			if (other.tipoIdentificacion != null)
-				return false;
-		} else if (!tipoIdentificacion.equals(other.tipoIdentificacion))
-			return false;
-		return true;
-	}	
 }

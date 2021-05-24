@@ -4,6 +4,7 @@ package co.edu.udea.onomastico.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -23,6 +24,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
@@ -39,11 +41,12 @@ import com.fasterxml.jackson.annotation.JsonView;
 	            "email"
 	        })
 })
+@Data
+@Generated
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class Usuario implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
 	@JsonView(Views.Public.class)
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -87,112 +90,18 @@ public class Usuario implements Serializable {
     @JoinTable(name = "asociacion_por_usuario", 
             joinColumns = { @JoinColumn(name = "usuario_id") }, 
             inverseJoinColumns = { @JoinColumn(name = "asociacion_id") })
-    private Set<Asociacion> asociacionPorUsuario = new HashSet<Asociacion>();
-	
-	public Usuario() {
-		super();
+    private Set<Asociacion> asociacionPorUsuario = new HashSet<>();
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Usuario usuario = (Usuario) o;
+		return id == usuario.id;
 	}
 
-	public Usuario(int id, String nombre, String email, String password, String estado, Date createTime, Rol rol,
-			Set<Asociacion> asociacionPorUsuario) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
-		this.email = email;
-		this.password = password;
-		this.estado = estado;
-		this.createTime = createTime;
-		this.rol = rol;
-		this.asociacionPorUsuario = asociacionPorUsuario;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
-
-	public Usuario(int id, String nombre, String email, String password, String estado, Date createTime, Rol rol,
-			String resetToken, Set<Asociacion> asociacionPorUsuario) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
-		this.email = email;
-		this.password = password;
-		this.estado = estado;
-		this.createTime = createTime;
-		this.rol = rol;
-		this.resetToken = resetToken;
-		this.asociacionPorUsuario = asociacionPorUsuario;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getEstado() {
-		return estado;
-	}
-
-	public void setEstado(String estado) {
-		this.estado = estado;
-	}
-
-	public java.util.Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(java.util.Date createTime) {
-		this.createTime = createTime;
-	}
-
-	public Rol getRol() {
-		return rol;
-	}
-
-	public void setRol(Rol rol) {
-		this.rol = rol;
-	}
-
-	public Set<Asociacion> getAsociacionPorUsuario() {
-		return asociacionPorUsuario;
-	}
-
-	public void setAsociacionPorUsuario(Set<Asociacion> asociacionPorUsuario) {
-		this.asociacionPorUsuario = asociacionPorUsuario;
-	}
-	
-	public String getResetToken() {
-		return resetToken;
-	}
-
-	public void setResetToken(String resetToken) {
-		this.resetToken = resetToken;
-	}
-
-	public static String hash(String password,int row) {
-        return BCrypt.hashpw(password, BCrypt.gensalt(row));
-    }
 }

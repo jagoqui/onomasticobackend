@@ -1,16 +1,13 @@
 package co.edu.udea.onomastico.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -18,7 +15,12 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Table(name = "plataforma")
-public class Plataforma {
+@Data
+@Generated
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+public class Plataforma implements Serializable {
 
 	@Id 
 	@Column(name = "idplataforma", nullable = false)
@@ -30,45 +32,33 @@ public class Plataforma {
 	@JsonView(Views.Public.class)
 	private String nombre;
 	
-	@ManyToMany(mappedBy = "plataformaPorUsuarioCorreo")
-	@OnDelete(action=OnDeleteAction.CASCADE) 
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "plataforma_por_usuario_correo", joinColumns = {
+			@JoinColumn(name = "plataforma_idplataforma")}, inverseJoinColumns = {
+			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
+			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion")})
 	@JsonView(Views.Internal.class)
+	@OnDelete(action = OnDeleteAction.CASCADE)
     private Set<UsuarioCorreo> usuariosCorreoPlataforma = new HashSet<>();
 
-	public Plataforma() {
-		super();
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Plataforma that = (Plataforma) o;
+		return id == that.id;
 	}
 
-	public Plataforma(int id, String nombre, Set<UsuarioCorreo> usuariosCorreoPlataforma) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
-		this.usuariosCorreoPlataforma = usuariosCorreoPlataforma;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 
-	public int getId() {
-		return id;
+	@Override
+	public String toString() {
+		return "Plataforma{" +
+				"id=" + id +
+				", nombre='" + nombre + '\'' +
+				'}';
 	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public Set<UsuarioCorreo> getUsuariosCorreoPlataforma() {
-		return usuariosCorreoPlataforma;
-	}
-
-	public void setUsuariosCorreoPlataforma(Set<UsuarioCorreo> usuariosCorreoPlataforma) {
-		this.usuariosCorreoPlataforma = usuariosCorreoPlataforma;
-	}
-
-	
 }

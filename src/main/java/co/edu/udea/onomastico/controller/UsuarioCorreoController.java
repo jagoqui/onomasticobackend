@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Base64;
 
+import co.edu.udea.onomastico.payload.UsuarioCorreoResquest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +33,9 @@ import co.edu.udea.onomastico.payload.EventoResponse;
 import co.edu.udea.onomastico.security.JwtTokenProvider;
 import co.edu.udea.onomastico.service.UsuarioCorreoService;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 
 @CrossOrigin(origins = "*")
@@ -60,14 +64,7 @@ public class UsuarioCorreoController {
 		Integer usuarioId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return usuarioService.getTotalUsuariosCorreoPorUsuarioPlataforma(usuarioId);
 	}
-	
-//	@JsonView(Views.Public.class)
-//	@GetMapping("/usuariosemail/pag/{pageNo}/{pageSize}/{sortBy}")
-//	public List<UsuarioCorreo> getAllUsuariosCorreo(@PathVariable(value = "pageNo") Integer pageNo, 
-//			@PathVariable(value = "pageSize") Integer pageSize,@PathVariable(value = "sortBy") String sortBy){
-//        return usuarioService.getAllUsuariosCorreo(pageNo, pageSize, sortBy);
-//    }
-	
+
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuariosemail")
 	public List<UsuarioCorreo> getAllUsuarios() {
@@ -75,31 +72,30 @@ public class UsuarioCorreoController {
 	}
 	
 	//crear usuario
-	@ExceptionHandler(value={ResourceAlreadyExistsException.class})
 	@JsonView(Views.Public.class)
 	@PostMapping("/usuariosemail")
-	public UsuarioCorreo createUsuario(@RequestBody UsuarioCorreo usuario) {
-		return usuarioService.createUsuario(usuario);
+	public UsuarioCorreo createUsuario(@Valid @RequestBody UsuarioCorreoResquest usuario) {
+		return usuarioService.createUsuario(UsuarioCorreoResquest.toModel(usuario));
 	}
 	
 	//ususcribe with ecripted email
 	@JsonView(Views.Public.class)
 	@PutMapping("/unsubscribe/{email}")
-	public UsuarioCorreo unsuscribe(@PathVariable(value = "email") String encriptedEmail) {
+	public UsuarioCorreo unsuscribe(@Valid @NotBlank @PathVariable(value = "email") String encriptedEmail) {
 		return usuarioService.unsubscribe(encriptedEmail);
 	}
 	
 	//ususcribe with ecripted email
 	@JsonView(Views.Public.class)
 	@PutMapping("/usuariosemail/subscribe/{email}")
-	public UsuarioCorreo suscribe(@PathVariable(value = "email") String nonencriptedEmail) {
+	public UsuarioCorreo suscribe(@Valid @Email @PathVariable(value = "email") String nonencriptedEmail) {
 		return usuarioService.subscribe(nonencriptedEmail);
 	}
 	
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuariosemail/{tipo}/{numero}")
-	public Optional<UsuarioCorreo> getUsuarioById(@PathVariable(value = "tipo") String tipo, 
-			@PathVariable(value = "numero")String numero) {
+	public Optional<UsuarioCorreo> getUsuarioById(@NotBlank @PathVariable(value = "tipo") String tipo,
+												  @NotBlank @PathVariable(value = "numero")String numero) {
 		Optional<UsuarioCorreo> usuario = usuarioService.getUsuarioById(tipo, numero);
 		if(!usuario.isPresent()) throw new ResourceNotFoundException();
 		else return usuario;
@@ -107,14 +103,14 @@ public class UsuarioCorreoController {
 	
 	@JsonView(Views.Public.class)
 	@PutMapping("/usuariosemail/{tipo}/{numero}")
-	public  UsuarioCorreo updateUsuario(@PathVariable(value = "tipo") String tipo, 
-			@PathVariable(value = "numero")String numero, @RequestBody UsuarioCorreo detallesUsuario) {
-		return usuarioService.updateUsuario(tipo, numero, detallesUsuario);
+	public  UsuarioCorreo updateUsuario(@NotBlank @PathVariable(value = "tipo") String tipo,
+			@NotBlank @PathVariable(value = "numero")String numero, @Valid @RequestBody UsuarioCorreoResquest detallesUsuario) {
+		return usuarioService.updateUsuario(tipo, numero, UsuarioCorreoResquest.toModel(detallesUsuario));
 	}
 	
 	@DeleteMapping("/usuariosemail/{tipo}/{numero}")
-	public ResponseEntity<?> deleteUsuario(@PathVariable(value = "tipo") String tipo, 
-			@PathVariable(value = "numero")String numero) {
+	public ResponseEntity<?> deleteUsuario(@NotBlank @PathVariable(value = "tipo") String tipo,
+			@NotBlank @PathVariable(value = "numero")String numero) {
 		return usuarioService.deleteUsuario(tipo, numero);
 	}
 }

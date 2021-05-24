@@ -1,8 +1,7 @@
 package co.edu.udea.onomastico.model;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,6 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -30,7 +30,13 @@ import com.fasterxml.jackson.annotation.JsonView;
 @Entity
 @Table(name = "evento")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Evento {
+@Data
+@Generated
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+@ToString
+public class Evento implements Serializable {
 	
 	@JsonView(Views.Public.class)
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -54,11 +60,6 @@ public class Evento {
 	@Column(name = "recurrencia", nullable = false, length = 10)
 	private String recurrencia;
 	
-//	@JsonView(Views.Public.class)
-//	@ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "asociacion_id")
-//	private Asociacion asociacion;
-	
 	@JsonView(Views.Public.class)
 	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -67,98 +68,20 @@ public class Evento {
 	
 	@JsonView(Views.Public.class)
 	@OnDelete(action=OnDeleteAction.CASCADE) 
-	@OneToMany(mappedBy = "eventoCondicion", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<Condicion> condicionesEvento = new HashSet<Condicion>();
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "evento_idevento")
+    private List<Condicion> condicionesEvento = new ArrayList<>();
 
-	public Evento() {
-		super();
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Evento evento = (Evento) o;
+		return id == evento.id;
 	}
 
-public Evento(int id, String nombre, Date fecha, String estado, String recurrencia,
-		Plantilla plantilla, Set<Condicion> condicionesEvento) {
-	super();
-	this.id = id;
-	this.nombre = nombre;
-	this.fecha = fecha;
-	this.estado = estado;
-	this.recurrencia = recurrencia;
-	//this.asociacion = asociacion;
-	this.plantilla = plantilla;
-	this.condicionesEvento = condicionesEvento;
-}
-
-public Evento(int id, String nombre, Date fecha, String estado, String recurrencia, Plantilla plantilla) {
-	super();
-	this.id = id;
-	this.nombre = nombre;
-	this.fecha = fecha;
-	this.estado = estado;
-	this.recurrencia = recurrencia;
-	this.plantilla = plantilla;
-}
-
-public int getId() {
-	return id;
-}
-
-public void setId(int id) {
-	this.id = id;
-}
-
-public String getNombre() {
-	return nombre;
-}
-
-public void setNombre(String nombre) {
-	this.nombre = nombre;
-}
-
-public java.util.Date getFecha() {
-	return fecha;
-}
-
-public void setFecha(java.util.Date fecha) {
-	this.fecha = fecha;
-}
-
-public String getEstado() {
-	return estado;
-}
-
-public void setEstado(String estado) {
-	this.estado = estado;
-}
-
-public String getRecurrencia() {
-	return recurrencia;
-}
-
-public void setRecurrencia(String recurrencia) {
-	this.recurrencia = recurrencia;
-}
-
-//public Asociacion getAsociacion() {
-//	return asociacion;
-//}
-//
-//public void setAsociacion(Asociacion asociacion) {
-//	this.asociacion = asociacion;
-//}
-
-public Plantilla getPlantilla() {
-	return plantilla;
-}
-
-public void setPlantilla(Plantilla plantilla) {
-	this.plantilla = plantilla;
-}
-
-public Set<Condicion> getCondicionesEvento() {
-	return condicionesEvento;
-}
-
-public void setCondicionesEvento(Set<Condicion> condicionesEvento) {
-	this.condicionesEvento = condicionesEvento;
-}
-	
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 }

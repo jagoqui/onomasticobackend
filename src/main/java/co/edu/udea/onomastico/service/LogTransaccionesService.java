@@ -24,10 +24,12 @@ public class LogTransaccionesService {
 	@Autowired
 	UsuarioRepository  usuarioRepository;
 	
-	public LogTransacciones createTransaccion(Integer usuarioId, LogTransacciones transaccion) {
+	public LogTransacciones createTransaccion(Integer usuarioId,String transaccion) {
 		return usuarioRepository.findById(usuarioId).map(usuario -> {
-			transaccion.setUsuario(usuario);
-			return transaccionesRepository.save(transaccion);
+			LogTransacciones LogTransaccion = new LogTransacciones();
+			LogTransaccion.setUsuario(usuario);
+			LogTransaccion.setTransaccion(transaccion);
+			return transaccionesRepository.save(LogTransaccion);
 			}).orElseThrow(() -> new ResourceNotFoundException("UsuarioId " + usuarioId + " not found"));
 		}
 	
