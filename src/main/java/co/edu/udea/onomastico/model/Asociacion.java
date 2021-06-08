@@ -42,11 +42,7 @@ public class Asociacion implements Serializable {
     private Set<Usuario> usuariosAsociacion = new HashSet<>();
 	
 	@JsonView(Views.Internal.class)
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "asociacion_por_correo_usuario", joinColumns = {
-			@JoinColumn(name = "asociacion_id") }, inverseJoinColumns = {
-			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
-			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"),})
+	@ManyToMany(mappedBy = "asociacionPorUsuarioCorreo")
 	@JsonIgnoreProperties({"usuariosAsociacion","usuariosCorreoAsociacion"})
     private Set<UsuarioCorreo> usuariosCorreoAsociacion = new HashSet<>();
 	

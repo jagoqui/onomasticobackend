@@ -68,11 +68,12 @@ public class UsuarioCorreo implements Serializable {
 	private String genero;
 
 	@JsonView(Views.Public.class)
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
 	@JoinTable(name = "asociacion_por_correo_usuario", joinColumns = {
-			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
-			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"),
-			}, inverseJoinColumns = {@JoinColumn(name = "asociacion_id")})
+			@JoinColumn(name = "usuario_correo_tipo_identificacion"),
+			@JoinColumn(name = "usuario_correo_numero_identificacion"),
+			},
+			inverseJoinColumns = {@JoinColumn(name = "asociacion_id")})
 	@JsonIgnoreProperties({"usuariosAsociacion","usuariosCorreoAsociacion"})
 	private Set<Asociacion> asociacionPorUsuarioCorreo = new HashSet<>();
 	
