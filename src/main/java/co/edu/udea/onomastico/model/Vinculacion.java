@@ -32,11 +32,7 @@ public class Vinculacion implements Serializable {
 	@Column(name = "nombre", nullable = false)
 	private String nombre;
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "vinculacion_por_usuario_correo", joinColumns = {
-			@JoinColumn(name = "vinculacion_idvinculacion"),}, inverseJoinColumns = {
-			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
-			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion")})
+	@ManyToMany(mappedBy = "vinculacionPorUsuarioCorreo")
 	@JsonView(Views.Internal.class)
     private Set<UsuarioCorreo> usuariosCorreoVinculacion = new HashSet<>();
 

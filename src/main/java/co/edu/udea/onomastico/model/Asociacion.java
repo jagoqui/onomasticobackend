@@ -38,7 +38,7 @@ public class Asociacion implements Serializable {
 	
 	@JsonView(Views.Internal.class)
 	@ManyToMany(mappedBy = "asociacionPorUsuario")
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	// @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Usuario> usuariosAsociacion = new HashSet<>();
 	
 	@JsonView(Views.Internal.class)
@@ -48,12 +48,12 @@ public class Asociacion implements Serializable {
 	
 	@JsonView(Views.Internal.class)
 	@ManyToMany(mappedBy = "asociacionesPorPlantilla")
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	// @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Plantilla> plantillasAsociacion = new HashSet<>();
 	
 	@JsonView(Views.Internal.class)
 	@OneToMany(mappedBy = "asociacion")
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	// @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<ProgramaAcademico> programasAcademicos = new HashSet<>();
 
 	@Override

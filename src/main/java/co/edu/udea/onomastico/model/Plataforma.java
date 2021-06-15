@@ -32,13 +32,9 @@ public class Plataforma implements Serializable {
 	@JsonView(Views.Public.class)
 	private String nombre;
 	
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "plataforma_por_usuario_correo", joinColumns = {
-			@JoinColumn(name = "plataforma_idplataforma")}, inverseJoinColumns = {
-			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion"),
-			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion")})
+	@ManyToMany(mappedBy = "plataformaPorUsuarioCorreo")
 	@JsonView(Views.Internal.class)
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	// @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<UsuarioCorreo> usuariosCorreoPlataforma = new HashSet<>();
 
 	@Override
