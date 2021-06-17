@@ -39,9 +39,9 @@ public class ProgramaAcademico implements Serializable {
 
 
 	@JsonView(Views.Internal.class)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "asociacion")
+	// @OnDelete(action = OnDeleteAction.CASCADE)
+	@ManyToOne
+	@JoinColumn(name = "asociacion", nullable = false, updatable = false)
 	private Asociacion asociacion;
 
 

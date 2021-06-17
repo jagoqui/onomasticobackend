@@ -52,9 +52,19 @@ public class Asociacion implements Serializable {
     private Set<Plantilla> plantillasAsociacion = new HashSet<>();
 	
 	@JsonView(Views.Internal.class)
-	@OneToMany(mappedBy = "asociacion")
+	@OneToMany(mappedBy = "asociacion", cascade = CascadeType.ALL, orphanRemoval = true)
 	// @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<ProgramaAcademico> programasAcademicos = new HashSet<>();
+
+	// Helper Methods
+	public void addProgramaAcademico(ProgramaAcademico programaAcademico){
+		programasAcademicos.add(programaAcademico);
+		programaAcademico.setAsociacion(this);
+	}
+	public void removeProgramaAcademico(ProgramaAcademico programaAcademico){
+		programasAcademicos.remove(programaAcademico);
+		programaAcademico.setAsociacion(null);
+	}
 
 	@Override
 	public boolean equals(Object o) {
