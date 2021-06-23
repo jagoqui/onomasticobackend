@@ -1,13 +1,8 @@
 package co.edu.udea.onomastico.payload;
 
 import co.edu.udea.onomastico.model.*;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -44,7 +39,7 @@ public class UsuarioCorreoResquest {
     private String genero;
 
     @NotEmpty
-    private Set<Asociacion> asociacionPorUsuarioCorreo = new HashSet<>();
+    private Set<Asociacion> asociacionPorCorreoUsuario = new HashSet<>();
 
     private Set<ProgramaAcademico> programaAcademicoPorUsuarioCorreo = new HashSet<>();
 
@@ -57,7 +52,7 @@ public class UsuarioCorreoResquest {
                 .apellido(usuarioCorreoResquest.getApellido()).email(usuarioCorreoResquest.getEmail())
                 .fechaNacimiento(usuarioCorreoResquest.getFechaNacimiento())
                 .estado(usuarioCorreoResquest.getEstado()).genero(usuarioCorreoResquest.getGenero())
-                .asociacionPorUsuarioCorreo(usuarioCorreoResquest.getAsociacionPorUsuarioCorreo())
+                .asociacionPorCorreoUsuario(usuarioCorreoResquest.getAsociacionPorCorreoUsuario())
                 .plataformaPorUsuarioCorreo(usuarioCorreoResquest.getPlataformaPorUsuarioCorreo())
                 .programaAcademicoPorUsuarioCorreo(usuarioCorreoResquest.getProgramaAcademicoPorUsuarioCorreo())
                 .vinculacionPorUsuarioCorreo(usuarioCorreoResquest.getVinculacionPorUsuarioCorreo()).build();

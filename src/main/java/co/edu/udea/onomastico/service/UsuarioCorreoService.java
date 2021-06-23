@@ -5,7 +5,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -55,7 +54,7 @@ public class UsuarioCorreoService {
 	}
 	
 	public List<UsuarioCorreo> findByAsociation(Asociacion asociacion){
-		return usuarioCorreoRepository.findByAsociacionPorUsuarioCorreo(asociacion);
+		return usuarioCorreoRepository.findByAsociacionPorCorreoUsuario(asociacion);
 	}
 	
 	public List<UsuarioCorreo> findByProgram(ProgramaAcademico programaAcademico){
@@ -74,6 +73,12 @@ public class UsuarioCorreoService {
 		List<UsuarioCorreo> usuarioCorreo =  getUsuariosCorreosByAsociacion(asociaciones);
 		return usuarioCorreo;
 	}
+
+	public UsuarioCorreo addAsociacionToUsuarioCorreo(List<Asociacion> asociacionesToAdd, UsuarioCorreoId idUsuario){
+		UsuarioCorreo usuario = usuarioCorreoRepository.findById(idUsuario).get();
+		asociacionesToAdd.stream().forEach(asociacion -> usuario.addAsociacion(asociacion));
+		return usuarioCorreoRepository.save(usuario);
+	}
 	
 	public List<UsuarioCorreo> getAllUsuarioCorreoByUsuarioPag(Integer usuarioId, Integer pageNo, Integer pageSize, String sortBy) throws ResourceNotFoundException{
 		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
@@ -88,7 +93,7 @@ public class UsuarioCorreoService {
 	public List<UsuarioCorreo> getUsuariosCorreosByAsociacion(Set<Asociacion> asociaciones){
 		List<UsuarioCorreo> merge = new ArrayList<UsuarioCorreo>();
 		asociaciones.forEach(asociacion ->{
-			List<UsuarioCorreo> temp = usuarioCorreoRepository.findByAsociacionPorUsuarioCorreo(asociacion);
+			List<UsuarioCorreo> temp = usuarioCorreoRepository.findByAsociacionPorCorreoUsuario(asociacion);
 			if(temp!= null && !temp.isEmpty())merge.addAll(temp);
 		});
 		return merge;
@@ -154,7 +159,7 @@ public class UsuarioCorreoService {
 		usuario.setEstado(detallesUsuario.getEstado());
 		usuario.setFechaNacimiento(detallesUsuario.getFechaNacimiento());
 		usuario.setPlataformaPorUsuarioCorreo(detallesUsuario.getPlataformaPorUsuarioCorreo());
-		usuario.setAsociacionPorUsuarioCorreo(detallesUsuario.getAsociacionPorUsuarioCorreo());
+		usuario.setAsociacionPorCorreoUsuario(detallesUsuario.getAsociacionPorCorreoUsuario());
 		usuario.setProgramaAcademicoPorUsuarioCorreo(asociacionService.setAsociacionesInProgramasAcademicos(detallesUsuario.getProgramaAcademicoPorUsuarioCorreo()));
 		usuario.setVinculacionPorUsuarioCorreo(detallesUsuario.getVinculacionPorUsuarioCorreo());
 		UsuarioCorreo updatedUsuario = usuarioCorreoRepository.save(usuario);

@@ -1,7 +1,6 @@
 package co.edu.udea.onomastico.model;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -17,16 +16,10 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
@@ -70,12 +63,10 @@ public class UsuarioCorreo implements Serializable {
 	@JsonView(Views.Public.class)
 	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
 	@JoinTable(name = "asociacion_por_correo_usuario", joinColumns = {
-			@JoinColumn(name = "usuario_correo_tipo_identificacion"),
-			@JoinColumn(name = "usuario_correo_numero_identificacion"),
-			},
-			inverseJoinColumns = {@JoinColumn(name = "asociacion_id")})
-	@JsonIgnoreProperties({"usuariosAsociacion","usuariosCorreoAsociacion"})
-	private Set<Asociacion> asociacionPorUsuarioCorreo = new HashSet<>();
+			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"),
+			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion")
+			}, inverseJoinColumns = @JoinColumn(name = "asociacion_id"))
+	private Set<Asociacion> asociacionPorCorreoUsuario = new HashSet<>();
 	
 	@JsonView(Views.Public.class)
 	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
@@ -112,8 +103,30 @@ public class UsuarioCorreo implements Serializable {
 		return id.equals(that.id);
 	}
 
+	public void addAsociacion(Asociacion asociacionToAdd){
+		asociacionPorCorreoUsuario.add(asociacionToAdd);
+		asociacionToAdd.getUsuariosCorreoAsociacion().add(this);
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
+	}
+
+	@Override
+	public String toString() {
+		return "UsuarioCorreo{" +
+				"id=" + id +
+				", nombre='" + nombre + '\'' +
+				", apellido='" + apellido + '\'' +
+				", email='" + email + '\'' +
+				", fechaNacimiento=" + fechaNacimiento +
+				", estado='" + estado + '\'' +
+				", genero='" + genero + '\'' +
+				", asociacionPorUsuarioCorreo=" + asociacionPorCorreoUsuario +
+				", programaAcademicoPorUsuarioCorreo=" + programaAcademicoPorUsuarioCorreo +
+				", plataformaPorUsuarioCorreo=" + plataformaPorUsuarioCorreo +
+				", vinculacionPorUsuarioCorreo=" + vinculacionPorUsuarioCorreo +
+				'}';
 	}
 }

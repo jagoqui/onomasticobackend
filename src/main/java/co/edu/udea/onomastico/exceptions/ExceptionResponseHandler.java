@@ -2,6 +2,7 @@ package co.edu.udea.onomastico.exceptions;
 
 import java.util.Date;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -34,4 +35,14 @@ public class ExceptionResponseHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(exceptionResponse, HttpStatus.UNPROCESSABLE_ENTITY);
         }
+
+    @ExceptionHandler({DataIntegrityViolationException.class})
+    public final ResponseEntity<ExceptionResponse> handleDataIntegrityViolationException(
+            DataIntegrityViolationException ex) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(),
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
 }

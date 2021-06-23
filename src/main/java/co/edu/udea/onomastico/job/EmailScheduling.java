@@ -71,7 +71,7 @@ public class EmailScheduling {
 	ProgramaAcademicoService programaAcademicoService;
 	
     //cron everyday at 7:00 am
-    @Scheduled(cron = "0 0 7 * * ?")
+    @Scheduled(cron = "0 0 14 * * ?")
     public void scheduleDailyEmails() {
     	StringBuilder emails = new StringBuilder();
     	List<Evento> eventos = eventoService.getAllEventos();
@@ -81,8 +81,10 @@ public class EmailScheduling {
     		 if(destinatarios != null) {
     		 destinatarios.forEach(destino ->{
     			 emails.append(getTextoByReciper(evento.getPlantilla(), destino)); 
-    			 emailService.sendEmail(destino.getEmail(),evento.getNombre(), getTextoByReciper(evento.getPlantilla(), destino));
-    			 correoEnviadoService.addCorreoEnviado(destino.getEmail(),evento.getNombre());
+    			 //emailService.sendEmail(destino.getEmail(),evento.getNombre(), getTextoByReciper(evento.getPlantilla(), destino));
+				 emailService.sendEmail("apoyodesarrolloingenieria5@udea.edu.co",evento.getNombre(), getTextoByReciper(evento.getPlantilla(), destino));
+				 correoEnviadoService.addCorreoEnviado(destino.getEmail(),evento.getNombre());
+				 System.out.println("Email: " + destino.getEmail());
     		 });
     		 }
     		}

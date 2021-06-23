@@ -8,14 +8,9 @@ import java.util.Set;
 import javax.persistence.*;
 
 import lombok.*;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
-
-import static org.hibernate.annotations.CascadeType.SAVE_UPDATE;
 
 
 @Entity
@@ -42,7 +37,7 @@ public class Asociacion implements Serializable {
     private Set<Usuario> usuariosAsociacion = new HashSet<>();
 	
 	@JsonView(Views.Internal.class)
-	@ManyToMany(mappedBy = "asociacionPorUsuarioCorreo")
+	@ManyToMany(mappedBy = "asociacionPorCorreoUsuario")
 	@JsonIgnoreProperties({"usuariosAsociacion","usuariosCorreoAsociacion"})
     private Set<UsuarioCorreo> usuariosCorreoAsociacion = new HashSet<>();
 	

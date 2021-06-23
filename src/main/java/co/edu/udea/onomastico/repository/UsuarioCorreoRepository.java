@@ -29,7 +29,7 @@ public interface UsuarioCorreoRepository extends JpaRepository<UsuarioCorreo, Us
 	
 	List<UsuarioCorreo> findByGenero(String genero);
 	
-	List<UsuarioCorreo> findByAsociacionPorUsuarioCorreo(Asociacion asociacion);
+	List<UsuarioCorreo> findByAsociacionPorCorreoUsuario(Asociacion asociacion);
 	
 	List<UsuarioCorreo> findByProgramaAcademicoPorUsuarioCorreo(ProgramaAcademico programaAcademico);
 	

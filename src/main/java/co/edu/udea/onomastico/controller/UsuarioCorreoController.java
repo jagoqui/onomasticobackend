@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Base64;
 
+import co.edu.udea.onomastico.model.Asociacion;
+import co.edu.udea.onomastico.model.UsuarioCorreoId;
 import co.edu.udea.onomastico.payload.UsuarioCorreoResquest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -75,7 +77,18 @@ public class UsuarioCorreoController {
 	@JsonView(Views.Public.class)
 	@PostMapping("/usuariosemail")
 	public UsuarioCorreo createUsuario(@Valid @RequestBody UsuarioCorreoResquest usuario) {
+		int x = 2;
 		return usuarioService.createUsuario(UsuarioCorreoResquest.toModel(usuario));
+	}
+
+	// Crear Usuario
+	@JsonView(Views.Public.class)
+	@PostMapping("/usuariosemail/{tipo}/{numero}")
+	public UsuarioCorreo AddAsociacionToUsuarioCorreo(@RequestBody List<Asociacion> asociacionRequest,
+													  @PathVariable String tipo,
+													  @PathVariable String numero){
+		UsuarioCorreoId idUsuario = UsuarioCorreoId.builder().tipoIdentificacion(tipo).numeroIdentificacion(numero).build();
+		return usuarioService.addAsociacionToUsuarioCorreo(asociacionRequest, idUsuario);
 	}
 	
 	//ususcribe with ecripted email
@@ -113,4 +126,7 @@ public class UsuarioCorreoController {
 			@NotBlank @PathVariable(value = "numero")String numero) {
 		return usuarioService.deleteUsuario(tipo, numero);
 	}
+
+
+
 }
