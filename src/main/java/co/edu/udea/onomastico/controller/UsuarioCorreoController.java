@@ -77,7 +77,6 @@ public class UsuarioCorreoController {
 	@JsonView(Views.Public.class)
 	@PostMapping("/usuariosemail")
 	public UsuarioCorreo createUsuario(@Valid @RequestBody UsuarioCorreoResquest usuario) {
-		int x = 2;
 		return usuarioService.createUsuario(UsuarioCorreoResquest.toModel(usuario));
 	}
 
