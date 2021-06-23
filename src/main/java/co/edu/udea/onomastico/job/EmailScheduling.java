@@ -81,8 +81,7 @@ public class EmailScheduling {
     		 if(destinatarios != null) {
     		 destinatarios.forEach(destino ->{
     			 emails.append(getTextoByReciper(evento.getPlantilla(), destino)); 
-    			 //emailService.sendEmail(destino.getEmail(),evento.getNombre(), getTextoByReciper(evento.getPlantilla(), destino));
-				 emailService.sendEmail("apoyodesarrolloingenieria5@udea.edu.co",evento.getNombre(), getTextoByReciper(evento.getPlantilla(), destino));
+    			 emailService.sendEmail(destino.getEmail(),evento.getNombre(), getTextoByReciper(evento.getPlantilla(), destino));
 				 correoEnviadoService.addCorreoEnviado(destino.getEmail(),evento.getNombre());
 				 System.out.println("Email: " + destino.getEmail());
     		 });
