@@ -210,21 +210,24 @@ public class EventoService {
 		parametrosGenero.add(new ParametroResponse(1,"genero","MASCULINO"));
 		parametrosGenero.add(new ParametroResponse(2,"genero","FEMENINO"));
 		condiciones.add(new CondicionResponse("Género", parametrosGenero));
-		List<ParametroResponse> parametrosPrograma = new ArrayList<ParametroResponse>();
+
 		if(asociaciones != null) {
 			List<ParametroResponse> parametrosAsociacion = new ArrayList<ParametroResponse>();
 			asociaciones.forEach(asociacion ->{
 				parametrosAsociacion.add(new ParametroResponse(asociacion.getId(),"asociacion",asociacion.getNombre()));
-				List<ProgramaAcademico> programas = new ArrayList<ProgramaAcademico>();
-				programas = programaAcademicoService.findByProgramaAcademicoPorAsociacion(asociacion);
-				programas.forEach(programa ->{
-					parametrosPrograma.add(new ParametroResponse(programa.getCodigo(),"programa_academico",
-					        programa.getNombre().concat(" / ").concat(asociacion.getNombre())));
-				});
 			});
-			condiciones.add(new CondicionResponse("Programa acádemico", parametrosPrograma));
 			condiciones.add(new CondicionResponse("Asociación", parametrosAsociacion));
 		}
+
+		List<ProgramaAcademico> programasAcademicos = programaAcademicoService.getAllProgramasAcademicos();
+		List<ParametroResponse> parametrosProgramaAcademico = new ArrayList<ParametroResponse>();
+		if(programasAcademicos != null) {
+			programasAcademicos.forEach(programaAcademico ->{
+				parametrosProgramaAcademico.add(new ParametroResponse(programaAcademico.getCodigo(),"programa_academico",programaAcademico.getNombre()));
+			});
+			condiciones.add(new CondicionResponse("Programa académico", parametrosProgramaAcademico));
+		}
+
 		List<Vinculacion> vinculaciones= vinculacionService.getAllVinculaciones();
 		List<ParametroResponse> parametrosVincuacion = new ArrayList<ParametroResponse>();
 		if(vinculaciones != null) {
@@ -311,7 +314,7 @@ public class EventoService {
 					}
 				}
 			});
-			if(!asociaciones.isEmpty()) {
+			/*if(!asociaciones.isEmpty()) {
 				asociaciones.forEach(asociacion ->{
 					programas.forEach(programa ->{
 						Asociacion asociacionFound = asociacionService.getAsociacionByProgramaAcademico(programa);
@@ -322,6 +325,8 @@ public class EventoService {
 					});
 				});
 			}
+
+			 */
 			eventoResponse.add(new EventoRequest(evento.getId(), evento.getNombre(), evento.getFecha(), evento.getEstado(), evento.getRecurrencia(), evento.getPlantilla(), 
 					condicionesResponse));
 		});

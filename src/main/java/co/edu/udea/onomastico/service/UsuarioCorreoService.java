@@ -113,7 +113,14 @@ public class UsuarioCorreoService {
 	public UsuarioCorreo createUsuario(UsuarioCorreo usuario) throws BadRequestException{
 		if(!isUserDetailsValid(usuario)) throw new BadRequestException("argumentos invalidos");
 		if(!usuarioCorreoRepository.findByEmail(usuario.getEmail()).isEmpty() || !usuarioCorreoRepository.findById(usuario.getId()).isEmpty()) throw new ResourceAlreadyExistsException(" ya se encuentra en uso", usuario.getEmail());
-		usuario.setProgramaAcademicoPorUsuarioCorreo(asociacionService.setAsociacionesInProgramasAcademicos(usuario.getProgramaAcademicoPorUsuarioCorreo()));
+
+		/*usuario.getProgramaAcademicoPorUsuarioCorreo().stream().forEach(programa -> {
+			usuario.addProgramaAcademico(programa);
+			Asociacion asociacion = asociacionService.getAsociacionByProgramaAcademico(programa);
+			asociacion.addProgramaAcademico(programa);
+		});
+
+		 */
 		UsuarioCorreo newUser = usuarioCorreoRepository.save(usuario);
 		return newUser;
 	}
@@ -160,14 +167,14 @@ public class UsuarioCorreoService {
 		usuario.setFechaNacimiento(detallesUsuario.getFechaNacimiento());
 		usuario.setPlataformaPorUsuarioCorreo(detallesUsuario.getPlataformaPorUsuarioCorreo());
 		usuario.setAsociacionPorCorreoUsuario(detallesUsuario.getAsociacionPorCorreoUsuario());
-		usuario.setProgramaAcademicoPorUsuarioCorreo(asociacionService.setAsociacionesInProgramasAcademicos(detallesUsuario.getProgramaAcademicoPorUsuarioCorreo()));
+		usuario.setProgramaAcademicoPorUsuarioCorreo(detallesUsuario.getProgramaAcademicoPorUsuarioCorreo());
 		usuario.setVinculacionPorUsuarioCorreo(detallesUsuario.getVinculacionPorUsuarioCorreo());
 		UsuarioCorreo updatedUsuario = usuarioCorreoRepository.save(usuario);
 	    return updatedUsuario;
 	}
 	
 	public ResponseEntity<?> deleteUsuario(String tipo, String numero) {
-		UsuarioCorreoId usuarioId = new UsuarioCorreoId(tipo,numero);
+		UsuarioCorreoId usuarioId = UsuarioCorreoId.builder().tipoIdentificacion(tipo).numeroIdentificacion(numero).build();
 		UsuarioCorreo usuario = usuarioCorreoRepository.findById(usuarioId)
 	            .orElseThrow(() -> new ResourceNotFoundException("UsuarioCorreo"+"id"+usuarioId));
 	    

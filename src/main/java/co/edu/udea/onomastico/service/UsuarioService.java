@@ -137,7 +137,7 @@ public class UsuarioService {
 		return usuario.getAsociacionPorUsuario();
 	}
 	
-	public List<ProgramaConAsociacionResponse> getProgramasPorAsociacionResponseUsuarioById(Integer usuarioId) {
+	/*public List<ProgramaConAsociacionResponse> getProgramasPorAsociacionResponseUsuarioById(Integer usuarioId) {
 		List<ProgramaConAsociacionResponse> programasPorAsociacion = new ArrayList<ProgramaConAsociacionResponse>();
 		Set<Asociacion> asociaciones = getAsociacionUsuarioById(usuarioId);
 		if(asociaciones != null) {
@@ -152,6 +152,8 @@ public class UsuarioService {
 		}
 		return programasPorAsociacion;
 	}
+
+	 */
 	
 	public boolean isAdmin(Integer usuarioId) {
 		Usuario usuario = usuarioRepository.findById(usuarioId)

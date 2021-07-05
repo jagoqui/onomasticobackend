@@ -2,6 +2,7 @@ package co.edu.udea.onomastico.service;
 
 import java.util.List;
 
+import co.edu.udea.onomastico.model.Facultad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,8 @@ public class ProgramaAcademicoService {
 	    return programaAcademicoRepository.findAll();
 	}
 	
-	public List<ProgramaAcademico> findByProgramaAcademicoPorAsociacion(Asociacion asociacion){
-		return programaAcademicoRepository.findByAsociacion(asociacion);
+	public List<ProgramaAcademico> findByProgramaAcademicoPorFacultad(Facultad facultad){
+		return programaAcademicoRepository.findByFacultad(facultad);
 	}
 	
 	public ProgramaAcademico getProgramaAcademicoById(Integer programaId) {

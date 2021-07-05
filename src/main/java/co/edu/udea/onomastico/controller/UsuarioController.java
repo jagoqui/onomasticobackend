@@ -90,12 +90,14 @@ public class UsuarioController {
 		return usuarioService.getUsuariosByRol(rol);
 	}
 	
-	@JsonView(Views.Public.class)
+	/*@JsonView(Views.Public.class)
 	@GetMapping("/usuarios/programasporasociacion")
 	public List<ProgramaConAsociacionResponse> getProgramasPorAsociacionUsuarioById() {
 		Integer usuarioId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return usuarioService.getProgramasPorAsociacionResponseUsuarioById(usuarioId);
 	}
+
+	 */
 	@JsonView(Views.Public.class)
 	@GetMapping("/usuarios/update")
 	public Usuario updateOwnInfo(@RequestBody Usuario detallesUsuario) {

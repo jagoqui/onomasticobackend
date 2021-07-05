@@ -1,7 +1,5 @@
 package co.edu.udea.onomastico.repository;
 
-import java.util.List;
-
 import co.edu.udea.onomastico.model.Facultad;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -9,8 +7,10 @@ import org.springframework.stereotype.Repository;
 import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.ProgramaAcademico;
 
-@Repository
-public interface ProgramaAcademicoRepository extends JpaRepository<ProgramaAcademico, Integer>{
+import java.util.List;
 
-	List<ProgramaAcademico> findByFacultad(Facultad asociacion);
+@Repository
+public interface FacultadRepository extends JpaRepository<Facultad, Integer> {
+
+    List<Facultad> findAll();
 }

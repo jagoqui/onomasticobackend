@@ -17,6 +17,10 @@ public class AsociacionService {
 
 	@Autowired
 	AsociacionRepository asociacionRepository;
+
+	@Autowired
+	ProgramaAcademicoService programaAcademicoService;
+
 	public List<Asociacion> getAllAsociaciones() {
 	    return asociacionRepository.findAll();
 	}
@@ -38,19 +42,23 @@ public class AsociacionService {
 	    return ResponseEntity.ok().build();
 	}
 	
-	public Asociacion getAsociacionByProgramaAcademico(ProgramaAcademico programaAcademico){
+	/*public Asociacion getAsociacionByProgramaAcademico(ProgramaAcademico programaAcademico){
 		return  asociacionRepository.findByprogramasAcademicos(programaAcademico);
 	}
+
+	 */
 	
 	public boolean existsAsociacion(Integer id) {
 		return asociacionRepository.existsById(id);
 	}
 
-	public Set<ProgramaAcademico> setAsociacionesInProgramasAcademicos(Set<ProgramaAcademico> programas){
+	/*public Set<ProgramaAcademico> setAsociacionesInProgramasAcademicos(Set<ProgramaAcademico> programas){
 		programas.forEach(programa ->{
 			Asociacion asociacion = getAsociacionByProgramaAcademico(programa);
-			programa.setAsociacion(Asociacion.toModel(asociacion.getId(),asociacion.getNombre()));
+			//programa.setAsociacion(Asociacion.toModel(asociacion.getId(),asociacion.getNombre()));
+			asociacion.addProgramaAcademico(programa);
+			programaAcademicoService.addProgramaAcademico(programa);
 		});
 		return programas;
-	}
+	}*/
 }

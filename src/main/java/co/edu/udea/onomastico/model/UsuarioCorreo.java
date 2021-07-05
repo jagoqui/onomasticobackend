@@ -108,6 +108,11 @@ public class UsuarioCorreo implements Serializable {
 		asociacionToAdd.getUsuariosCorreoAsociacion().add(this);
 	}
 
+	public void addProgramaAcademico(ProgramaAcademico programaToAdd){
+		programaAcademicoPorUsuarioCorreo.add(programaToAdd);
+		programaToAdd.getUsuariosCorreoProgramaAcademico().add(this);
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
