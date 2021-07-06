@@ -27,7 +27,7 @@ public class Facultad {
     private int id;
 
     @JsonView(Views.Public.class)
-    @Column(name = "nombre", nullable = false, length=30)
+    @Column(name = "nombre", nullable = false, length=60)
     private String nombre;
 
     @JsonView(Views.Internal.class)

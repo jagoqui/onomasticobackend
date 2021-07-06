@@ -62,7 +62,8 @@ public class ProgramaAcademico implements Serializable {
 	public String toString() {
 		return "ProgramaAcademico{" +
 				"codigo=" + codigo +
-				", nombre='" + nombre + '\'' +
+				", nombre='" + nombre +
+				", facultad='" + facultad + '\'' +
 				'}';
 	}
 }
