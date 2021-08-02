@@ -62,11 +62,11 @@ public class UsuarioCorreo implements Serializable {
 
 	@JsonView(Views.Public.class)
 	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-	@JoinTable(name = "asociacion_por_correo_usuario", joinColumns = {
+	@JoinTable(name = "unidad_administrativa_por_correo_usuario", joinColumns = {
 			@JoinColumn(name = "usuario_correo_numero_identificacion", referencedColumnName = "numero_identificacion"),
 			@JoinColumn(name = "usuario_correo_tipo_identificacion", referencedColumnName = "tipo_identificacion")
-			}, inverseJoinColumns = @JoinColumn(name = "asociacion_id"))
-	private Set<Asociacion> asociacionPorCorreoUsuario = new HashSet<>();
+			}, inverseJoinColumns = @JoinColumn(name = "unidad_administrativa_id"))
+	private Set<UnidadAdministrativa> unidadAdministrativaPorCorreoUsuario = new HashSet<>();
 	
 	@JsonView(Views.Public.class)
 	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
@@ -103,9 +103,9 @@ public class UsuarioCorreo implements Serializable {
 		return id.equals(that.id);
 	}
 
-	public void addAsociacion(Asociacion asociacionToAdd){
-		asociacionPorCorreoUsuario.add(asociacionToAdd);
-		asociacionToAdd.getUsuariosCorreoAsociacion().add(this);
+	public void addAsociacion(UnidadAdministrativa unidadAdministrativaToAdd){
+		unidadAdministrativaPorCorreoUsuario.add(unidadAdministrativaToAdd);
+		unidadAdministrativaToAdd.getUsuariosCorreoUnidadAcademica().add(this);
 	}
 
 	public void addProgramaAcademico(ProgramaAcademico programaToAdd){
@@ -128,7 +128,7 @@ public class UsuarioCorreo implements Serializable {
 				", fechaNacimiento=" + fechaNacimiento +
 				", estado='" + estado + '\'' +
 				", genero='" + genero + '\'' +
-				", asociacionPorUsuarioCorreo=" + asociacionPorCorreoUsuario +
+				", asociacionPorUsuarioCorreo=" + unidadAdministrativaPorCorreoUsuario +
 				", programaAcademicoPorUsuarioCorreo=" + programaAcademicoPorUsuarioCorreo +
 				", plataformaPorUsuarioCorreo=" + plataformaPorUsuarioCorreo +
 				", vinculacionPorUsuarioCorreo=" + vinculacionPorUsuarioCorreo +

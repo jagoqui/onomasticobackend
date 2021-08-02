@@ -1,32 +1,21 @@
 package co.edu.udea.onomastico.job;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import co.edu.udea.onomastico.util.EmailUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import co.edu.udea.onomastico.model.Condicion;
-import co.edu.udea.onomastico.model.CorreoEnviado;
-import co.edu.udea.onomastico.model.CorreoEnviadoId;
 import co.edu.udea.onomastico.model.Evento;
 import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.payload.EmailQueryResponse;
 import co.edu.udea.onomastico.repository.EmailSchedulingRepository;
-import co.edu.udea.onomastico.service.AsociacionService;
+import co.edu.udea.onomastico.service.UnidadAdministrativaService;
 import co.edu.udea.onomastico.service.CorreoEnviadoService;
 import co.edu.udea.onomastico.service.EmailService;
 import co.edu.udea.onomastico.service.EventoService;
@@ -62,7 +51,7 @@ public class EmailScheduling {
 	UsuarioCorreoService  usuarioService;
     
     @Autowired
-	AsociacionService asociacionService;
+	UnidadAdministrativaService unidadAdministrativaService;
 	
 	@Autowired
 	VinculacionService vinculacionService;
@@ -92,7 +81,7 @@ public class EmailScheduling {
 	private String getTextoByReciper(Plantilla plantilla, EmailQueryResponse destino) {
 		String textoPlantilla = plantilla.getTexto();
 		String encriptedEmail = Base64.getEncoder().encodeToString(destino.getEmail().getBytes());
-		String asociacion = getAsociacionName(destino.getAsociacionId());
+		String asociacion = getAsociacionName(destino.getUnidadAdministrativaId());
 		String vinculacion = getVinculacionName(destino.getVinculacionId());
 		String programa = getProgramaAcademicoName(destino.getProgramaAcademicoId());
 		StringBuilder text = new StringBuilder(textoPlantilla);
@@ -123,7 +112,7 @@ public class EmailScheduling {
 	private String getAsociacionName(int id) {
 		String name;
 		try{
-			name = asociacionService.getAsociacionById(id).getNombre();
+			name = unidadAdministrativaService.getUnidadAdministrativaById(id).getNombre();
 		}catch(Exception e) {
 			name = "";
 		};

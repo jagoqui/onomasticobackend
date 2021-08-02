@@ -2,36 +2,16 @@ package co.edu.udea.onomastico.model;
 
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
@@ -87,10 +67,10 @@ public class Usuario implements Serializable {
 	@JsonView(Views.Public.class)
 	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    @JoinTable(name = "asociacion_por_usuario", 
+    @JoinTable(name = "unidad_administrativa_por_usuario",
             joinColumns = { @JoinColumn(name = "usuario_id") }, 
-            inverseJoinColumns = { @JoinColumn(name = "asociacion_id") })
-    private Set<Asociacion> asociacionPorUsuario = new HashSet<>();
+            inverseJoinColumns = { @JoinColumn(name = "unidad_administrativa_id") })
+    private Set<UnidadAdministrativa> unidadAdministrativaPorUsuario = new HashSet<>();
 
 	@Override
 	public boolean equals(Object o) {

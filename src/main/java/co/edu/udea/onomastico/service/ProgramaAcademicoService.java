@@ -2,13 +2,12 @@ package co.edu.udea.onomastico.service;
 
 import java.util.List;
 
-import co.edu.udea.onomastico.model.Facultad;
+import co.edu.udea.onomastico.model.UnidadAcademica;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
-import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.ProgramaAcademico;
 import co.edu.udea.onomastico.repository.ProgramaAcademicoRepository;
 
@@ -22,8 +21,8 @@ public class ProgramaAcademicoService {
 	    return programaAcademicoRepository.findAll();
 	}
 	
-	public List<ProgramaAcademico> findByProgramaAcademicoPorFacultad(Facultad facultad){
-		return programaAcademicoRepository.findByFacultad(facultad);
+	public List<ProgramaAcademico> findByProgramaAcademicoPorFacultad(UnidadAcademica unidadAcademica){
+		return programaAcademicoRepository.findByUnidadAcademica(unidadAcademica);
 	}
 	
 	public ProgramaAcademico getProgramaAcademicoById(Integer programaId) {
@@ -45,5 +44,12 @@ public class ProgramaAcademicoService {
 	
 	public boolean existsProgramaAcademico(Integer id) {
 		return programaAcademicoRepository.existsById(id);
+		// Buscar asociaciones del publicador
+		//
 	}
+
+	public UnidadAcademica getUnidadAcademicaByPrograma(Integer idPrograma){
+		return getProgramaAcademicoById(idPrograma).getUnidadAcademica();
+	}
+
 }

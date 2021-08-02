@@ -14,14 +14,14 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 
 @Entity
-@Table(name = "asociacion")
+@Table(name = "unidad_administrativa")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Data
 @Generated
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class Asociacion implements Serializable {
+public class UnidadAdministrativa implements Serializable {
 	
 	@JsonView(Views.Public.class)
 	@Id @GeneratedValue(strategy=GenerationType.AUTO)
@@ -32,26 +32,26 @@ public class Asociacion implements Serializable {
 	private String nombre;
 	
 	@JsonView(Views.Internal.class)
-	@ManyToMany(mappedBy = "asociacionPorUsuario")
+	@ManyToMany(mappedBy = "unidadAdministrativaPorUsuario")
 	// @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<Usuario> usuariosAsociacion = new HashSet<>();
+    private Set<Usuario> usuariosUnidadAdministrativa = new HashSet<>();
 	
 	@JsonView(Views.Internal.class)
-	@ManyToMany(mappedBy = "asociacionPorCorreoUsuario")
-	@JsonIgnoreProperties({"usuariosAsociacion","usuariosCorreoAsociacion"})
-    private Set<UsuarioCorreo> usuariosCorreoAsociacion = new HashSet<>();
+	@ManyToMany(mappedBy = "unidadAdministrativaPorCorreoUsuario")
+	@JsonIgnoreProperties({"usuariosUnidadAcademica","usuariosCorreoUnidadAcademica"})
+    private Set<UsuarioCorreo> usuariosCorreoUnidadAcademica = new HashSet<>();
 	
 	@JsonView(Views.Internal.class)
-	@ManyToMany(mappedBy = "asociacionesPorPlantilla")
+	@ManyToMany(mappedBy = "unidadesAdministrativasPorPlantilla")
 	// @OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<Plantilla> plantillasAsociacion = new HashSet<>();
+    private Set<Plantilla> plantillasUnidadAdministrativa = new HashSet<>();
 
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		Asociacion that = (Asociacion) o;
+		UnidadAdministrativa that = (UnidadAdministrativa) o;
 		return id == that.id;
 	}
 
@@ -60,8 +60,8 @@ public class Asociacion implements Serializable {
 		return Objects.hash(id);
 	}
 
-	public static Asociacion toModel(Integer id, String nombre){
-		return Asociacion.builder().id(id).nombre(nombre).build();
+	public static UnidadAdministrativa toModel(Integer id, String nombre){
+		return UnidadAdministrativa.builder().id(id).nombre(nombre).build();
 	}
 
 	@Override

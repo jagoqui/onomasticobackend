@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import co.edu.udea.onomastico.exceptions.BadRequestException;
 import co.edu.udea.onomastico.exceptions.ResourceAlreadyExistsException;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
-import co.edu.udea.onomastico.model.Asociacion;
+import co.edu.udea.onomastico.model.UnidadAdministrativa;
 import co.edu.udea.onomastico.model.ProgramaAcademico;
 import co.edu.udea.onomastico.model.UsuarioCorreo;
 import co.edu.udea.onomastico.model.UsuarioCorreoId;
@@ -40,7 +40,7 @@ public class UsuarioCorreoService {
 	VinculacionService vinculacionService;
 	
 	@Autowired
-	AsociacionService asociacionService;
+	UnidadAdministrativaService unidadAdministrativaService;
 	
 	@Autowired
 	ProgramaAcademicoService programaAcademicoService;
@@ -53,8 +53,8 @@ public class UsuarioCorreoService {
 		return usuarioCorreoRepository.findByGenero(gender);
 	}
 	
-	public List<UsuarioCorreo> findByAsociation(Asociacion asociacion){
-		return usuarioCorreoRepository.findByAsociacionPorCorreoUsuario(asociacion);
+	public List<UsuarioCorreo> findByAsociation(UnidadAdministrativa unidadAdministrativa){
+		return usuarioCorreoRepository.findByUnidadAdministrativaPorCorreoUsuario(unidadAdministrativa);
 	}
 	
 	public List<UsuarioCorreo> findByProgram(ProgramaAcademico programaAcademico){
@@ -69,19 +69,19 @@ public class UsuarioCorreoService {
 	}
 	
 	public List<UsuarioCorreo> getAllUsuarioCorreoByUsuario(@NotNull Integer usuarioId){
-		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
+		Set<UnidadAdministrativa> asociaciones = usuarioService.getUnidadAdministrativaUsuarioById(usuarioId);
 		List<UsuarioCorreo> usuarioCorreo =  getUsuariosCorreosByAsociacion(asociaciones);
 		return usuarioCorreo;
 	}
 
-	public UsuarioCorreo addAsociacionToUsuarioCorreo(List<Asociacion> asociacionesToAdd, UsuarioCorreoId idUsuario){
+	public UsuarioCorreo addAsociacionToUsuarioCorreo(List<UnidadAdministrativa> asociacionesToAdd, UsuarioCorreoId idUsuario){
 		UsuarioCorreo usuario = usuarioCorreoRepository.findById(idUsuario).get();
 		asociacionesToAdd.stream().forEach(asociacion -> usuario.addAsociacion(asociacion));
 		return usuarioCorreoRepository.save(usuario);
 	}
 	
 	public List<UsuarioCorreo> getAllUsuarioCorreoByUsuarioPag(Integer usuarioId, Integer pageNo, Integer pageSize, String sortBy) throws ResourceNotFoundException{
-		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
+		Set<UnidadAdministrativa> asociaciones = usuarioService.getUnidadAdministrativaUsuarioById(usuarioId);
 		List<UsuarioCorreo> usuarioCorreos = getUsuariosCorreosByAsociacion(asociaciones);
 		Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 		final int start = (int)paging.getOffset();
@@ -90,10 +90,10 @@ public class UsuarioCorreoService {
 		return page.toList();
 	}
 	
-	public List<UsuarioCorreo> getUsuariosCorreosByAsociacion(Set<Asociacion> asociaciones){
+	public List<UsuarioCorreo> getUsuariosCorreosByAsociacion(Set<UnidadAdministrativa> asociaciones){
 		List<UsuarioCorreo> merge = new ArrayList<UsuarioCorreo>();
 		asociaciones.forEach(asociacion ->{
-			List<UsuarioCorreo> temp = usuarioCorreoRepository.findByAsociacionPorCorreoUsuario(asociacion);
+			List<UsuarioCorreo> temp = usuarioCorreoRepository.findByUnidadAdministrativaPorCorreoUsuario(asociacion);
 			if(temp!= null && !temp.isEmpty())merge.addAll(temp);
 		});
 		return merge;
@@ -166,7 +166,7 @@ public class UsuarioCorreoService {
 		usuario.setEstado(detallesUsuario.getEstado());
 		usuario.setFechaNacimiento(detallesUsuario.getFechaNacimiento());
 		usuario.setPlataformaPorUsuarioCorreo(detallesUsuario.getPlataformaPorUsuarioCorreo());
-		usuario.setAsociacionPorCorreoUsuario(detallesUsuario.getAsociacionPorCorreoUsuario());
+		usuario.setUnidadAdministrativaPorCorreoUsuario(detallesUsuario.getUnidadAdministrativaPorCorreoUsuario());
 		usuario.setProgramaAcademicoPorUsuarioCorreo(detallesUsuario.getProgramaAcademicoPorUsuarioCorreo());
 		usuario.setVinculacionPorUsuarioCorreo(detallesUsuario.getVinculacionPorUsuarioCorreo());
 		UsuarioCorreo updatedUsuario = usuarioCorreoRepository.save(usuario);

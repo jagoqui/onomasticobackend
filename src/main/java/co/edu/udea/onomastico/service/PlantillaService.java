@@ -23,8 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
-import co.edu.udea.onomastico.model.Asociacion;
-import co.edu.udea.onomastico.model.LogTransacciones;
+import co.edu.udea.onomastico.model.UnidadAdministrativa;
 import co.edu.udea.onomastico.model.Plantilla;
 import co.edu.udea.onomastico.payload.UploadFileResponse;
 import co.edu.udea.onomastico.repository.PlantillaRepository;
@@ -68,13 +67,13 @@ public class PlantillaService {
     }
 	
 	public List<Plantilla> getAllPlantillasByUsuario(Integer usuarioId){
-		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
+		Set<UnidadAdministrativa> asociaciones = usuarioService.getUnidadAdministrativaUsuarioById(usuarioId);
 		List<Plantilla> plantillas = getPlantillasByAsociacion(asociaciones);
 		return plantillas;
 	}
 	
 	public List<Plantilla> getAllPlantillasByUsuarioPag(Integer usuarioId, Integer pageNo, Integer pageSize, String sortBy) throws ResourceNotFoundException{
-		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
+		Set<UnidadAdministrativa> asociaciones = usuarioService.getUnidadAdministrativaUsuarioById(usuarioId);
 		List<Plantilla> plantillas = getPlantillasByAsociacion(asociaciones);
 		Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 		final int start = (int)paging.getOffset();
@@ -83,10 +82,10 @@ public class PlantillaService {
 		return page.toList();
 	}
 	
-	public List<Plantilla> getPlantillasByAsociacion(Set<Asociacion> asociaciones){
+	public List<Plantilla> getPlantillasByAsociacion(Set<UnidadAdministrativa> asociaciones){
 		List<Plantilla> merge = new ArrayList<Plantilla>();
 		asociaciones.forEach(asociacion ->{
-			List<Plantilla> temp = plantillaRepository.findByAsociacionesPorPlantilla(asociacion);
+			List<Plantilla> temp = plantillaRepository.findByUnidadesAdministrativasPorPlantilla(asociacion);
 			if(temp!= null && !temp.isEmpty())merge.addAll(temp);
 		});
 		return merge;
@@ -143,7 +142,7 @@ public class PlantillaService {
 	            .orElseThrow(() -> new ResourceNotFoundException("plantilla" + "id"+plantillaId));
 		
 		plantillaToUpdate.setTexto(plantilla.getTexto());
-		plantillaToUpdate.setAsociacionesPorPlantilla(plantilla.getAsociacionesPorPlantilla());;
+		plantillaToUpdate.setUnidadesAdministrativasPorPlantilla(plantilla.getUnidadesAdministrativasPorPlantilla());;
 		Plantilla updatedPlantilla = plantillaRepository.save(plantillaToUpdate);
 		String transaccion = "Editar plantilla:"+updatedPlantilla.getId();
 		transaccionesService.createTransaccion(usuarioId, transaccion);

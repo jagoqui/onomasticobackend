@@ -8,13 +8,8 @@ import java.util.Set;
 import javax.persistence.*;
 
 import lombok.*;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import com.fasterxml.jackson.annotation.JsonView;
-
-import static org.hibernate.annotations.CascadeType.SAVE_UPDATE;
 
 @Entity
 @Table(name = "programa_academico")
@@ -41,8 +36,8 @@ public class ProgramaAcademico implements Serializable {
 	@JsonView(Views.Internal.class)
 	// @OnDelete(action = OnDeleteAction.CASCADE)
 	@ManyToOne
-	@JoinColumn(name = "facultad", nullable = false)
-	private Facultad facultad;
+	@JoinColumn(name = "unidad_academica", nullable = false)
+	private UnidadAcademica unidadAcademica;
 
 
 	@Override
@@ -63,7 +58,7 @@ public class ProgramaAcademico implements Serializable {
 		return "ProgramaAcademico{" +
 				"codigo=" + codigo +
 				", nombre='" + nombre +
-				", facultad='" + facultad + '\'' +
+				", unidadAcademica='" + unidadAcademica + '\'' +
 				'}';
 	}
 }

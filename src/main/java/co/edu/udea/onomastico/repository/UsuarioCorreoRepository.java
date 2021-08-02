@@ -1,20 +1,13 @@
 package co.edu.udea.onomastico.repository;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.stereotype.Repository;
 
-import co.edu.udea.onomastico.model.Asociacion;
+import co.edu.udea.onomastico.model.UnidadAdministrativa;
 import co.edu.udea.onomastico.model.ProgramaAcademico;
 import co.edu.udea.onomastico.model.UsuarioCorreo;
 import co.edu.udea.onomastico.model.UsuarioCorreoId;
@@ -29,7 +22,7 @@ public interface UsuarioCorreoRepository extends JpaRepository<UsuarioCorreo, Us
 	
 	List<UsuarioCorreo> findByGenero(String genero);
 	
-	List<UsuarioCorreo> findByAsociacionPorCorreoUsuario(Asociacion asociacion);
+	List<UsuarioCorreo> findByUnidadAdministrativaPorCorreoUsuario(UnidadAdministrativa unidadAdministrativa);
 	
 	List<UsuarioCorreo> findByProgramaAcademicoPorUsuarioCorreo(ProgramaAcademico programaAcademico);
 	

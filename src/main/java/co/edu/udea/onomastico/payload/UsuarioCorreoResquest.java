@@ -39,7 +39,7 @@ public class UsuarioCorreoResquest {
     private String genero;
 
     @NotEmpty
-    private Set<Asociacion> asociacionPorCorreoUsuario = new HashSet<>();
+    private Set<UnidadAdministrativa> unidadAdministrativaPorCorreoUsuario = new HashSet<>();
 
     private Set<ProgramaAcademico> programaAcademicoPorUsuarioCorreo = new HashSet<>();
 
@@ -52,7 +52,7 @@ public class UsuarioCorreoResquest {
                 .apellido(usuarioCorreoResquest.getApellido()).email(usuarioCorreoResquest.getEmail())
                 .fechaNacimiento(usuarioCorreoResquest.getFechaNacimiento())
                 .estado(usuarioCorreoResquest.getEstado()).genero(usuarioCorreoResquest.getGenero())
-                .asociacionPorCorreoUsuario(usuarioCorreoResquest.getAsociacionPorCorreoUsuario())
+                .unidadAdministrativaPorCorreoUsuario(usuarioCorreoResquest.getUnidadAdministrativaPorCorreoUsuario())
                 .plataformaPorUsuarioCorreo(usuarioCorreoResquest.getPlataformaPorUsuarioCorreo())
                 .programaAcademicoPorUsuarioCorreo(usuarioCorreoResquest.getProgramaAcademicoPorUsuarioCorreo())
                 .vinculacionPorUsuarioCorreo(usuarioCorreoResquest.getVinculacionPorUsuarioCorreo()).build();

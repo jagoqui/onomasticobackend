@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import co.edu.udea.onomastico.model.Asociacion;
+import co.edu.udea.onomastico.model.UnidadAdministrativa;
 import co.edu.udea.onomastico.model.Rol;
 import co.edu.udea.onomastico.model.Usuario;
 
@@ -21,7 +21,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
 	Boolean existsByEmail(String email);
 	
-	List<Usuario> findByAsociacionPorUsuario(Asociacion asociacion);
+	List<Usuario> findByUnidadAdministrativaPorUsuario(UnidadAdministrativa unidadAdministrativa);
 	
 	List<Usuario> findByRol(Rol rol);
 }

@@ -2,25 +2,14 @@ package co.edu.udea.onomastico.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import co.edu.udea.onomastico.model.Asociacion;
 import co.edu.udea.onomastico.model.Condicion;
-import co.edu.udea.onomastico.model.UsuarioCorreo;
-import co.edu.udea.onomastico.model.UsuarioCorreoId;
-import co.edu.udea.onomastico.model.Vinculacion;
 import co.edu.udea.onomastico.payload.EmailQueryResponse;
-import co.edu.udea.onomastico.service.AsociacionService;
-import co.edu.udea.onomastico.service.VinculacionService;
 
 @Repository
 public class EmailSchedulingRepository {
@@ -88,7 +77,7 @@ public class EmailSchedulingRepository {
 		EmailQueryResponse em = new EmailQueryResponse();
 		em.setEmail(rs.getString("email"));
 		em.setNombre(rs.getString("nombre"));
-		if(query.contains("asociacion_por_correo_usuario")) em.setAsociacionId(rs.getInt("asociacion_id"));
+		if(query.contains("asociacion_por_correo_usuario")) em.setUnidadAdministrativaId(rs.getInt("asociacion_id"));
 		if(query.contains("idvinculacion")) em.setVinculacionId(rs.getInt("idvinculacion"));
 		if(query.contains("programa_academico_codigo")) em.setProgramaAcademicoId(rs.getInt("codigo"));
 		return em;

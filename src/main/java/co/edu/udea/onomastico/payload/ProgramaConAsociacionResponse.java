@@ -1,11 +1,7 @@
 package co.edu.udea.onomastico.payload;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonView;
 
-import co.edu.udea.onomastico.model.Asociacion;
-import co.edu.udea.onomastico.model.ProgramaAcademico;
 import co.edu.udea.onomastico.model.Views;
 
 public class ProgramaConAsociacionResponse {

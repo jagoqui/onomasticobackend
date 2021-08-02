@@ -3,6 +3,7 @@ package co.edu.udea.onomastico.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import co.edu.udea.onomastico.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,14 +15,6 @@ import org.springframework.stereotype.Service;
 
 import co.edu.udea.onomastico.exceptions.BadRequestException;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
-import co.edu.udea.onomastico.model.Asociacion;
-import co.edu.udea.onomastico.model.Condicion;
-import co.edu.udea.onomastico.model.CondicionId;
-import co.edu.udea.onomastico.model.Evento;
-import co.edu.udea.onomastico.model.Plantilla;
-import co.edu.udea.onomastico.model.ProgramaAcademico;
-import co.edu.udea.onomastico.model.Usuario;
-import co.edu.udea.onomastico.model.Vinculacion;
 import co.edu.udea.onomastico.payload.CondicionRequest;
 import co.edu.udea.onomastico.payload.CondicionResponse;
 import co.edu.udea.onomastico.payload.EventoRequest;
@@ -46,13 +39,16 @@ public class EventoService {
 	LogTransaccionesService transaccionesService;
 	
 	@Autowired
-	AsociacionService asociacionService;
+	UnidadAdministrativaService unidadAdministrativaService;
 	
 	@Autowired
 	VinculacionService vinculacionService;
 	
 	@Autowired
 	ProgramaAcademicoService programaAcademicoService;
+
+	@Autowired
+	UnidadAcademicaService unidadAcademicaService;
 	
 	@Autowired
 	UsuarioService usuarioService;
@@ -64,13 +60,13 @@ public class EventoService {
 	    return eventoRepository.findAll();
 	}
 	public List<EventoRequest> getAllEventosByUsuario(Integer usuarioId){
-		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
+		Set<UnidadAdministrativa> asociaciones = usuarioService.getUnidadAdministrativaUsuarioById(usuarioId);
 		List<Evento> eventos = getAllEventosByAsociacion(asociaciones);
 		return getEventoResponseFormat(eventos);
 	}
 	
 	public List<EventoRequest> getAllEventosByUsuarioPag(Integer usuarioId, Integer pageNo, Integer pageSize, String sortBy){
-		Set<Asociacion> asociaciones = usuarioService.getAsociacionUsuarioById(usuarioId);
+		Set<UnidadAdministrativa> asociaciones = usuarioService.getUnidadAdministrativaUsuarioById(usuarioId);
 		List<Evento> eventosAsociacion = getAllEventosByAsociacion(asociaciones);
 		List<EventoRequest> eventos = getEventoResponseFormat(eventosAsociacion);
 		Pageable paging;
@@ -82,7 +78,7 @@ public class EventoService {
 		return page.toList();
 	}
 	
-	public List<Evento> getAllEventosByAsociacion(Set<Asociacion> asociaciones) {
+	public List<Evento> getAllEventosByAsociacion(Set<UnidadAdministrativa> asociaciones) {
 		List<Evento> merge = new ArrayList<>();
 		asociaciones.forEach(asociacion->{
 			List<Integer> indexes = condicionRepository.getEventosIdByAsociacion(asociacion.getId());
@@ -114,38 +110,51 @@ public class EventoService {
 	}
 	
 	public boolean isValidCondicionesEvento(EventoRequest eventoRequest, Integer userId){
-		Set<Asociacion> as = usuarioService.getAsociacionUsuarioById(userId);
+		Set<UnidadAdministrativa> as = usuarioService.getUnidadAdministrativaUsuarioById(userId);
+		List<Object> unidades = usuarioService.getUnidadesPorUsuario(userId);
+		List<UnidadAcademica> unidadesAcademicas = usuarioService.getUnidadAcademicaPorUsuario(userId);
+		Set<UnidadAdministrativa> unidadesAdministrativas = usuarioService.getUnidadAdministrativaUsuarioById(userId);
+
 		if(!(eventoRequest.getEstado().equals("ACTIVO") || eventoRequest.getEstado().equals("INACTIVO"))) return false;
 		if(!(eventoRequest.getRecurrencia().equals("DIARIA") || eventoRequest.getRecurrencia().equals("ANUAL")))return false;
 		if(!plantillaService.existsPlantilla(eventoRequest.getPlantilla().getId()))return false;
 		List<CondicionRequest> condicionRequest = eventoRequest.getCondicionesEvento();
 		for(CondicionRequest condicion: condicionRequest){
-			if(condicion.getCondicion().contains("asociacion")) {
-				if(!asociacionService.existsAsociacion(Integer.parseInt(condicion.getId()))
-						||  as.stream().filter(item -> String.valueOf(item.getId()).contains(condicion.getId())).collect(Collectors.toSet()).isEmpty() ) return false;
+			if(condicion.getCondicion().contains("unidad_administrativa")) {
+				if(!unidadAdministrativaService.existsUnidadAdministrativa(Integer.parseInt(condicion.getId()))
+						|| !unidadesAdministrativas.contains((condicion))) return false;
+			}
+			else if(condicion.getCondicion().contains("unidad_academica")){
+				if(!unidadAcademicaService.existsUnidadAcademica(Integer.parseInt(condicion.getId()))
+						|| !unidadesAcademicas.contains((condicion))) return false;
 			}
 			else if(condicion.getCondicion().contains("programa_academico")) {
-				if(!programaAcademicoService.existsProgramaAcademico(Integer.parseInt(condicion.getId()))) return false;
+				if(!programaAcademicoService.existsProgramaAcademico(Integer.parseInt(condicion.getId()))
+				|| unidadesAcademicas.contains(programaAcademicoService.getUnidadAcademicaByPrograma(Integer.parseInt(condicion.getId())))) return false;
 			}else if(condicion.getCondicion().contains("vinculacion")) {
 				if(!vinculacionService.existsVinculacion(Integer.parseInt(condicion.getId()))) return false;
 			}
 			else if(!(condicion.getCondicion().contains("vinculacion") || 
-					 condicion.getCondicion().contains("programa_academico") ||
-					 condicion.getCondicion().contains("asociacion") ||
-					 condicion.getCondicion().contains("genero") ||
-					 condicion.getCondicion().contains("fecha_nacimiento"))) {
+					condicion.getCondicion().contains("unidad_administrativa") ||
+					condicion.getCondicion().contains("unidad_academica") ||
+					condicion.getCondicion().contains("programa_academico") ||
+					condicion.getCondicion().contains("genero") ||
+					condicion.getCondicion().contains("fecha_nacimiento"))) {
 				return false;
 			}
 		}
 		return true;
 	}
+
+
+
 	public EventoRequest AddEvento(EventoRequest eventoRequest, Integer usuarioId) throws BadRequestException{
 	    if(isValidCondicionesEvento(eventoRequest, usuarioId)==false)throw new BadRequestException("Condiciones incorrectas");
 		Evento evento = EventoRequest.toModelCreate(eventoRequest);
 	    evento = eventoRepository.save(evento);
 	    Integer newEventoId = evento.getId();
 	    evento.setCondicionesEvento(setCondiciones(eventoRequest.getCondicionesEvento(),newEventoId, usuarioId, evento));
-	    Evento newEvento= eventoRepository.save(evento);
+	    Evento newEvento = eventoRepository.save(evento);
 		EventoRequest eventoResponse = getEventoResponseFormate(newEvento);
 		if(eventoResponse!=null){
 			String transaccion = "Añadir evento:"+newEvento.getId()+" "+newEvento.getNombre();
@@ -188,21 +197,37 @@ public class EventoService {
 	    		condiciones.add(new Condicion(new CondicionId(newEventoId,condicion.getCondicion(),condicion.getId())));
 	    	}
 	    }
-	    Set<Condicion> results = condiciones.stream().filter(item -> item.getId().getCondicion().equals("asociacion")).collect(Collectors.toSet());
-	    	     
+		Set<Condicion> resultsProgramas = condiciones.stream().filter(item -> item.getId().getCondicion().equals("programa_academico")).collect(Collectors.toSet());
+		Set<Condicion> results = condiciones.stream().filter(item -> item.getId().getCondicion().equals("unidad_administrativa")).collect(Collectors.toSet());
+
+		if(!resultsProgramas.isEmpty()) return condiciones;
 	    if(results.isEmpty()) {
-			Set<Asociacion> as = usuarioService.getAsociacionUsuarioById(usuarioId);
-	    	as.forEach(asociacion ->{
-	    		condiciones.add(new Condicion(new CondicionId(newEventoId,"asociacion",String.valueOf(asociacion.getId()))));
+			Set<UnidadAdministrativa> uad = usuarioService.getUnidadAdministrativaUsuarioById(usuarioId);
+	    	uad.forEach(unidadAdministrativa ->{
+	    		condiciones.add(new Condicion(new CondicionId(newEventoId,"unidad_administrativa",String.valueOf(unidadAdministrativa.getId()))));
 	    	});
 		}
+		results = condiciones.stream().filter(item -> item.getId().getCondicion().equals("unidad_academica")).collect(Collectors.toSet());
+
+		if(results.isEmpty()) {
+			List<UnidadAcademica> uac = usuarioService.getUnidadAcademicaPorUsuario(usuarioId);
+			uac.forEach(unidadAcademica ->{
+				condiciones.add(new Condicion(new CondicionId(newEventoId,"unidad_academica",String.valueOf(unidadAcademica.getId()))));
+			});
+		}
+
 		return condiciones;
 	}
 	
 	public List<CondicionResponse> getConditionsForUser(Integer id){
 		List<CondicionResponse> condiciones = new ArrayList<>();
 		Usuario usuario = usuarioRepository.findById(id).orElse(null);
-		Set<Asociacion> asociaciones = usuario.getAsociacionPorUsuario();
+
+		Set<UnidadAdministrativa> unidadesAdministrativas = usuario.getUnidadAdministrativaPorUsuario();
+		// lista con la mezcla de unidades
+		List<Object> unidades = new ArrayList<Object>();
+		unidades.addAll(unidadesAdministrativas);
+
 		List<ParametroResponse> parametrosFecha = new ArrayList<ParametroResponse>();
 		parametrosFecha.add(new ParametroResponse(1,"fecha_nacimiento","cumpleaños"));
 		condiciones.add(new CondicionResponse("Fecha de nacimiento", parametrosFecha));
@@ -211,12 +236,25 @@ public class EventoService {
 		parametrosGenero.add(new ParametroResponse(2,"genero","FEMENINO"));
 		condiciones.add(new CondicionResponse("Género", parametrosGenero));
 
-		if(asociaciones != null) {
+		if(unidadesAdministrativas != null) {
 			List<ParametroResponse> parametrosAsociacion = new ArrayList<ParametroResponse>();
-			asociaciones.forEach(asociacion ->{
-				parametrosAsociacion.add(new ParametroResponse(asociacion.getId(),"asociacion",asociacion.getNombre()));
+			unidadesAdministrativas.forEach(asociacion ->{
+				parametrosAsociacion.add(new ParametroResponse(asociacion.getId(),"unidad_administrativa",asociacion.getNombre()));
 			});
-			condiciones.add(new CondicionResponse("Asociación", parametrosAsociacion));
+			condiciones.add(new CondicionResponse("Unidad Administrativa", parametrosAsociacion));
+		}
+
+		List<UnidadAcademica> unidadesAcademicas = unidadAcademicaService.getAllUnidadesAcademicas();
+
+		List<ParametroResponse> parametrosFacultad =  new ArrayList<ParametroResponse>();
+		if(unidadesAcademicas != null){
+			unidadesAcademicas.forEach(unidadAcademica -> {
+				if(unidadAdministrativaService.existsUnidadAdministrativa(unidadAcademica.getId())){
+					parametrosFacultad.add(new ParametroResponse(unidadAcademica.getId(), "unidad_academica", unidadAcademica.getNombre()));
+					unidades.add(unidadAcademica);
+				}
+			});
+			condiciones.add(new CondicionResponse("Unidad Académica", parametrosFacultad));
 		}
 
 		List<ProgramaAcademico> programasAcademicos = programaAcademicoService.getAllProgramasAcademicos();
@@ -284,15 +322,15 @@ public class EventoService {
 		List<EventoRequest> eventoResponse = new ArrayList<EventoRequest>();
 		eventos.forEach(evento ->{
 			List<CondicionRequest> condicionesResponse = new ArrayList<>();
-			List<Asociacion> asociaciones = new ArrayList<Asociacion>();
+			List<UnidadAdministrativa> asociaciones = new ArrayList<UnidadAdministrativa>();
 			List<ProgramaAcademico> programas = new ArrayList<ProgramaAcademico>();
 
 			List<Condicion> condicionesEvento = evento.getCondicionesEvento();
 			condicionesEvento.forEach(condicion ->{
 				if(condicion.getId().getCondicion().contains("asociacion")) {
-					Asociacion tempAsociacion = asociacionService.getAsociacionById(Integer.parseInt(condicion.getId().getParametro()));
-					asociaciones.add(tempAsociacion);
-					condicionesResponse.add(new  CondicionRequest(String.valueOf(tempAsociacion.getId()), "asociacion",tempAsociacion.getNombre()));
+					UnidadAdministrativa tempUnidadAdministrativa = unidadAdministrativaService.getUnidadAdministrativaById(Integer.parseInt(condicion.getId().getParametro()));
+					asociaciones.add(tempUnidadAdministrativa);
+					condicionesResponse.add(new  CondicionRequest(String.valueOf(tempUnidadAdministrativa.getId()), "asociacion", tempUnidadAdministrativa.getNombre()));
 				}
 				else if(condicion.getId().getCondicion().contains("vinculacion")) {
 					Vinculacion tempVinculacion = vinculacionService.getVinculacionById(Integer.parseInt(condicion.getId().getParametro()));

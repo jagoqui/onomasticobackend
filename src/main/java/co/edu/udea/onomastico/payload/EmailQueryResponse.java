@@ -3,7 +3,7 @@ package co.edu.udea.onomastico.payload;
 public class EmailQueryResponse {
 	private String email;
 	private String nombre;
-	private int asociacionId;
+	private int unidadAdministrativaId;
 	private int vinculacionId;
 	private int programaAcademicoId;
 	
@@ -11,12 +11,12 @@ public class EmailQueryResponse {
 		super();
 	}
 
-	public EmailQueryResponse(String email, String nombre, int asociacionId, int vinculacionId,
-			int programaAcademicoId) {
+	public EmailQueryResponse(String email, String nombre, int unidadAdministrativaId, int vinculacionId,
+							  int programaAcademicoId) {
 		super();
 		this.email = email;
 		this.nombre = nombre;
-		this.asociacionId = asociacionId;
+		this.unidadAdministrativaId = unidadAdministrativaId;
 		this.vinculacionId = vinculacionId;
 		this.programaAcademicoId = programaAcademicoId;
 	}
@@ -37,12 +37,12 @@ public class EmailQueryResponse {
 		this.nombre = nombre;
 	}
 
-	public int getAsociacionId() {
-		return asociacionId;
+	public int getUnidadAdministrativaId() {
+		return unidadAdministrativaId;
 	}
 
-	public void setAsociacionId(int asociacionId) {
-		this.asociacionId = asociacionId;
+	public void setUnidadAdministrativaId(int unidadAdministrativaId) {
+		this.unidadAdministrativaId = unidadAdministrativaId;
 	}
 
 	public int getVinculacionId() {
