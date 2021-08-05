@@ -110,9 +110,8 @@ public class EventoService {
 	}
 	
 	public boolean isValidCondicionesEvento(EventoRequest eventoRequest, Integer userId){
-		Set<UnidadAdministrativa> as = usuarioService.getUnidadAdministrativaUsuarioById(userId);
 		List<Object> unidades = usuarioService.getUnidadesPorUsuario(userId);
-		List<UnidadAcademica> unidadesAcademicas = usuarioService.getUnidadAcademicaPorUsuario(userId);
+		Set<UnidadAcademica> unidadesAcademicas = usuarioService.getUnidadAcademicaUsuarioById(userId);
 		Set<UnidadAdministrativa> unidadesAdministrativas = usuarioService.getUnidadAdministrativaUsuarioById(userId);
 
 		if(!(eventoRequest.getEstado().equals("ACTIVO") || eventoRequest.getEstado().equals("INACTIVO"))) return false;
@@ -210,7 +209,7 @@ public class EventoService {
 		results = condiciones.stream().filter(item -> item.getId().getCondicion().equals("unidad_academica")).collect(Collectors.toSet());
 
 		if(results.isEmpty()) {
-			List<UnidadAcademica> uac = usuarioService.getUnidadAcademicaPorUsuario(usuarioId);
+			Set<UnidadAcademica> uac = usuarioService.getUnidadAcademicaUsuarioById(usuarioId);
 			uac.forEach(unidadAcademica ->{
 				condiciones.add(new Condicion(new CondicionId(newEventoId,"unidad_academica",String.valueOf(unidadAcademica.getId()))));
 			});

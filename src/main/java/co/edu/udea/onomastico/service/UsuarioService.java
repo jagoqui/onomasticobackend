@@ -6,7 +6,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import co.edu.udea.onomastico.model.UnidadAcademica;
+import co.edu.udea.onomastico.model.*;
+import co.edu.udea.onomastico.payload.EventoRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -23,9 +24,6 @@ import co.edu.udea.onomastico.exceptions.AuthException;
 import co.edu.udea.onomastico.exceptions.BadRequestException;
 import co.edu.udea.onomastico.exceptions.ResourceAlreadyExistsException;
 import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
-import co.edu.udea.onomastico.model.UnidadAdministrativa;
-import co.edu.udea.onomastico.model.Rol;
-import co.edu.udea.onomastico.model.Usuario;
 import co.edu.udea.onomastico.repository.UsuarioRepository;
 
 @Service
@@ -53,7 +51,7 @@ public class UsuarioService {
 	private String RESET_SERVER;
 	
 	public List<Usuario> getAllUsuarios() {
-	    return usuarioRepository.findAll();
+		return usuarioRepository.findAll();
 	}
 	
 	public List<Usuario> getAllUsuariosPag(Integer pageNo, Integer pageSize, String sortBy){
@@ -138,6 +136,12 @@ public class UsuarioService {
 	            .orElseThrow(() -> new ResourceNotFoundException("Usuario"+"id"+usuarioId));
 		return usuario.getUnidadAdministrativaPorUsuario();
 	}
+
+	public Set<UnidadAcademica> getUnidadAcademicaUsuarioById(Integer usuarioId) {
+		Usuario usuario = usuarioRepository.findById(usuarioId)
+				.orElseThrow(() -> new ResourceNotFoundException("Usuario"+"id"+usuarioId));
+		return usuario.getUnidadAcademicaPorUsuario();
+	}
 	
 	/*public List<ProgramaConAsociacionResponse> getProgramasPorAsociacionResponseUsuarioById(Integer usuarioId) {
 		List<ProgramaConAsociacionResponse> programasPorAsociacion = new ArrayList<ProgramaConAsociacionResponse>();
@@ -210,7 +214,7 @@ public class UsuarioService {
 		Usuario usuario = usuarioRepository.findById(usuarioId)
 				.orElseThrow(() -> new ResourceNotFoundException("Usuario"+"id"+usuarioId));
 		Set<UnidadAdministrativa> unidadesAdministrativas = usuario.getUnidadAdministrativaPorUsuario();
-		List<UnidadAcademica> unidadesAcademicas = getUnidadAcademicaPorUsuario(usuarioId);
+		Set<UnidadAcademica> unidadesAcademicas = usuario.getUnidadAcademicaPorUsuario();
 
 		List<Object> unidadesMerge = new ArrayList<>();
 		unidadesMerge.addAll(unidadesAdministrativas);
@@ -220,20 +224,6 @@ public class UsuarioService {
 
 	}
 
-	public List<UnidadAcademica> getUnidadAcademicaPorUsuario(Integer usuarioId){
-		Usuario usuario = usuarioRepository.findById(usuarioId)
-				.orElseThrow(() -> new ResourceNotFoundException("Usuario"+"id"+usuarioId));
-		List<UnidadAcademica> unidadAcademicaSet = unidadAcademicaService.getAllUnidadesAcademicas();
-		List<UnidadAcademica> unidadesAcademicas = new ArrayList<>();
-		if(unidadAcademicaSet != null){
-			unidadAcademicaSet.forEach(unidadAcademica -> {
-				if(unidadAdministrativaService.existsUnidadAdministrativa(unidadAcademica.getId())){
-					unidadesAcademicas.add(unidadAcademica);
-				}
-			});
-		}
-		return unidadesAcademicas;
-	}
 
 
 

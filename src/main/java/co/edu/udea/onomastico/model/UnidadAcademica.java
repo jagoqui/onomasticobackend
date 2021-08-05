@@ -44,6 +44,10 @@ public class UnidadAcademica {
 		programaAcademico.setUnidadAcademica(null);
 	}
 
+    @JsonView(Views.Internal.class)
+    @ManyToMany(mappedBy = "unidadAcademicaPorUsuario")
+    private Set<Usuario> usuariosUnidadAcademica = new HashSet<>();
+
     @Override
     public int hashCode() {
         return Objects.hash(id);

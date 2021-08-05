@@ -70,8 +70,8 @@ public class UsuarioController {
 	}
 	
 	@JsonView(Views.Public.class)
-	@GetMapping("/usuarios/asociacion")
-	public List<Object> getAsociacionUsuarioById() {
+	@GetMapping("/usuarios/unidades")
+	public List<Object> getUnidadesUsuarioById() {
 		Integer usuarioId = tokenProvider.getUserIdFromJWT(interceptor.getBearerTokenHeader());
 		return usuarioService.getUnidadesPorUsuario(usuarioId);
 	}

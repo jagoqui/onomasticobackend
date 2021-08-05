@@ -6,6 +6,7 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import co.edu.udea.onomastico.service.UsuarioService;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -71,6 +72,17 @@ public class Usuario implements Serializable {
             joinColumns = { @JoinColumn(name = "usuario_id") }, 
             inverseJoinColumns = { @JoinColumn(name = "unidad_administrativa_id") })
     private Set<UnidadAdministrativa> unidadAdministrativaPorUsuario = new HashSet<>();
+
+	@JsonView(Views.Public.class)
+	@OnDelete(action=OnDeleteAction.CASCADE)
+	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+	@JoinTable(name = "unidad_academica_por_usuario",
+			joinColumns = { @JoinColumn(name = "usuario_id") },
+			inverseJoinColumns = { @JoinColumn(name = "unidad_academica_id") })
+	private Set<UnidadAcademica> unidadAcademicaPorUsuario = new HashSet<>();
+
+
+
 
 	@Override
 	public boolean equals(Object o) {
