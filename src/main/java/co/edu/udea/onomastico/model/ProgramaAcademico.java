@@ -36,7 +36,7 @@ public class ProgramaAcademico implements Serializable {
 	@JsonView(Views.Internal.class)
 	// @OnDelete(action = OnDeleteAction.CASCADE)
 	@ManyToOne
-	@JoinColumn(name = "unidadAcademica", nullable = false)
+	@JoinColumn(name = "unidad_academica", nullable = false)
 	private UnidadAcademica unidadAcademica;
 
 
