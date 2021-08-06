@@ -4,28 +4,28 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import co.edu.udea.onomastico.model.Views;
 
-public class ProgramaConAsociacionResponse {
+public class ProgramaConUnidadAcademicaResponse {
 	@JsonView(Views.Public.class)
-	private int id; // de asociación
+	private int idUnidadAcademica; // de unidad academica
 	@JsonView(Views.Public.class)
 	private int codigo; //de programa
 	@JsonView(Views.Public.class)
 	private String nombre;
-	public ProgramaConAsociacionResponse() {
+	public ProgramaConUnidadAcademicaResponse() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public ProgramaConAsociacionResponse(int id, int codigo, String nombre) {
+	public ProgramaConUnidadAcademicaResponse(int idUnidadAcademica, int codigo, String nombre) {
 		super();
-		this.id = id;
+		this.idUnidadAcademica = idUnidadAcademica;
 		this.codigo = codigo;
 		this.nombre = nombre;
 	}
-	public int getId() {
-		return id;
+	public int getIdUnidadAcademica() {
+		return idUnidadAcademica;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setIdUnidadAcademica(int idUnidadAcademica) {
+		this.idUnidadAcademica = idUnidadAcademica;
 	}
 	public int getCodigo() {
 		return codigo;

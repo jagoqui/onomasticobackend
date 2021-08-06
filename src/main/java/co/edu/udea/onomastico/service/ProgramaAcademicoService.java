@@ -1,8 +1,12 @@
 package co.edu.udea.onomastico.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import co.edu.udea.onomastico.model.Evento;
 import co.edu.udea.onomastico.model.UnidadAcademica;
+import co.edu.udea.onomastico.payload.EventoRequest;
+import co.edu.udea.onomastico.payload.ProgramaConUnidadAcademicaResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,6 +23,11 @@ public class ProgramaAcademicoService {
 	
 	public List<ProgramaAcademico> getAllProgramasAcademicos() {
 	    return programaAcademicoRepository.findAll();
+	}
+
+	public List<ProgramaConUnidadAcademicaResponse> findAllProgramasAcademicosResponse(){
+		List<ProgramaAcademico> programas = programaAcademicoRepository.findAll();
+		return getProgramasAcademicosResponseFormat(programas);
 	}
 	
 	public List<ProgramaAcademico> findByProgramaAcademicoPorFacultad(UnidadAcademica unidadAcademica){
@@ -50,6 +59,26 @@ public class ProgramaAcademicoService {
 
 	public UnidadAcademica getUnidadAcademicaByPrograma(Integer idPrograma){
 		return getProgramaAcademicoById(idPrograma).getUnidadAcademica();
+	}
+
+	public ProgramaConUnidadAcademicaResponse getProgramaConUnidadAcademica(Integer idPrograma){
+		ProgramaAcademico programa = programaAcademicoRepository.findById(idPrograma)
+				.orElseThrow(() -> new ResourceNotFoundException("ProgramaAcademico" + "id"+ idPrograma));
+
+		ProgramaConUnidadAcademicaResponse programaConUnidadAcademica = new ProgramaConUnidadAcademicaResponse();
+		programaConUnidadAcademica.setCodigo(programa.getCodigo());
+		programaConUnidadAcademica.setNombre(programa.getNombre());
+		programaConUnidadAcademica.setIdUnidadAcademica(programa.getUnidadAcademica().getId());
+
+		return programaConUnidadAcademica;
+	}
+
+	public List<ProgramaConUnidadAcademicaResponse> getProgramasAcademicosResponseFormat(List<ProgramaAcademico> programas){
+		List<ProgramaConUnidadAcademicaResponse> programasConUnidadesAcademicas = new ArrayList<>();
+		programas.forEach(programaAcademico -> {
+			programasConUnidadesAcademicas.add(new ProgramaConUnidadAcademicaResponse(programaAcademico.getUnidadAcademica().getId(), programaAcademico.getCodigo(), programaAcademico.getNombre()));
+		});
+		return programasConUnidadesAcademicas;
 	}
 
 }

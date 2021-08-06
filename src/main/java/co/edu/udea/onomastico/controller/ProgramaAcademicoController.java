@@ -2,6 +2,7 @@ package co.edu.udea.onomastico.controller;
 
 import java.util.List;
 
+import co.edu.udea.onomastico.payload.ProgramaConUnidadAcademicaResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,8 +27,8 @@ public class ProgramaAcademicoController {
 	
 	@GetMapping("/programasacademicos")
 	@JsonView(Views.Public.class)
-	public List<ProgramaAcademico> getAllProgramasAcademicos() {
-	    return programaAcademicoService.getAllProgramasAcademicos();
+	public List<ProgramaConUnidadAcademicaResponse> getAllProgramasAcademicos() {
+	    return programaAcademicoService.findAllProgramasAcademicosResponse();
 	}
 	
 	@JsonView(Views.Public.class)
@@ -46,4 +47,11 @@ public class ProgramaAcademicoController {
 	public ResponseEntity<?> deleteProgramaAcademico(@PathVariable(value = "id") Integer programaAcademicoId) {
 		return programaAcademicoService.deleteProgramaAcademico(programaAcademicoId);
 	}
+
+	@JsonView(Views.Public.class)
+	@GetMapping("/programaconunidad/{id}")
+	public ProgramaConUnidadAcademicaResponse getProgramaAcademicoConUnidadAcademica(@PathVariable(value = "id") Integer programaId) {
+		return  programaAcademicoService.getProgramaConUnidadAcademica(programaId);
+	}
+
 }
