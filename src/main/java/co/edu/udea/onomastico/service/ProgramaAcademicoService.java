@@ -68,7 +68,7 @@ public class ProgramaAcademicoService {
 		ProgramaConUnidadAcademicaResponse programaConUnidadAcademica = new ProgramaConUnidadAcademicaResponse();
 		programaConUnidadAcademica.setCodigo(programa.getCodigo());
 		programaConUnidadAcademica.setNombre(programa.getNombre());
-		programaConUnidadAcademica.setIdUnidadAcademica(programa.getUnidadAcademica().getId());
+		programaConUnidadAcademica.setUnidadAcademica(programa.getUnidadAcademica());
 
 		return programaConUnidadAcademica;
 	}
@@ -76,7 +76,7 @@ public class ProgramaAcademicoService {
 	public List<ProgramaConUnidadAcademicaResponse> getProgramasAcademicosResponseFormat(List<ProgramaAcademico> programas){
 		List<ProgramaConUnidadAcademicaResponse> programasConUnidadesAcademicas = new ArrayList<>();
 		programas.forEach(programaAcademico -> {
-			programasConUnidadesAcademicas.add(new ProgramaConUnidadAcademicaResponse(programaAcademico.getUnidadAcademica().getId(), programaAcademico.getCodigo(), programaAcademico.getNombre()));
+			programasConUnidadesAcademicas.add(new ProgramaConUnidadAcademicaResponse(programaAcademico.getCodigo(), programaAcademico.getNombre(), programaAcademico.getUnidadAcademica()));
 		});
 		return programasConUnidadesAcademicas;
 	}
