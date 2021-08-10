@@ -33,10 +33,11 @@ public class ProgramaAcademico implements Serializable {
     private Set<UsuarioCorreo> usuariosCorreoProgramaAcademico = new HashSet<>();
 
 
-	@JsonView(Views.Internal.class)
+
 	// @OnDelete(action = OnDeleteAction.CASCADE)
 	@ManyToOne
 	@JoinColumn(name = "unidad_academica", nullable = false)
+	@JsonView(Views.Public.class)
 	private UnidadAcademica unidadAcademica;
 
 

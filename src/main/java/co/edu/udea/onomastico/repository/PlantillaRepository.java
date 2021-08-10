@@ -11,5 +11,6 @@ import co.edu.udea.onomastico.model.Plantilla;
 @Repository
 public interface PlantillaRepository extends JpaRepository<Plantilla, Integer>{
 
-	List<Plantilla> findByUnidadesAdministrativasPorPlantilla(UnidadAdministrativa unidadAdministrativa);
+	List<Plantilla> findByUnidadAdministrativaPorPlantilla(UnidadAdministrativa unidadAdministrativa);
+	List<Plantilla> findByUnidadAcademicaPorPlantilla(UnidadAdministrativa unidadAdministrativa);
 }

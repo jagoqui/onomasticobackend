@@ -68,13 +68,13 @@ public class PlantillaService {
 	
 	public List<Plantilla> getAllPlantillasByUsuario(Integer usuarioId){
 		Set<UnidadAdministrativa> asociaciones = usuarioService.getUnidadAdministrativaUsuarioById(usuarioId);
-		List<Plantilla> plantillas = getPlantillasByAsociacion(asociaciones);
+		List<Plantilla> plantillas = getPlantillasByUnidadAdministrativa(asociaciones);
 		return plantillas;
 	}
 	
 	public List<Plantilla> getAllPlantillasByUsuarioPag(Integer usuarioId, Integer pageNo, Integer pageSize, String sortBy) throws ResourceNotFoundException{
 		Set<UnidadAdministrativa> asociaciones = usuarioService.getUnidadAdministrativaUsuarioById(usuarioId);
-		List<Plantilla> plantillas = getPlantillasByAsociacion(asociaciones);
+		List<Plantilla> plantillas = getPlantillasByUnidadAdministrativa(asociaciones);
 		Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 		final int start = (int)paging.getOffset();
 		final int end = Math.min((start + paging.getPageSize()), plantillas.size());
@@ -82,10 +82,10 @@ public class PlantillaService {
 		return page.toList();
 	}
 	
-	public List<Plantilla> getPlantillasByAsociacion(Set<UnidadAdministrativa> asociaciones){
+	public List<Plantilla> getPlantillasByUnidadAdministrativa(Set<UnidadAdministrativa> unidadesAdministrativas){
 		List<Plantilla> merge = new ArrayList<Plantilla>();
-		asociaciones.forEach(asociacion ->{
-			List<Plantilla> temp = plantillaRepository.findByUnidadesAdministrativasPorPlantilla(asociacion);
+		unidadesAdministrativas.forEach(unidadAdministrativa ->{
+			List<Plantilla> temp = plantillaRepository.findByUnidadAdministrativaPorPlantilla(unidadAdministrativa);
 			if(temp!= null && !temp.isEmpty())merge.addAll(temp);
 		});
 		return merge;
@@ -142,7 +142,8 @@ public class PlantillaService {
 	            .orElseThrow(() -> new ResourceNotFoundException("plantilla" + "id"+plantillaId));
 		
 		plantillaToUpdate.setTexto(plantilla.getTexto());
-		plantillaToUpdate.setUnidadesAdministrativasPorPlantilla(plantilla.getUnidadesAdministrativasPorPlantilla());;
+		plantillaToUpdate.setUnidadAdministrativaPorPlantilla(plantilla.getUnidadAdministrativaPorPlantilla());
+		plantillaToUpdate.setUnidadAcademicaPorPlantilla(plantilla.getUnidadAcademicaPorPlantilla());
 		Plantilla updatedPlantilla = plantillaRepository.save(plantillaToUpdate);
 		String transaccion = "Editar plantilla:"+updatedPlantilla.getId();
 		transaccionesService.createTransaccion(usuarioId, transaccion);

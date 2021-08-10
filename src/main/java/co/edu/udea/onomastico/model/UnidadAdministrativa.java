@@ -42,7 +42,7 @@ public class UnidadAdministrativa implements Serializable {
     private Set<UsuarioCorreo> usuariosCorreoUnidadAcademica = new HashSet<>();
 	
 	@JsonView(Views.Internal.class)
-	@ManyToMany(mappedBy = "unidadesAdministrativasPorPlantilla")
+	@ManyToMany(mappedBy = "unidadAdministrativaPorPlantilla")
 	// @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Plantilla> plantillasUnidadAdministrativa = new HashSet<>();
 

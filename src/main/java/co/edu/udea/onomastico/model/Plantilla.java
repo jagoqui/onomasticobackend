@@ -42,13 +42,19 @@ public class Plantilla implements Serializable {
 	@Column(name = "texto")
 	private String texto;
 	
-	@JsonView(Views.Internal.class)
-	@OnDelete(action=OnDeleteAction.CASCADE) 
-	@ManyToMany(cascade={CascadeType.MERGE,CascadeType.REFRESH},fetch = FetchType.EAGER)
+	@JsonView(Views.Public.class)
+	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "unidad_administrativa_por_plantilla",
             joinColumns = { @JoinColumn(name = "plantilla_idplantilla") }, 
             inverseJoinColumns = { @JoinColumn(name = "unidad_administrativa_id") })
-    private Set<UnidadAdministrativa> unidadesAdministrativasPorPlantilla = new HashSet<>();
+    private Set<UnidadAdministrativa> unidadAdministrativaPorPlantilla = new HashSet<>();
+
+	@JsonView(Views.Public.class)
+	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+	@JoinTable(name = "unidad_academica_por_plantilla", joinColumns = {
+			@JoinColumn(name = "plantilla_id")
+	}, inverseJoinColumns = @JoinColumn(name = "unidad_academica_id"))
+	private Set<UnidadAcademica> unidadAcademicaPorPlantilla = new HashSet<>();
 
 	@Override
 	public boolean equals(Object o) {

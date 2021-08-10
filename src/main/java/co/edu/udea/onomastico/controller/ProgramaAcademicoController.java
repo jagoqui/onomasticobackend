@@ -27,8 +27,8 @@ public class ProgramaAcademicoController {
 	
 	@GetMapping("/programasacademicos")
 	@JsonView(Views.Public.class)
-	public List<ProgramaConUnidadAcademicaResponse> getAllProgramasAcademicos() {
-	    return programaAcademicoService.findAllProgramasAcademicosResponse();
+	public List<ProgramaAcademico> getAllProgramasAcademicos() {
+	    return programaAcademicoService.getAllProgramasAcademicos();
 	}
 	
 	@JsonView(Views.Public.class)

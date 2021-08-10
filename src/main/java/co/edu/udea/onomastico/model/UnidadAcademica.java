@@ -34,6 +34,10 @@ public class UnidadAcademica {
     //@OnDelete(action = OnDeleteAction.CASCADE)
     private Set<ProgramaAcademico> programasAcademicos = new HashSet<>();
 
+    @JsonView(Views.Internal.class)
+    @ManyToMany(mappedBy = "unidadAcademicaPorPlantilla")
+    private Set<Plantilla> plantillasUnidadAcademica = new HashSet<>();
+
     // Helper Methods
     public void addProgramaAcademico(ProgramaAcademico programaAcademico){
 		programasAcademicos.add(programaAcademico);
