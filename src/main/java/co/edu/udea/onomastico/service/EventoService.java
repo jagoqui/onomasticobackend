@@ -243,17 +243,17 @@ public class EventoService {
 			condiciones.add(new CondicionResponse("Unidad Administrativa", parametrosAsociacion));
 		}
 
-		List<UnidadAcademica> unidadesAcademicas = unidadAcademicaService.getAllUnidadesAcademicas();
+		Set<UnidadAcademica> unidadesAcademicas = usuario.getUnidadAcademicaPorUsuario();
 
-		List<ParametroResponse> parametrosFacultad =  new ArrayList<ParametroResponse>();
+		List<ParametroResponse> parametrosUnidadAcademica =  new ArrayList<ParametroResponse>();
 		if(unidadesAcademicas != null){
 			unidadesAcademicas.forEach(unidadAcademica -> {
-				if(unidadAdministrativaService.existsUnidadAdministrativa(unidadAcademica.getId())){
-					parametrosFacultad.add(new ParametroResponse(unidadAcademica.getId(), "unidad_academica", unidadAcademica.getNombre()));
+				if(unidadAcademicaService.existsUnidadAcademica(unidadAcademica.getId())){
+					parametrosUnidadAcademica.add(new ParametroResponse(unidadAcademica.getId(), "unidad_academica", unidadAcademica.getNombre()));
 					unidades.add(unidadAcademica);
 				}
 			});
-			condiciones.add(new CondicionResponse("Unidad Académica", parametrosFacultad));
+			condiciones.add(new CondicionResponse("Unidad Académica", parametrosUnidadAcademica));
 		}
 
 		List<ProgramaAcademico> programasAcademicos = programaAcademicoService.getAllProgramasAcademicos();
