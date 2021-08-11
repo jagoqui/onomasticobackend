@@ -66,17 +66,17 @@ public class Usuario implements Serializable {
 	private String resetToken;
 	
 	@JsonView(Views.Public.class)
-	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "unidad_administrativa_por_usuario",
-            joinColumns = { @JoinColumn(name = "usuario_id") }, 
-            inverseJoinColumns = { @JoinColumn(name = "unidad_administrativa_id") })
+            joinColumns = { @JoinColumn(name = "usuario_id")},
+            inverseJoinColumns = { @JoinColumn(name = "unidad_administrativa_id", referencedColumnName = "id") })
     private Set<UnidadAdministrativa> unidadAdministrativaPorUsuario = new HashSet<>();
 
 	@JsonView(Views.Public.class)
-	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+	@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
 	@JoinTable(name = "unidad_academica_por_usuario",
 			joinColumns = { @JoinColumn(name = "usuario_id") },
-			inverseJoinColumns = { @JoinColumn(name = "unidad_academica_id") })
+			inverseJoinColumns = { @JoinColumn(name = "unidad_academica_id", referencedColumnName = "id") })
 	private Set<UnidadAcademica> unidadAcademicaPorUsuario = new HashSet<>();
 
 
