@@ -28,7 +28,7 @@ public class UnidadAdministrativa implements Serializable {
 	private int id;
 	
 	@JsonView(Views.Public.class)
-	@Column(name = "nombre", nullable = false, length=60)
+	@Column(name = "nombre", nullable = false, length=100)
 	private String nombre;
 	
 	@JsonView(Views.Internal.class)

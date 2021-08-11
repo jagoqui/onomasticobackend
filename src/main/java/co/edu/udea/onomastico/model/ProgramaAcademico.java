@@ -24,7 +24,7 @@ public class ProgramaAcademico implements Serializable {
 	@Id 
 	private int codigo;
 	
-	@Column(name = "nombre", length = 60, nullable = false)
+	@Column(name = "nombre", length = 100, nullable = false)
 	@JsonView(Views.Public.class)
 	private String nombre;
 	

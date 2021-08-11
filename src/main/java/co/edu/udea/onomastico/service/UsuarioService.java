@@ -182,6 +182,7 @@ public class UsuarioService {
 		usuario.setEstado(detallesUsuario.getEstado());
 		if(detallesUsuario.getRol()!=null)usuario.setRol(detallesUsuario.getRol());
 		if(detallesUsuario.getUnidadAdministrativaPorUsuario()!=null)usuario.setUnidadAdministrativaPorUsuario(detallesUsuario.getUnidadAdministrativaPorUsuario());
+		if(detallesUsuario.getUnidadAcademicaPorUsuario()!=null)usuario.setUnidadAcademicaPorUsuario(detallesUsuario.getUnidadAcademicaPorUsuario());
 		Usuario updatedUsuario = usuarioRepository.save(usuario);
 	    return updatedUsuario;
 	}
