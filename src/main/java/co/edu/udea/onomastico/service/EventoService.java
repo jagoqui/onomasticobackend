@@ -120,20 +120,20 @@ public class EventoService {
 		List<CondicionRequest> condicionRequest = eventoRequest.getCondicionesEvento();
 		for(CondicionRequest condicion: condicionRequest){
 			if(condicion.getCondicion().contains("unidad_administrativa")) {
-				if(!unidadAdministrativaService.existsUnidadAdministrativa(Integer.parseInt(condicion.getId()))
-						|| !unidadesAdministrativas.contains((condicion))) return false;
+				UnidadAdministrativa unidadAdminConstruida = unidadAdministrativaService.getUnidadAdministrativaById(Integer.parseInt(condicion.getId()));
+				if(!unidadesAdministrativas.contains(unidadAdminConstruida)) return false;
 			}
 			else if(condicion.getCondicion().contains("unidad_academica")){
-				if(!unidadAcademicaService.existsUnidadAcademica(Integer.parseInt(condicion.getId()))
-						|| !unidadesAcademicas.contains((condicion))) return false;
+				UnidadAcademica unidadAcadConstruida = unidadAcademicaService.getUnidadAcademicaById(Integer.parseInt(condicion.getId()));
+				if(!unidadesAcademicas.contains(unidadAcadConstruida)) return false;
 			}
 			else if(condicion.getCondicion().contains("programa_academico")) {
-				if(!programaAcademicoService.existsProgramaAcademico(Integer.parseInt(condicion.getId()))
-				|| unidadesAcademicas.contains(programaAcademicoService.getUnidadAcademicaByPrograma(Integer.parseInt(condicion.getId())))) return false;
+				ProgramaAcademico programaConstruido = programaAcademicoService.getProgramaAcademicoById(Integer.parseInt(condicion.getId()));
+				if(!unidadesAcademicas.contains(programaConstruido.getUnidadAcademica())) return false;
 			}else if(condicion.getCondicion().contains("vinculacion")) {
 				if(!vinculacionService.existsVinculacion(Integer.parseInt(condicion.getId()))) return false;
 			}
-			else if(!(condicion.getCondicion().contains("vinculacion") || 
+			else if(!(condicion.getCondicion().contains("vinculacion") ||
 					condicion.getCondicion().contains("unidad_administrativa") ||
 					condicion.getCondicion().contains("unidad_academica") ||
 					condicion.getCondicion().contains("programa_academico") ||

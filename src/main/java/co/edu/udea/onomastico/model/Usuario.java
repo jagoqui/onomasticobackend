@@ -66,7 +66,6 @@ public class Usuario implements Serializable {
 	private String resetToken;
 	
 	@JsonView(Views.Public.class)
-	@OnDelete(action=OnDeleteAction.CASCADE) 
 	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(name = "unidad_administrativa_por_usuario",
             joinColumns = { @JoinColumn(name = "usuario_id") }, 
@@ -74,7 +73,6 @@ public class Usuario implements Serializable {
     private Set<UnidadAdministrativa> unidadAdministrativaPorUsuario = new HashSet<>();
 
 	@JsonView(Views.Public.class)
-	@OnDelete(action=OnDeleteAction.CASCADE)
 	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
 	@JoinTable(name = "unidad_academica_por_usuario",
 			joinColumns = { @JoinColumn(name = "usuario_id") },

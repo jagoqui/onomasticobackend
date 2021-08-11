@@ -2,6 +2,7 @@ package co.edu.udea.onomastico.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import co.edu.udea.onomastico.model.*;
 import co.edu.udea.onomastico.repository.UnidadAcademicaRepository;
@@ -62,5 +63,8 @@ public class UnidadAcademicaService {
         return unidadAcademicaRepository.existsById(id);
     }
 
-
+    public UnidadAcademica getUnidadAcademicaById(Integer id){
+        return unidadAcademicaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("UnidadAcademica" + "id"+ id));
+    }
 }
