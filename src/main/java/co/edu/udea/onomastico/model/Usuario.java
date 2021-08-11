@@ -79,7 +79,15 @@ public class Usuario implements Serializable {
 			inverseJoinColumns = { @JoinColumn(name = "unidad_academica_id", referencedColumnName = "id") })
 	private Set<UnidadAcademica> unidadAcademicaPorUsuario = new HashSet<>();
 
+	public void addUnidadAdministrativa(UnidadAdministrativa unidadAdministrativaToAdd){
+		unidadAdministrativaPorUsuario.add(unidadAdministrativaToAdd);
+		unidadAdministrativaToAdd.getUsuariosUnidadAdministrativa().add(this);
+	}
 
+	public void addUnidadAcademica(UnidadAcademica unidadAcademicaToAdd){
+		unidadAcademicaPorUsuario.add(unidadAcademicaToAdd);
+		unidadAcademicaToAdd.getUsuariosUnidadAcademica().add(this);
+	}
 
 
 	@Override

@@ -66,7 +66,7 @@ public class UnidadAdministrativa implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Asociacion{" +
+		return "UnidadAdministrativa{" +
 				"id=" + id +
 				", nombre='" + nombre + '\'' +
 				'}';

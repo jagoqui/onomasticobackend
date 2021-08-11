@@ -29,24 +29,23 @@ public class UnidadAcademica {
     @Column(name = "nombre", nullable = false, length=100)
     private String nombre;
 
-    @JsonView(Views.Internal.class)
-    @OneToMany(mappedBy = "unidadAcademica", cascade = CascadeType.ALL, orphanRemoval = true)
-    //@OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<ProgramaAcademico> programasAcademicos = new HashSet<>();
+    //@JsonView(Views.Internal.class)
+    //@OneToMany(mappedBy = "unidadAcademica", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private Set<ProgramaAcademico> programasAcademicos = new HashSet<>();
 
     @JsonView(Views.Internal.class)
     @ManyToMany(mappedBy = "unidadAcademicaPorPlantilla")
     private Set<Plantilla> plantillasUnidadAcademica = new HashSet<>();
 
     // Helper Methods
-    public void addProgramaAcademico(ProgramaAcademico programaAcademico){
-		programasAcademicos.add(programaAcademico);
-		programaAcademico.setUnidadAcademica(this);
-	}
-	public void removeProgramaAcademico(ProgramaAcademico programaAcademico){
-		programasAcademicos.remove(programaAcademico);
-		programaAcademico.setUnidadAcademica(null);
-	}
+    //public void addProgramaAcademico(ProgramaAcademico programaAcademico){
+    //	programasAcademicos.add(programaAcademico);
+    //	programaAcademico.setUnidadAcademica(this);
+    //}
+    //public void removeProgramaAcademico(ProgramaAcademico programaAcademico){
+    //	programasAcademicos.remove(programaAcademico);
+    //	programaAcademico.setUnidadAcademica(null);
+    //}
 
     @JsonView(Views.Internal.class)
     @ManyToMany(mappedBy = "unidadAcademicaPorUsuario")
