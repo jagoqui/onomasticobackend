@@ -199,7 +199,6 @@ public class EventoService {
 		Set<Condicion> resultsProgramas = condiciones.stream().filter(item -> item.getId().getCondicion().equals("programa_academico")).collect(Collectors.toSet());
 		Set<Condicion> results = condiciones.stream().filter(item -> item.getId().getCondicion().equals("unidad_administrativa")).collect(Collectors.toSet());
 
-		if(!resultsProgramas.isEmpty()) return condiciones;
 	    if(results.isEmpty()) {
 			Set<UnidadAdministrativa> uad = usuarioService.getUnidadAdministrativaUsuarioById(usuarioId);
 	    	uad.forEach(unidadAdministrativa ->{
@@ -321,15 +320,21 @@ public class EventoService {
 		List<EventoRequest> eventoResponse = new ArrayList<EventoRequest>();
 		eventos.forEach(evento ->{
 			List<CondicionRequest> condicionesResponse = new ArrayList<>();
-			List<UnidadAdministrativa> asociaciones = new ArrayList<UnidadAdministrativa>();
+			List<UnidadAdministrativa> unidadesAdministrativas = new ArrayList<UnidadAdministrativa>();
+			List<UnidadAcademica> unidadesAcademicas = new ArrayList<UnidadAcademica>();
 			List<ProgramaAcademico> programas = new ArrayList<ProgramaAcademico>();
 
 			List<Condicion> condicionesEvento = evento.getCondicionesEvento();
 			condicionesEvento.forEach(condicion ->{
-				if(condicion.getId().getCondicion().contains("asociacion")) {
+				if(condicion.getId().getCondicion().contains("unidad_administrativa")) {
 					UnidadAdministrativa tempUnidadAdministrativa = unidadAdministrativaService.getUnidadAdministrativaById(Integer.parseInt(condicion.getId().getParametro()));
-					asociaciones.add(tempUnidadAdministrativa);
-					condicionesResponse.add(new  CondicionRequest(String.valueOf(tempUnidadAdministrativa.getId()), "asociacion", tempUnidadAdministrativa.getNombre()));
+					unidadesAdministrativas.add(tempUnidadAdministrativa);
+					condicionesResponse.add(new  CondicionRequest(String.valueOf(tempUnidadAdministrativa.getId()), "unidad_administrativa", tempUnidadAdministrativa.getNombre()));
+				}
+				else if(condicion.getId().getCondicion().contains("unidad_academica")) {
+					UnidadAcademica tempUnidadAcademica = unidadAcademicaService.getUnidadAcademicaById(Integer.parseInt(condicion.getId().getParametro()));
+					unidadesAcademicas.add(tempUnidadAcademica);
+					condicionesResponse.add(new  CondicionRequest(String.valueOf(tempUnidadAcademica.getId()), "unidad_academica", tempUnidadAcademica.getNombre()));
 				}
 				else if(condicion.getId().getCondicion().contains("vinculacion")) {
 					Vinculacion tempVinculacion = vinculacionService.getVinculacionById(Integer.parseInt(condicion.getId().getParametro()));
@@ -338,6 +343,7 @@ public class EventoService {
 				else if(condicion.getId().getCondicion().contains("programa_academico")) {
 					ProgramaAcademico tempProgramaAcademico = programaAcademicoService.getProgramaAcademicoById(Integer.parseInt(condicion.getId().getParametro()));
 					programas.add(tempProgramaAcademico);
+					condicionesResponse.add(new  CondicionRequest(String.valueOf(tempProgramaAcademico.getCodigo()), "programa_academico", tempProgramaAcademico.getNombre()));
 				}
 				else if(condicion.getId().getCondicion().contains("fecha_nacimiento")) {
 					condicionesResponse.add(new  CondicionRequest(String.valueOf(1),"fecha_nacimiento","cumpleaños"));

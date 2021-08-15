@@ -2,11 +2,13 @@ package co.edu.udea.onomastico.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import co.edu.udea.onomastico.model.*;
+import co.edu.udea.onomastico.repository.ProgramaAcademicoRepository;
 import co.edu.udea.onomastico.repository.UnidadAcademicaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,9 @@ public class UnidadAcademicaService {
 
     @Autowired
     UnidadAcademicaRepository unidadAcademicaRepository;
+
+    @Autowired
+    ProgramaAcademicoRepository programaAcademicoRepository;
 
     @Autowired
     UnidadAdministrativaService unidadAdministrativaService;
@@ -67,4 +72,15 @@ public class UnidadAcademicaService {
         return unidadAcademicaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("UnidadAcademica" + "id"+ id));
     }
+
+    public List<ProgramaAcademico> findProgramasByUnidadAcademica(Integer idUnidadAcademica){
+        return unidadAcademicaRepository.findProgramasAcademicosByUnidadAcademica(idUnidadAcademica);
+    }
+
+    public List<ProgramaAcademico> findProgramasByUnidadAcademicaPag(Integer idUnidadAcademica, Pageable pageable){
+        UnidadAcademica unidadAcademica = unidadAcademicaRepository.findById(idUnidadAcademica)
+                .orElseThrow(() -> new ResourceNotFoundException("UnidadAcademica" + "id"+ idUnidadAcademica));
+        return programaAcademicoRepository.findByUnidadAcademica(unidadAcademica, pageable);
+    }
+
 }

@@ -20,6 +20,9 @@ public class ProgramaAcademicoService {
 
 	@Autowired
 	ProgramaAcademicoRepository programaAcademicoRepository;
+
+	@Autowired
+	UnidadAcademicaService unidadAcademicaService;
 	
 	public List<ProgramaAcademico> getAllProgramasAcademicos() {
 	    return programaAcademicoRepository.findAll();
@@ -79,6 +82,16 @@ public class ProgramaAcademicoService {
 			programasConUnidadesAcademicas.add(new ProgramaConUnidadAcademicaResponse(programaAcademico.getCodigo(), programaAcademico.getNombre(), programaAcademico.getUnidadAcademica()));
 		});
 		return programasConUnidadesAcademicas;
+	}
+
+	public List<ProgramaAcademico> getProgramasAcademicosByUnidadAcademica(UnidadAcademica unidadAcademica){
+		List<ProgramaAcademico> programas = getAllProgramasAcademicos();
+		List<ProgramaAcademico> programasDeLaUnidad = new ArrayList<>();
+		programas.forEach(programaAcademico -> {
+			if(programaAcademico.getUnidadAcademica().equals(unidadAcademica)) programasDeLaUnidad.add(programaAcademico);
+		});
+
+		return programasDeLaUnidad;
 	}
 
 }
