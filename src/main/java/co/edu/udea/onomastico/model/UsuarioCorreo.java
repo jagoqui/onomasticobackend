@@ -128,7 +128,7 @@ public class UsuarioCorreo implements Serializable {
 				", fechaNacimiento=" + fechaNacimiento +
 				", estado='" + estado + '\'' +
 				", genero='" + genero + '\'' +
-				", asociacionPorUsuarioCorreo=" + unidadAdministrativaPorCorreoUsuario +
+				", unidadAdministrativaPorCorreoUsuario=" + unidadAdministrativaPorCorreoUsuario +
 				", programaAcademicoPorUsuarioCorreo=" + programaAcademicoPorUsuarioCorreo +
 				", plataformaPorUsuarioCorreo=" + plataformaPorUsuarioCorreo +
 				", vinculacionPorUsuarioCorreo=" + vinculacionPorUsuarioCorreo +

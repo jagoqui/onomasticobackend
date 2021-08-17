@@ -8,6 +8,7 @@ import javax.persistence.*;
 
 import co.edu.udea.onomastico.service.UsuarioService;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
@@ -89,6 +90,15 @@ public class Usuario implements Serializable {
 		unidadAcademicaToAdd.getUsuariosUnidadAcademica().add(this);
 	}
 
+	public void removeUnidadAcademica(UnidadAcademica unidadAcademica){
+			unidadAcademicaPorUsuario.remove(unidadAcademica);
+			unidadAcademica.setUsuariosUnidadAcademica(null);
+	}
+
+	public void removeUnidadAdministrativa(UnidadAdministrativa unidadAdministrativa){
+		unidadAdministrativaPorUsuario.remove(unidadAdministrativa);
+		unidadAdministrativa.setUsuariosUnidadAdministrativa(null);
+	}
 
 	@Override
 	public boolean equals(Object o) {

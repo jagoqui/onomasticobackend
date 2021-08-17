@@ -1,10 +1,6 @@
 package co.edu.udea.onomastico.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import co.edu.udea.onomastico.model.*;
 import co.edu.udea.onomastico.payload.EventoRequest;
@@ -18,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import co.edu.udea.onomastico.exceptions.AuthException;
@@ -27,6 +24,7 @@ import co.edu.udea.onomastico.exceptions.ResourceNotFoundException;
 import co.edu.udea.onomastico.repository.UsuarioRepository;
 
 @Service
+@Transactional
 public class UsuarioService {
 
 	@Autowired
@@ -49,7 +47,8 @@ public class UsuarioService {
 	
 	@Value("${app.resetpwd}")
 	private String RESET_SERVER;
-	
+
+	@Transactional(readOnly = true)
 	public List<Usuario> getAllUsuarios() {
 		return usuarioRepository.findAll();
 	}
@@ -103,16 +102,28 @@ public class UsuarioService {
 	}
 	
 
-	public Usuario AddUsuario(@RequestBody Usuario usuario) {
-		if(!(usuario.getEstado().equals("ACTIVO") || usuario.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado Incorrecto");
-		if(!usuarioRepository.findByEmail(usuario.getEmail()).isEmpty()) throw new ResourceAlreadyExistsException("usuario existente",usuario.getEmail());
+
+	public Usuario AddUsuario(@RequestBody Usuario usuarioRequest) {
+		if(!(usuarioRequest.getEstado().equals("ACTIVO") || usuarioRequest.getEstado().equals("INACTIVO"))) throw new BadRequestException("Estado Incorrecto");
+		if(!usuarioRepository.findByEmail(usuarioRequest.getEmail()).isEmpty()) throw new ResourceAlreadyExistsException("usuario existente",usuarioRequest.getEmail());
 		String password = UUID.randomUUID().toString();
 		String encriptedPassword = passwordEncoder.encode(password);
-		usuario.setPassword(encriptedPassword);
-		usuario.setResetToken(UUID.randomUUID().toString());
-	    Usuario newuser = usuarioRepository.save(usuario);
-	    sendEmailToNewUser(usuario);
-	    return newuser;
+		Usuario usuarioToCreate = Usuario.builder().nombre(usuarioRequest.getNombre()).email(usuarioRequest.getEmail()).estado(usuarioRequest.getEstado()).rol(usuarioRequest.getRol()).unidadAcademicaPorUsuario(new HashSet<>()).unidadAdministrativaPorUsuario(new HashSet<>()).build();
+		usuarioToCreate.setPassword(encriptedPassword);
+		usuarioToCreate.setResetToken(UUID.randomUUID().toString());
+		Usuario usuarioCreated = usuarioRepository.save(usuarioToCreate);
+	    usuarioRequest.getUnidadAcademicaPorUsuario().stream().forEach(unidadAcademica -> {
+	    	UnidadAcademica unidadInDataBase = unidadAcademicaService.unidadAcademicaRepository.findById(unidadAcademica.getId()).
+					orElseThrow(() -> new ResourceNotFoundException("UnidadAcademica"+"id"+unidadAcademica.getId()));
+	    	usuarioCreated.addUnidadAcademica(unidadInDataBase);
+		});
+		usuarioRequest.getUnidadAdministrativaPorUsuario().stream().forEach(unidadAdministrativa -> {
+			UnidadAdministrativa unidadInDataBase = unidadAdministrativaService.unidadAdministrativaRepository.findById(unidadAdministrativa.getId()).
+					orElseThrow(() -> new ResourceNotFoundException("UnidadAdministrativa"+"id"+unidadAdministrativa.getId()));
+			usuarioCreated.addUnidadAdministrativa(unidadInDataBase);
+		});
+
+	    return usuarioRepository.save(usuarioCreated);
 	}
 	public void sendEmailToNewUser(Usuario user) {
 		String asunto = "Bienvenido a onomastico";
