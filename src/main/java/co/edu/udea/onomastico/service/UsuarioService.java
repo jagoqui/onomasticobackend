@@ -44,6 +44,9 @@ public class UsuarioService {
 	
 	@Autowired
 	private EmailService emailService;
+
+	@Autowired
+	private RolService rolService;
 	
 	@Value("${app.resetpwd}")
 	private String RESET_SERVER;
@@ -123,7 +126,9 @@ public class UsuarioService {
 			usuarioCreated.addUnidadAdministrativa(unidadInDataBase);
 		});
 
-	    return usuarioRepository.save(usuarioCreated);
+		Usuario newuser = usuarioRepository.save(usuarioCreated);
+		// sendEmailToNewUser(usuarioCreated);
+		return newuser;
 	}
 	public void sendEmailToNewUser(Usuario user) {
 		String asunto = "Bienvenido a onomastico";
@@ -191,9 +196,24 @@ public class UsuarioService {
 		}
 		if(!(detallesUsuario.getEstado().equals("ACTIVO")|| detallesUsuario.getEstado().equals("INACTIVO")))throw new BadRequestException("Estado incorrecto");
 		usuario.setEstado(detallesUsuario.getEstado());
-		if(detallesUsuario.getRol()!=null)usuario.setRol(detallesUsuario.getRol());
-		if(detallesUsuario.getUnidadAdministrativaPorUsuario()!=null)usuario.setUnidadAdministrativaPorUsuario(detallesUsuario.getUnidadAdministrativaPorUsuario());
-		if(detallesUsuario.getUnidadAcademicaPorUsuario()!=null)usuario.setUnidadAcademicaPorUsuario(detallesUsuario.getUnidadAcademicaPorUsuario());
+		if(detallesUsuario.getRol()!=null){
+			Rol rolInDataBase = rolService.rolRepository.findById(detallesUsuario.getRol().getId()).get();
+			usuario.setRol(rolInDataBase);
+		}
+		if(detallesUsuario.getUnidadAdministrativaPorUsuario()!=null){
+			Set<UnidadAdministrativa> unidadesAdministrativasRequest = detallesUsuario.getUnidadAdministrativaPorUsuario();
+			unidadesAdministrativasRequest.stream().forEach(unidadAdministrativa -> {
+				UnidadAdministrativa unidadInDataBase = unidadAdministrativaService.unidadAdministrativaRepository.findById(unidadAdministrativa.getId()).get();
+				usuario.addUnidadAdministrativa(unidadInDataBase);
+			});
+		}
+		if(detallesUsuario.getUnidadAcademicaPorUsuario()!=null){
+			Set<UnidadAcademica> unidadesAcademicasRequest = detallesUsuario.getUnidadAcademicaPorUsuario();
+			unidadesAcademicasRequest.stream().forEach(unidadAcademica -> {
+				UnidadAcademica unidadInDataBase = unidadAcademicaService.unidadAcademicaRepository.findById(unidadAcademica.getId()).get();
+				usuario.addUnidadAcademica(unidadInDataBase);
+			});
+		}
 		Usuario updatedUsuario = usuarioRepository.save(usuario);
 	    return updatedUsuario;
 	}
