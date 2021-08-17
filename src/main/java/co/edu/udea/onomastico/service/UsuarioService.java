@@ -202,17 +202,21 @@ public class UsuarioService {
 		}
 		if(detallesUsuario.getUnidadAdministrativaPorUsuario()!=null){
 			Set<UnidadAdministrativa> unidadesAdministrativasRequest = detallesUsuario.getUnidadAdministrativaPorUsuario();
+			Set<UnidadAdministrativa> unidadesAdministrativasToSet = new HashSet<>();
 			unidadesAdministrativasRequest.stream().forEach(unidadAdministrativa -> {
 				UnidadAdministrativa unidadInDataBase = unidadAdministrativaService.unidadAdministrativaRepository.findById(unidadAdministrativa.getId()).get();
-				usuario.addUnidadAdministrativa(unidadInDataBase);
+				unidadesAdministrativasToSet.add(unidadInDataBase);
 			});
+			usuario.setUnidadAdministrativaPorUsuario(unidadesAdministrativasToSet);
 		}
 		if(detallesUsuario.getUnidadAcademicaPorUsuario()!=null){
 			Set<UnidadAcademica> unidadesAcademicasRequest = detallesUsuario.getUnidadAcademicaPorUsuario();
+			Set<UnidadAcademica> unidadesAcademicasToSet = new HashSet<>();
 			unidadesAcademicasRequest.stream().forEach(unidadAcademica -> {
 				UnidadAcademica unidadInDataBase = unidadAcademicaService.unidadAcademicaRepository.findById(unidadAcademica.getId()).get();
-				usuario.addUnidadAcademica(unidadInDataBase);
+				unidadesAcademicasToSet.add(unidadInDataBase);
 			});
+			usuario.setUnidadAcademicaPorUsuario(unidadesAcademicasToSet);
 		}
 		Usuario updatedUsuario = usuarioRepository.save(usuario);
 	    return updatedUsuario;
